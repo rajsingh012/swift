@@ -1,0 +1,48 @@
+import * as svgo from 'svgo'
+
+export default function optimizeSvg(input) {
+  const result = svgo.optimize(input, {
+    floatPrecision: 4,
+    multipass: true,
+    plugins: [
+      { name: 'cleanupAttrs' },
+      { name: 'removeDoctype' },
+      { name: 'removeXMLProcInst' },
+      { name: 'removeComments' },
+      { name: 'removeMetadata' },
+      { name: 'removeTitle' },
+      { name: 'removeDesc' },
+      { name: 'removeUselessDefs' },
+      { name: 'removeEditorsNSData' },
+      { name: 'removeEmptyAttrs' },
+      { name: 'removeHiddenElems' },
+      { name: 'removeEmptyText' },
+      { name: 'removeViewBox' },
+      { name: 'cleanupEnableBackground' },
+      { name: 'minifyStyles' },
+      { name: 'convertStyleToAttrs' },
+      { name: 'convertColors', params: { currentColor: true } },
+      { name: 'convertPathData' },
+      { name: 'convertTransform' },
+      { name: 'removeUnknownsAndDefaults' },
+      { name: 'removeNonInheritableGroupAttrs' },
+      { name: 'removeUselessStrokeAndFill', params: { removeNone: true } },
+      { name: 'removeUnusedNS' },
+      { name: 'cleanupNumericValues' },
+      { name: 'cleanupListOfValues' },
+      { name: 'moveElemsAttrsToGroup' },
+      { name: 'moveGroupAttrsToElems' },
+      { name: 'collapseGroups' },
+      { name: 'removeRasterImages' },
+      { name: 'mergePaths' },
+      { name: 'convertShapeToPath' },
+      { name: 'sortAttrs' },
+      { name: 'removeDimensions' },
+      { name: 'removeElementsByAttr' },
+      { name: 'removeStyleElement' },
+      { name: 'removeScriptElement' },
+      { name: 'removeEmptyContainers' },
+    ],
+  })
+  return result.data
+}
