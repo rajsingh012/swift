@@ -1,0 +1,326 @@
+import { useEffect, useRef, useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
+import { Text } from '@swift/components'
+
+export const Route = createFileRoute('/foundations')({
+  component: ColorsRoute,
+})
+
+const PALETTES: Array<{ name: string; shades: number[] }> = [
+  { name: 'brand', shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900] },
+  { name: 'neutral', shades: [0, 50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 900] },
+  { name: 'ink', shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900] },
+  { name: 'highlight', shades: [50, 100, 200, 300, 400, 500, 600, 700] },
+  { name: 'success', shades: [50, 100, 200, 300, 500, 600, 700] },
+  { name: 'warning', shades: [50, 100, 200, 300, 400, 500, 600, 700, 800] },
+  { name: 'critical', shades: [50, 100, 200, 300, 400, 500, 600, 700] },
+  { name: 'new', shades: [50, 100, 200, 300, 400, 500, 600, 700] },
+]
+
+const SEMANTIC_GROUPS: Array<{ label: string; vars: string[] }> = [
+  {
+    label: 'Surface',
+    vars: [
+      '--color-surface',
+      '--color-surface-muted',
+      '--color-surface-subtle',
+      '--color-surface-elevated',
+      '--color-surface-inverse',
+      '--color-surface-brand',
+      '--color-surface-brand-muted',
+      '--color-surface-highlight',
+      '--color-surface-highlight-muted',
+      '--color-surface-success',
+      '--color-surface-success-muted',
+      '--color-surface-warning',
+      '--color-surface-warning-muted',
+      '--color-surface-critical',
+      '--color-surface-critical-muted',
+      '--color-surface-new',
+      '--color-surface-new-muted',
+    ],
+  },
+  {
+    label: 'Content',
+    vars: [
+      '--color-content',
+      '--color-content-muted',
+      '--color-content-subtle',
+      '--color-content-strong',
+      '--color-content-inverse',
+      '--color-content-on-brand',
+      '--color-content-brand',
+      '--color-content-highlight',
+      '--color-content-success',
+      '--color-content-warning',
+      '--color-content-critical',
+      '--color-content-new',
+    ],
+  },
+  {
+    label: 'Stroke',
+    vars: [
+      '--color-stroke',
+      '--color-stroke-muted',
+      '--color-stroke-strong',
+      '--color-stroke-inverse',
+      '--color-stroke-brand',
+      '--color-stroke-highlight',
+      '--color-stroke-success',
+      '--color-stroke-warning',
+      '--color-stroke-critical',
+      '--color-stroke-new',
+    ],
+  },
+]
+
+const RADIUS_TOKENS = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', 'full'] as const
+const SHADOW_TOKENS = ['level1', 'level2', 'level3', 'level4', 'level5', 'level6'] as const
+
+function rgbToHex(value: string): string {
+  const m = value.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/)
+  if (!m) return value
+  const toHex = (n: string) => Number(n).toString(16).padStart(2, '0')
+  return `#${toHex(m[1])}${toHex(m[2])}${toHex(m[3])}`
+}
+
+function useResolvedColors(refs: React.RefObject<Record<string, HTMLDivElement | null>>): Record<string, string> {
+  const [resolved, setResolved] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      const next: Record<string, string> = {}
+      for (const [key, node] of Object.entries(refs.current ?? {})) {
+        if (!node) continue
+        const bg = getComputedStyle(node).backgroundColor
+        next[key] = rgbToHex(bg)
+      }
+      setResolved(next)
+    }, 0)
+    return () => window.clearTimeout(id)
+  })
+
+  return resolved
+}
+
+function Swatch({
+  label,
+  varName,
+  onResolveRef,
+  small,
+}: {
+  label: string
+  varName: string
+  onResolveRef: (node: HTMLDivElement | null) => void
+  small?: boolean
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div
+        ref={onResolveRef}
+        className={`w-full rounded-md border border-stroke-muted ${small ? 'h-12' : 'h-16'}`}
+        style={{ backgroundColor: `var(${varName})` }}
+        title={varName}
+      />
+      <div className="flex flex-col">
+        <Text variant="body-xs" fontWeight="semibold" color="primary">
+          {label}
+        </Text>
+        <Text variant="body-xs" fontFamily="mono" color="muted">
+          {varName}
+        </Text>
+      </div>
+    </div>
+  )
+}
+
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <Text
+      variant="body-xs"
+      fontWeight="semibold"
+      color="muted"
+      className="mb-3 block tracking-wider uppercase"
+    >
+      {children}
+    </Text>
+  )
+}
+
+function PaletteRow({
+  name,
+  shades,
+  registerRef,
+  resolved,
+}: {
+  name: string
+  shades: number[]
+  registerRef: (key: string, node: HTMLDivElement | null) => void
+  resolved: Record<string, string>
+}) {
+  return (
+    <div className="grid gap-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <Text variant="body-sm" fontWeight="semibold" className="capitalize">
+          {name}
+        </Text>
+        <Text variant="body-xs" color="muted" fontFamily="mono">
+          {shades.length} stops
+        </Text>
+      </div>
+      <div className="flex h-16 overflow-hidden rounded-lg border border-stroke shadow-level1">
+        {shades.map((shade) => {
+          const varName = `--color-${name}-${shade}`
+          const hex = resolved[varName]
+          return (
+            <div
+              key={shade}
+              ref={(node) => registerRef(varName, node)}
+              className="group relative flex flex-1 flex-col items-center justify-end gap-0.5 pb-2 transition-[flex-grow] hover:flex-[1.4]"
+              style={{ backgroundColor: `var(${varName})` }}
+              title={`${varName}${hex ? ` · ${hex}` : ''}`}
+            >
+              <span
+                className="font-mono text-[10px] font-semibold opacity-0 mix-blend-difference transition-opacity group-hover:opacity-100"
+                style={{ color: 'white' }}
+              >
+                {shade}
+              </span>
+              <span
+                className="font-mono text-[9px] opacity-0 mix-blend-difference transition-opacity group-hover:opacity-100"
+                style={{ color: 'white' }}
+              >
+                {hex ?? ''}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function ColorsRoute() {
+  const refs = useRef<Record<string, HTMLDivElement | null>>({})
+  const [, force] = useState(0)
+  const registerRef = (key: string, node: HTMLDivElement | null) => {
+    refs.current[key] = node
+  }
+  const resolved = useResolvedColors(refs)
+
+  // Force a re-resolve when the theme toggles by listening to data-theme changes.
+  useEffect(() => {
+    const observer = new MutationObserver(() => force((n) => n + 1))
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div className="h-full w-full overflow-y-auto bg-surface px-8 py-10">
+      <div className="mx-auto grid max-w-6xl gap-12">
+        <header>
+          <Text variant="heading-xl" fontWeight="bold" gutterBottom>
+            Color palette
+          </Text>
+          <Text variant="para-lg" color="secondary">
+            The full design-token surface. Raw palettes anchor each hue;
+            semantic tokens (surface, content, stroke) compose them into roles
+            that respond to <code>[data-theme="dark"]</code>.
+          </Text>
+        </header>
+
+        <section>
+          <SectionHeader>Raw palettes</SectionHeader>
+          <div className="grid gap-8 rounded-xl border border-stroke bg-surface-elevated p-6 shadow-level1">
+            {PALETTES.map(({ name, shades }) => (
+              <PaletteRow
+                key={name}
+                name={name}
+                shades={shades}
+                registerRef={registerRef}
+                resolved={resolved}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <SectionHeader>Semantic tokens</SectionHeader>
+          <div className="grid gap-8 rounded-xl border border-stroke bg-surface-elevated p-6 shadow-level1">
+            {SEMANTIC_GROUPS.map(({ label, vars }) => (
+              <div key={label} className="grid gap-3">
+                <Text variant="body-sm" fontWeight="semibold">
+                  {label}
+                </Text>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                  {vars.map((v) => (
+                    <Swatch
+                      key={v}
+                      label={v.replace('--color-', '')}
+                      varName={v}
+                      onResolveRef={(node) => registerRef(v, node)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <SectionHeader>Radius</SectionHeader>
+          <div className="grid grid-cols-2 gap-4 rounded-xl border border-stroke bg-surface-elevated p-6 shadow-level1 sm:grid-cols-4 lg:grid-cols-8">
+            {RADIUS_TOKENS.map((r) => (
+              <div key={r} className="flex flex-col items-center gap-2">
+                <div
+                  className="h-16 w-16 border border-stroke bg-surface-brand-muted"
+                  style={{ borderRadius: `var(--radius-${r})` }}
+                />
+                <Text variant="body-xs" fontFamily="mono" fontWeight="semibold">
+                  {r}
+                </Text>
+                <Text variant="body-xs" fontFamily="mono" color="muted">
+                  --radius-{r}
+                </Text>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <SectionHeader>Shadow elevation</SectionHeader>
+          <div className="grid grid-cols-2 gap-6 rounded-xl border border-stroke bg-surface-muted p-8 sm:grid-cols-3 lg:grid-cols-6">
+            {SHADOW_TOKENS.map((s) => (
+              <div key={s} className="flex flex-col items-center gap-3">
+                <div
+                  className="h-20 w-20 rounded-lg bg-surface-elevated"
+                  style={{ boxShadow: `var(--shadow-${s})` }}
+                />
+                <Text variant="body-xs" fontFamily="mono" fontWeight="semibold">
+                  {s}
+                </Text>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <SectionHeader>Theme behaviour</SectionHeader>
+          <div className="grid gap-4 rounded-xl border border-stroke bg-surface-elevated p-6 shadow-level1">
+            <Text variant="para-md" color="secondary">
+              Every token above is a CSS variable. Switching <code>data-theme</code> on
+              <code>&lt;html&gt;</code> reassigns the variables — utilities like
+              <code>bg-surface</code> and <code>text-content</code> follow without re-render.
+            </Text>
+            <Text variant="para-md" color="secondary">
+              Try the moon/sun toggle in the header.
+            </Text>
+          </div>
+        </section>
+      </div>
+    </div>
+  )
+}

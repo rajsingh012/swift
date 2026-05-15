@@ -1,5 +1,6 @@
 import { useMemo, useState, type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { Text } from '@swift/components'
 import * as Icons from '@swift/icons'
 import { useIconSearch } from '../lib/icon-search'
 import { CopyableImport } from '../lib/CopyableImport'
@@ -59,6 +60,71 @@ function describe(name: string) {
   return `The ${readableName(name).toLowerCase()} icon. Sizing follows font-size by default (1em) or pass the size prop. Color inherits from the current text color.`
 }
 
+const ICON_PROPS: ReadonlyArray<{
+  name: string
+  type: string
+  defaultValue?: string
+  description: string
+}> = [
+  {
+    name: 'size',
+    type: 'number | string',
+    defaultValue: `'1em'`,
+    description:
+      'Sets both width and height of the underlying <svg>. Numbers become pixels; strings can be any CSS length (em, rem, %). Defaults to 1em so the icon scales with the surrounding font size.',
+  },
+  {
+    name: 'title',
+    type: 'string',
+    description:
+      'Accessible label. When provided, the icon renders a <title> element and switches to role="img"; when omitted, it is treated as decorative (aria-hidden). Use it only when the icon conveys meaning on its own.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    description:
+      'Forwarded to the <svg>. Color is driven by currentColor — set a text-* utility (e.g. text-content-brand) or any Tailwind text color to recolor the glyph.',
+  },
+  {
+    name: 'style',
+    type: 'CSSProperties',
+    description:
+      'Merged with the defaults { userSelect: "none", display: "inline-block" }. Use for one-off color/transform overrides; prefer className for shared styling.',
+  },
+  {
+    name: 'onClick',
+    type: '(event: MouseEvent<SVGSVGElement>) => void',
+    description:
+      'Standard SVG click handler. If you make an icon interactive, also pair it with a button/link wrapper and a meaningful title or aria-label.',
+  },
+  {
+    name: 'ref',
+    type: 'Ref<SVGSVGElement>',
+    description:
+      'Forwarded to the underlying <svg> element — useful for measurement, focus, or animation hooks.',
+  },
+  {
+    name: '...rest',
+    type: 'SVGAttributes<SVGSVGElement>',
+    description:
+      'All other standard SVG attributes (id, role, aria-*, data-*, event handlers, fill, stroke, etc.) are forwarded to the rendered <svg>.',
+  },
+]
+
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <Text
+      variant="body-xs"
+      fontWeight="semibold"
+      color="muted"
+      className="mb-3 block uppercase tracking-wide"
+      variantMapping={{ 'body-xs': 'h2' }}
+    >
+      {children}
+    </Text>
+  )
+}
+
 function RouteComponent() {
   const [selected, setSelected] = useState(allIcons[0]?.[0] ?? '')
   const { query } = useIconSearch()
@@ -75,26 +141,24 @@ function RouteComponent() {
   )
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-white dark:bg-gray-950">
-      <aside className="flex w-72 shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
-        <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3.5 dark:border-gray-800">
-          <div className="min-w-0">
-            <h2 className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
-              @swift/icons
-            </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {query
-                ? `${filtered.length} of ${allIcons.length}`
-                : `${allIcons.length} icons`}
-            </p>
-          </div>
+    <div className="flex h-full w-full overflow-hidden bg-surface">
+      <aside className="flex w-72 shrink-0 flex-col border-r border-stroke bg-surface">
+       <div className="border-b border-stroke px-4 py-3.5">
+          <Text variant="body-sm" fontWeight="semibold">
+            @swift/icons
+          </Text>
+          <Text variant="body-xs" color="muted" className="block">
+            {query
+              ? `${filtered.length} of ${allIcons.length}`
+              : `${allIcons.length} icons`}
+          </Text>
         </div>
 
         <div className="flex-1 overflow-y-auto px-2 py-2">
           {filtered.length === 0 ? (
-            <p className="px-2 py-4 text-sm text-gray-500 dark:text-gray-400">
+            <Text variant="body-sm" color="muted" className="block px-2 py-4">
               No icons match “{query}”.
-            </p>
+            </Text>
           ) : (
             <ul className="space-y-0.5">
               {filtered.map(([name, C]) => {
@@ -104,19 +168,14 @@ function RouteComponent() {
                     <button
                       type="button"
                       onClick={() => setSelected(name)}
-                      className={`group flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
-                        isActive
-                          ? 'bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300'
-                          : 'font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-                      }`}
+                      className={`group flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${isActive
+                          ? 'bg-surface-brand-muted font-semibold text-content-brand'
+                          : 'font-medium text-content hover:bg-surface-muted'
+                        }`}
                     >
                       <C
                         size={18}
-                        className={
-                          isActive
-                            ? 'text-indigo-600 dark:text-indigo-300'
-                            : colorFor(name)
-                        }
+                        className={isActive ? 'text-content-brand' : colorFor(name)}
                       />
                       <span className="truncate">{name}</span>
                     </button>
@@ -130,36 +189,34 @@ function RouteComponent() {
 
       <main className="flex-1 overflow-y-auto p-8">
         {!Selected ? (
-          <p className="text-gray-500 dark:text-gray-400">Select an icon from the sidebar.</p>
+          <Text variant="body-md" color="muted">
+            Select an icon from the sidebar.
+          </Text>
         ) : (
           <div className="grid gap-8">
             <header className="flex items-center gap-4">
-              <div className="flex size-20 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
+              <div className="flex size-20 items-center justify-center rounded-lg border border-stroke bg-surface-muted text-content-strong">
                 <Selected size={48} />
               </div>
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
+                <Text variant="heading-lg" fontWeight="semibold" color="primary">
                   {selected}
-                </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                </Text>
+                <Text variant="body-sm" color="secondary" className="block">
                   {readableName(selected)}
-                </p>
+                </Text>
               </div>
             </header>
 
             <section>
-              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                Description
-              </h2>
-              <p className="text-gray-800 leading-relaxed dark:text-gray-200">
+              <SectionHeader>Description</SectionHeader>
+              <Text variant="para-md" color="secondary">
                 {describe(selected)}
-              </p>
+              </Text>
             </section>
 
             <section>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                Sizes
-              </h2>
+              <SectionHeader>Sizes</SectionHeader>
               <div className="flex items-end gap-6">
                 {[
                   { size: 16, color: 'text-blue-600' },
@@ -170,55 +227,119 @@ function RouteComponent() {
                 ].map(({ size, color }) => (
                   <div key={size} className="flex flex-col items-center gap-1">
                     <Selected size={size} className={color} />
-                    <small className="text-xs text-gray-500 dark:text-gray-400">{size}px</small>
+                    <Text variant="body-xs" color="muted">
+                      {size}px
+                    </Text>
                   </div>
                 ))}
               </div>
             </section>
 
             <section>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                Colors
-              </h2>
+              <SectionHeader>Colors</SectionHeader>
               <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
                 {[
-                  { label: 'default', text: 'text-gray-900 dark:text-gray-100', bg: 'bg-gray-50 dark:bg-gray-800' },
-                  { label: 'slate', text: 'text-slate-700', bg: 'bg-slate-100' },
-                  { label: 'gray', text: 'text-gray-400', bg: 'bg-gray-100' },
-                  { label: 'blue', text: 'text-blue-600', bg: 'bg-blue-50' },
-                  { label: 'indigo', text: 'text-indigo-600', bg: 'bg-indigo-50' },
-                  { label: 'violet', text: 'text-violet-600', bg: 'bg-violet-50' },
-                  { label: 'pink', text: 'text-pink-600', bg: 'bg-pink-50' },
-                  { label: 'red', text: 'text-red-500', bg: 'bg-red-50' },
-                  { label: 'orange', text: 'text-orange-500', bg: 'bg-orange-50' },
-                  { label: 'amber', text: 'text-amber-500', bg: 'bg-amber-50' },
-                  { label: 'emerald', text: 'text-emerald-600', bg: 'bg-emerald-50' },
-                  { label: 'teal', text: 'text-teal-600', bg: 'bg-teal-50' },
-                  { label: 'cyan', text: 'text-cyan-600', bg: 'bg-cyan-50' },
-                  { label: 'lime', text: 'text-lime-600', bg: 'bg-lime-50' },
-                  { label: 'dark', text: 'text-white', bg: 'bg-gray-900' },
-                ].map(({ label, text, bg }) => (
+                  { label: 'default', text: 'text-content-strong', bg: 'bg-surface-muted', labelTone: 'muted' as const },
+                  { label: 'brand', text: 'text-content-brand', bg: 'bg-surface-brand-muted', labelTone: 'muted' as const },
+                  { label: 'success', text: 'text-content-success', bg: 'bg-surface-success-muted', labelTone: 'muted' as const },
+                  { label: 'warning', text: 'text-content-warning', bg: 'bg-surface-warning-muted', labelTone: 'muted' as const },
+                  { label: 'critical', text: 'text-content-critical', bg: 'bg-surface-critical-muted', labelTone: 'muted' as const },
+                  { label: 'highlight', text: 'text-content-highlight', bg: 'bg-surface-highlight-muted', labelTone: 'muted' as const },
+                  { label: 'blue', text: 'text-blue-600', bg: 'bg-blue-50', labelTone: 'muted' as const },
+                  { label: 'indigo', text: 'text-indigo-600', bg: 'bg-indigo-50', labelTone: 'muted' as const },
+                  { label: 'violet', text: 'text-violet-600', bg: 'bg-violet-50', labelTone: 'muted' as const },
+                  { label: 'pink', text: 'text-pink-600', bg: 'bg-pink-50', labelTone: 'muted' as const },
+                  { label: 'orange', text: 'text-orange-500', bg: 'bg-orange-50', labelTone: 'muted' as const },
+                  { label: 'teal', text: 'text-teal-600', bg: 'bg-teal-50', labelTone: 'muted' as const },
+                  { label: 'cyan', text: 'text-cyan-600', bg: 'bg-cyan-50', labelTone: 'muted' as const },
+                  { label: 'lime', text: 'text-lime-600', bg: 'bg-lime-50', labelTone: 'muted' as const },
+                  { label: 'inverse', text: 'text-content-inverse', bg: 'bg-surface-inverse', labelTone: 'inverse' as const },
+                ].map(({ label, text, bg, labelTone }) => (
                   <div
                     key={label}
-                    className={`flex flex-col items-center gap-1 rounded-lg border border-gray-200 p-3 dark:border-gray-700 ${bg}`}
+                    className={`flex flex-col items-center gap-1 rounded-lg border border-stroke p-3 ${bg}`}
                   >
                     <Selected size={32} className={text} />
-                    <small
-                      className={`text-xs ${
-                        label === 'dark' ? 'text-white' : 'text-gray-600'
-                      }`}
+                    <Text
+                      variant="body-xs"
+                      className={labelTone === 'inverse' ? 'text-content-inverse' : 'text-content-muted'}
                     >
                       {label}
-                    </small>
+                    </Text>
                   </div>
                 ))}
               </div>
             </section>
 
             <section>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                Import
-              </h2>
+              <SectionHeader>Props</SectionHeader>
+              <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+                <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
+                  <Text
+                    variant="body-xs"
+                    fontWeight="bold"
+                    color="secondary"
+                    className="tracking-wider uppercase"
+                  >
+                    Prop
+                  </Text>
+                  <Text
+                    variant="body-xs"
+                    fontWeight="bold"
+                    color="secondary"
+                    className="tracking-wider uppercase"
+                  >
+                    Type
+                  </Text>
+                  <Text
+                    variant="body-xs"
+                    fontWeight="bold"
+                    color="secondary"
+                    className="tracking-wider uppercase"
+                  >
+                    Default
+                  </Text>
+                </div>
+                {ICON_PROPS.map(({ name, type, defaultValue, description }) => (
+                  <div
+                    key={name}
+                    className="grid gap-2 border-b border-stroke-muted px-6 py-5 last:border-0 md:grid-cols-[200px_1fr_120px] md:items-start md:gap-6"
+                  >
+                    <Text
+                      variant="body-sm"
+                      fontFamily="mono"
+                      fontWeight="semibold"
+                      color="primary"
+                    >
+                      {name}
+                    </Text>
+                    <div className="flex flex-col gap-1.5">
+                      <Text
+                        variant="body-xs"
+                        fontFamily="mono"
+                        color="secondary"
+                        className="wrap-break-word"
+                      >
+                        {type}
+                      </Text>
+                      <Text variant="body-sm" color="secondary">
+                        {description}
+                      </Text>
+                    </div>
+                    <Text
+                      variant="body-xs"
+                      fontFamily="mono"
+                      color={defaultValue ? 'inherit' : 'muted'}
+                    >
+                      {defaultValue ?? '—'}
+                    </Text>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <SectionHeader>Import</SectionHeader>
               <div className="grid gap-3">
                 <CopyableImport
                   label="Named import"
@@ -232,12 +353,10 @@ function RouteComponent() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                Usage
-              </h2>
-              <pre className="overflow-x-auto rounded bg-gray-900 p-3 text-xs leading-relaxed text-gray-100 dark:border dark:border-gray-700">
+              <SectionHeader>Usage</SectionHeader>
+              <pre className="overflow-x-auto rounded bg-surface-inverse p-3 text-xs leading-relaxed text-content-inverse">
                 {`<${selected} size={24} />
-<${selected} size={32} className="text-blue-600" />`}
+<${selected} size={32} className="text-content-brand" />`}
               </pre>
             </section>
           </div>

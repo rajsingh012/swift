@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button, Card, Text } from '@swift/components'
-import { ArrowRight, Check, Person, Settings } from '@swift/icons'
+import { ArrowRight, Check, CreditCard, Document, Person, Settings } from '@swift/icons'
 import { CopyableImport } from '../lib/CopyableImport'
+
+type IconComponent = ComponentType<{ size?: number; className?: string }>
 
 export const Route = createFileRoute('/components')({
   component: RouteComponent,
@@ -10,19 +12,22 @@ export const Route = createFileRoute('/components')({
 
 type ComponentName = 'Button' | 'Card' | 'Text'
 
-const components: Array<{ name: ComponentName; description: string }> = [
+const components: Array<{ name: ComponentName; icon: IconComponent; description: string }> = [
   {
     name: 'Button',
+    icon: Check,
     description:
       'Clickable affordance with primary, secondary, and ghost variants, three sizes, optional left/right icons, and a full-width option.',
   },
   {
     name: 'Card',
+    icon: CreditCard,
     description:
       'Container with optional title and footer slots. Body renders any children — use it to group related content.',
   },
   {
     name: 'Text',
+    icon: Document,
     description:
       'Typography primitive with semantic variants, font weight/family, alignment, color tokens, gutter, ellipsis, per-variant tag mapping, and a polymorphic render prop.',
   },
@@ -32,30 +37,32 @@ function RouteComponent() {
   const [selected, setSelected] = useState<ComponentName>('Button')
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-white dark:bg-gray-950">
-      <aside className="flex w-72 shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
-        <div className="border-b border-gray-200 px-4 py-3.5 dark:border-gray-800">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+    <div className="flex h-full w-full overflow-hidden bg-surface">
+      <aside className="flex w-72 shrink-0 flex-col border-r border-stroke bg-surface">
+        <div className="border-b border-stroke px-4 py-3.5">
+          <Text variant="body-sm" fontWeight="semibold">
             @swift/components
-          </h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          </Text>
+          <Text variant="body-xs" color="muted" className="block">
             {components.length} components
-          </p>
+          </Text>
         </div>
         <div className="flex-1 overflow-y-auto px-2 py-2">
           <ul className="space-y-0.5">
-            {components.map(({ name }) => {
+            {components.map(({ name, icon: Icon }) => {
               const isActive = name === selected
               return (
                 <li key={name}>
                   <button
                     type="button"
                     onClick={() => setSelected(name)}
-                    className={`flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${isActive
-                        ? 'bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300'
-                        : 'font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
-                      }`}
+                    className={`flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
+                      isActive
+                        ? 'bg-surface-brand-muted font-semibold text-content-brand'
+                        : 'font-medium text-content hover:bg-surface-muted'
+                    }`}
                   >
+                    <Icon size={16} className="shrink-0" />
                     <span className="truncate">{name}</span>
                   </button>
                 </li>
@@ -80,15 +87,21 @@ function RouteComponent() {
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+    <Text
+      variant="body-xs"
+      fontWeight="semibold"
+      color="muted"
+      className="mb-3 block uppercase tracking-wide"
+      variantMapping={{ 'body-xs': 'h2' }}
+    >
       {children}
-    </h2>
+    </Text>
   )
 }
 
 function CodeBlock({ code }: { code: string }) {
   return (
-    <pre className="overflow-x-auto rounded bg-gray-900 p-3 text-xs leading-relaxed text-gray-100 dark:border dark:border-gray-700">
+    <pre className="overflow-x-auto rounded bg-surface-inverse p-3 text-xs leading-relaxed text-content-inverse">
       {code}
     </pre>
   )
@@ -96,7 +109,7 @@ function CodeBlock({ code }: { code: string }) {
 
 function PreviewRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-stroke bg-surface-muted p-4">
       {children}
     </div>
   )
@@ -107,8 +120,12 @@ function ButtonPanel() {
   return (
     <div className="grid gap-8">
       <header>
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Button</h1>
-        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{info.description}</p>
+        <Text variant="heading-lg" fontWeight="semibold" gutterBottom>
+          Button
+        </Text>
+        <Text variant="body-sm" color="secondary">
+          {info.description}
+        </Text>
       </header>
 
       <section>
@@ -315,7 +332,7 @@ function SpecimenCard({
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+    <div className="rounded-xl border border-stroke bg-surface-elevated p-5">
       <Text
         variant="body-xs"
         fontWeight="semibold"
@@ -334,7 +351,7 @@ function TextPanel() {
 
   return (
     <div className="grid gap-10">
-      <header className="border-b border-gray-200 pb-6 dark:border-gray-800">
+      <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           Text
         </Text>
@@ -345,11 +362,11 @@ function TextPanel() {
 
       <section>
         <SectionHeader>Type ramp</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
           {TYPE_RAMP.map(({ variant, size, use }) => (
             <div
               key={variant}
-              className="grid grid-cols-[180px_1fr] items-baseline gap-6 border-b border-gray-100 px-6 py-5 last:border-0 dark:border-gray-800"
+              className="grid grid-cols-[180px_1fr] items-baseline gap-6 border-b border-stroke-muted px-6 py-5 last:border-0"
             >
               <div className="flex flex-col gap-0.5">
                 <Text
@@ -377,7 +394,7 @@ function TextPanel() {
 
       <section>
         <SectionHeader>In context · Editorial</SectionHeader>
-        <article className="rounded-xl border border-gray-200 bg-white p-8 dark:border-gray-800 dark:bg-gray-900">
+        <article className="rounded-xl border border-stroke bg-surface-elevated p-8">
           <Text
             variant="body-xs"
             fontWeight="bold"
@@ -410,7 +427,7 @@ function TextPanel() {
       <section>
         <SectionHeader>In context · UI surface</SectionHeader>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+          <div className="rounded-xl border border-stroke bg-surface-elevated p-6">
             <Text variant="heading-sm" fontWeight="semibold" gutterBottom>
               Payment details
             </Text>
@@ -427,7 +444,7 @@ function TextPanel() {
               >
                 Card number
               </Text>
-              <div className="rounded-md border border-gray-300 px-3 py-2 dark:border-gray-700">
+              <div className="rounded-md border border-stroke-strong px-3 py-2">
                 <Text variant="body-md" fontFamily="mono">
                   4242 4242 4242 4242
                 </Text>
@@ -438,7 +455,7 @@ function TextPanel() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+          <div className="rounded-xl border border-stroke bg-surface-elevated p-6">
             <Text
               variant="body-xs"
               fontWeight="bold"
@@ -602,7 +619,7 @@ function TextPanel() {
 
       <section>
         <SectionHeader>Semantic tag mapping</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
           {[
             { variant: 'heading-xl..xs', tag: 'h1 → h5' },
             { variant: 'para-*', tag: 'p' },
@@ -610,7 +627,7 @@ function TextPanel() {
           ].map(({ variant, tag }) => (
             <div
               key={variant}
-              className="flex items-center justify-between border-b border-gray-100 px-5 py-3 last:border-0 dark:border-gray-800"
+              className="flex items-center justify-between border-b border-stroke-muted px-5 py-3 last:border-0"
             >
               <Text variant="body-sm" fontFamily="mono" color="primary">
                 {variant}
@@ -632,7 +649,7 @@ function TextPanel() {
 
       <section>
         <SectionHeader>Polymorphism · variantMapping & render</SectionHeader>
-        <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+        <div className="rounded-xl border border-stroke bg-surface-elevated p-6">
           <div className="grid gap-4">
             <div className="flex items-center justify-between gap-4">
               <Text variant="body-xs" color="muted" fontFamily="mono">
@@ -646,7 +663,7 @@ function TextPanel() {
                 Important inline text
               </Text>
             </div>
-            <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-4 dark:border-gray-800">
+            <div className="flex items-center justify-between gap-4 border-t border-stroke-muted pt-4">
               <Text variant="body-xs" color="muted" fontFamily="mono">
                 render={'{<a href />}'}
               </Text>
@@ -659,7 +676,7 @@ function TextPanel() {
                 Read the docs
               </Text>
             </div>
-            <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-4 dark:border-gray-800">
+            <div className="flex items-center justify-between gap-4 border-t border-stroke-muted pt-4">
               <Text variant="body-xs" color="muted" fontFamily="mono">
                 render={'{(p) => <button {...p} />}'}
               </Text>
@@ -672,7 +689,7 @@ function TextPanel() {
                     <button
                       type="button"
                       {...rest}
-                      className={`${props.className ?? ''} cursor-pointer rounded-md bg-indigo-600 px-3 py-1.5 text-white hover:bg-indigo-700`}
+                      className={`${props.className ?? ''} cursor-pointer rounded-md bg-surface-brand px-3 py-1.5 text-content-on-brand hover:opacity-90`}
                     />
                   )
                 }}
@@ -686,8 +703,8 @@ function TextPanel() {
 
       <section>
         <SectionHeader>Props</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-          <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-gray-200 bg-gray-50 px-6 py-3 dark:border-gray-800 dark:bg-gray-950/40 md:grid">
+        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+          <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text
               variant="body-xs"
               fontWeight="bold"
@@ -716,7 +733,7 @@ function TextPanel() {
           {TEXT_PROPS.map(({ name, type, defaultValue, description }) => (
             <div
               key={name}
-              className="grid gap-2 border-b border-gray-100 px-6 py-5 last:border-0 md:grid-cols-[200px_1fr_120px] md:items-start md:gap-6 dark:border-gray-800"
+              className="grid gap-2 border-b border-stroke-muted px-6 py-5 last:border-0 md:grid-cols-[200px_1fr_120px] md:items-start md:gap-6"
             >
               <div className="flex flex-col gap-1">
                 <Text
@@ -788,17 +805,21 @@ function CardPanel() {
   return (
     <div className="grid gap-8">
       <header>
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Card</h1>
-        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{info.description}</p>
+        <Text variant="heading-lg" fontWeight="semibold" gutterBottom>
+          Card
+        </Text>
+        <Text variant="body-sm" color="secondary">
+          {info.description}
+        </Text>
       </header>
 
       <section>
         <SectionHeader>Basic</SectionHeader>
         <PreviewRow>
           <Card>
-            <p className="m-0 text-sm text-gray-800">
+            <Text variant="body-sm">
               A simple card with just a body. Drop any children in.
-            </p>
+            </Text>
           </Card>
         </PreviewRow>
       </section>
@@ -807,9 +828,9 @@ function CardPanel() {
         <SectionHeader>With title</SectionHeader>
         <PreviewRow>
           <Card title="Account details">
-            <p className="m-0 text-sm text-gray-800">
+            <Text variant="body-sm">
               The title slot renders above the body with a hairline divider.
-            </p>
+            </Text>
           </Card>
         </PreviewRow>
       </section>
@@ -823,9 +844,9 @@ function CardPanel() {
               <Button rightIcon={<ArrowRight size={16} />}>Continue to payment</Button>
             }
           >
-            <p className="m-0 text-sm text-gray-800">
+            <Text variant="body-sm">
               Wrap actions or summary text in the footer slot. The body stays focused on content.
-            </p>
+            </Text>
           </Card>
         </PreviewRow>
       </section>

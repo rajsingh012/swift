@@ -1,16 +1,23 @@
 /**
- * Semantic color tokens — what most components should reference.
+ * Semantic color tokens — the only layer that's theme-aware.
  * Three namespaces:
  *   --color-surface-*  → backgrounds      (utility: bg-surface, bg-surface-muted, …)
  *   --color-content-*  → text & icons     (utility: text-content, text-content-muted, …)
  *   --color-stroke-*   → borders & rings  (utility: border-stroke, border-stroke-strong, …)
  *
- * Light values are aliases into the palette scale. Dark mode mostly inherits
- * because the underlying palette already flips, but a handful of roles are
- * re-aliased for better contrast in dark mode.
+ * Light values are defined in @theme. Dark mode reassigns each token to a
+ * different shade of the FIXED palette (palettes.css has no theme overrides).
+ *
+ * Convention for picking shades:
+ *   - Light surface  → low palette numbers (50–100)
+ *   - Light text     → high palette numbers (600–900)
+ *   - Dark  surface  → high neutral numbers (700–900); brand surfaces stay at the
+ *                       anchor (500) for identity
+ *   - Dark  text     → low–mid palette numbers (200–400) for accents,
+ *                       low neutrals (0–200) for body copy
  */
 
-@theme {
+@theme static {
   /* Surface */
   --color-surface: var(--color-neutral-0);
   --color-surface-muted: var(--color-neutral-50);
@@ -40,12 +47,12 @@
   --color-content-inverse: var(--color-neutral-0);
   --color-content-on-brand: #ffffff;
 
-  --color-content-brand: var(--color-brand-600);
-  --color-content-highlight: var(--color-highlight-600);
-  --color-content-success: var(--color-success-600);
+  --color-content-brand: var(--color-brand-700);
+  --color-content-highlight: var(--color-highlight-700);
+  --color-content-success: var(--color-success-700);
   --color-content-warning: var(--color-warning-700);
-  --color-content-critical: var(--color-critical-600);
-  --color-content-new: var(--color-new-600);
+  --color-content-critical: var(--color-critical-700);
+  --color-content-new: var(--color-new-700);
 
   /* Stroke */
   --color-stroke: var(--color-neutral-200);
@@ -62,17 +69,55 @@
 }
 
 [data-theme="dark"] {
-  /* In dark mode, "elevated" rises slightly above the page surface. */
-  --color-surface-elevated: var(--color-neutral-50);
-  --color-surface-overlay: rgb(0 0 0 / 0.6);
+  /* Surface — neutrals flip to the dark end of the scale */
+  --color-surface: var(--color-neutral-900);
+  --color-surface-muted: var(--color-neutral-800);
+  --color-surface-subtle: var(--color-neutral-700);
+  --color-surface-elevated: var(--color-neutral-800);
+  --color-surface-inverse: var(--color-neutral-0);
+  --color-surface-overlay: rgb(0 0 0 / 0.65);
 
-  /* Brand reads better one shade up in dark UIs. */
-  --color-content-brand: var(--color-brand-500);
-  --color-content-highlight: var(--color-highlight-600);
-  --color-content-success: var(--color-success-600);
-  --color-content-critical: var(--color-critical-600);
-  --color-content-new: var(--color-new-600);
+  /* Brand identity surfaces keep the anchor (500); "muted" variants shift to
+     the dark end of the palette so they still read as tinted-dark backdrops. */
+  --color-surface-brand: var(--color-brand-500);
+  --color-surface-brand-muted: var(--color-brand-900);
+  --color-surface-highlight: var(--color-highlight-500);
+  --color-surface-highlight-muted: var(--color-highlight-900);
+  --color-surface-success: var(--color-success-500);
+  --color-surface-success-muted: var(--color-success-900);
+  --color-surface-warning: var(--color-warning-500);
+  --color-surface-warning-muted: var(--color-warning-900);
+  --color-surface-critical: var(--color-critical-500);
+  --color-surface-critical-muted: var(--color-critical-900);
+  --color-surface-new: var(--color-new-500);
+  --color-surface-new-muted: var(--color-new-900);
 
-  /* Buttons on brand surfaces stay readable. */
+  /* Content — neutrals jump to the light end; accents jump to the light end
+     of their palette to maintain readable contrast on dark surfaces. */
+  --color-content: var(--color-neutral-200);
+  --color-content-muted: var(--color-neutral-400);
+  --color-content-subtle: var(--color-neutral-500);
+  --color-content-strong: var(--color-neutral-0);
+  --color-content-inverse: var(--color-neutral-900);
   --color-content-on-brand: #ffffff;
+
+  --color-content-brand: var(--color-brand-300);
+  --color-content-highlight: var(--color-highlight-300);
+  --color-content-success: var(--color-success-300);
+  --color-content-warning: var(--color-warning-300);
+  --color-content-critical: var(--color-critical-300);
+  --color-content-new: var(--color-new-300);
+
+  /* Stroke — visible-but-subtle borders against dark surfaces */
+  --color-stroke: var(--color-neutral-700);
+  --color-stroke-muted: var(--color-neutral-800);
+  --color-stroke-strong: var(--color-neutral-600);
+  --color-stroke-inverse: var(--color-neutral-200);
+
+  --color-stroke-brand: var(--color-brand-400);
+  --color-stroke-highlight: var(--color-highlight-400);
+  --color-stroke-success: var(--color-success-400);
+  --color-stroke-warning: var(--color-warning-400);
+  --color-stroke-critical: var(--color-critical-400);
+  --color-stroke-new: var(--color-new-400);
 }

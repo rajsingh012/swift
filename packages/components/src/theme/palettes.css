@@ -1,22 +1,26 @@
 /**
- * Color palettes — raw scales for brand, neutral, and signal colors.
- * Light values live in @theme; dark mode overrides reassign the same
- * variables under [data-theme="dark"], so utilities like `bg-brand-500`
- * automatically switch values at runtime.
+ * Color palettes — fixed scales. Each shade is a single hex value that never
+ * changes between light and dark themes. Theme switching happens at the
+ * SEMANTIC layer (surface, content, stroke) which re-aliases to different
+ * palette shades under [data-theme="dark"].
+ *
+ * Convention: lower numbers = lighter, higher numbers = darker.
+ * Use raw palette utilities (bg-brand-500, text-neutral-700) only when you
+ * truly want that exact swatch; otherwise reach for semantic tokens.
  */
 
-@theme {
-  /* Brand (seville / orange) */
-  --color-brand-50: #fff7f0;
-  --color-brand-100: #ffeddb;
-  --color-brand-200: #ffd2a8;
-  --color-brand-300: #ffb473;
-  --color-brand-400: #ff993f;
-  --color-brand-500: #fc790d;
-  --color-brand-600: #c95c08;
-  --color-brand-700: #994204;
-  --color-brand-800: #732d01;
-  --color-brand-900: #401800;
+@theme static {
+  /* Brand (teal) — anchored at brand-500 = #218c74 */
+  --color-brand-50: #ecf8f4;
+  --color-brand-100: #d2f0e7;
+  --color-brand-200: #a8e1d0;
+  --color-brand-300: #74cdb3;
+  --color-brand-400: #42b194;
+  --color-brand-500: #218c74;
+  --color-brand-600: #1a7361;
+  --color-brand-700: #145a4c;
+  --color-brand-800: #0e4137;
+  --color-brand-900: #082921;
 
   /* Highlight (blue) */
   --color-highlight-50: #f0fbff;
@@ -27,15 +31,20 @@
   --color-highlight-500: #0770e4;
   --color-highlight-600: #0664cc;
   --color-highlight-700: #0757bf;
+  --color-highlight-800: #064494;
+  --color-highlight-900: #053370;
 
   /* Success (green) */
   --color-success-50: #ebfcf5;
   --color-success-100: #dcfcee;
   --color-success-200: #84dbb7;
   --color-success-300: #53cf99;
+  --color-success-400: #1ab875;
   --color-success-500: #009952;
   --color-success-600: #008547;
   --color-success-700: #00743e;
+  --color-success-800: #005a30;
+  --color-success-900: #003d20;
 
   /* Warning (yellow) */
   --color-warning-50: #fffaf0;
@@ -47,6 +56,7 @@
   --color-warning-600: #b86b00;
   --color-warning-700: #8c4f00;
   --color-warning-800: #754200;
+  --color-warning-900: #4d2b00;
 
   /* Critical (red) */
   --color-critical-50: #fff7f7;
@@ -57,6 +67,8 @@
   --color-critical-500: #d92b34;
   --color-critical-600: #c71e22;
   --color-critical-700: #a31216;
+  --color-critical-800: #7d0a0d;
+  --color-critical-900: #4d0507;
 
   /* New / accent (purple) */
   --color-new-50: #f9f0ff;
@@ -67,12 +79,13 @@
   --color-new-500: #8320da;
   --color-new-600: #6a16bd;
   --color-new-700: #510d99;
+  --color-new-800: #3a086d;
+  --color-new-900: #240543;
 
   /*
-   * Neutral — semantic by *role*, not by lightness.
-   * Lower numbers = surface (lighter in light mode); higher numbers = content.
-   * In dark mode the same numbers are flipped so role-based usage stays correct
-   * (e.g. neutral-0 = page surface in both themes).
+   * Neutral — true 0 → 900 scale from white to near-black.
+   * Pick role-appropriate shades from this in semantic.css rather than
+   * referencing neutrals directly in components.
    */
   --color-neutral-0: #ffffff;
   --color-neutral-50: #f5f6fa;
@@ -86,82 +99,19 @@
   --color-neutral-700: #303547;
   --color-neutral-800: #1b1e2f;
   --color-neutral-900: #0b0e1b;
-}
 
-[data-theme="dark"] {
-  /* Brand */
-  --color-brand-50: #241810;
-  --color-brand-100: #41240e;
-  --color-brand-200: #5a3212;
-  --color-brand-300: #8a4810;
-  --color-brand-400: #c2600f;
-  --color-brand-500: #d96a0e;
-  --color-brand-600: #e7903b;
-  --color-brand-700: #f0ad6b;
-  --color-brand-800: #f5c294;
-  --color-brand-900: #fbe0c8;
-
-  /* Highlight */
-  --color-highlight-50: #121e2e;
-  --color-highlight-100: #122b47;
-  --color-highlight-200: #103052;
-  --color-highlight-300: #0e3d72;
-  --color-highlight-400: #0c509b;
-  --color-highlight-500: #0962c5;
-  --color-highlight-600: #2d82d6;
-  --color-highlight-700: #539ee0;
-
-  /* Success */
-  --color-success-50: #111d17;
-  --color-success-100: #0a3321;
-  --color-success-200: #0e3c27;
-  --color-success-300: #095d36;
-  --color-success-500: #03a35e;
-  --color-success-600: #0aad67;
-  --color-success-700: #50c692;
-
-  /* Warning */
-  --color-warning-50: #1f190d;
-  --color-warning-100: #3d2d0c;
-  --color-warning-200: #563f12;
-  --color-warning-300: #a37010;
-  --color-warning-400: #bf8313;
-  --color-warning-500: #cf8f0f;
-  --color-warning-600: #e7a839;
-  --color-warning-700: #f3c058;
-  --color-warning-800: #d9ab4e;
-
-  /* Critical */
-  --color-critical-50: #1f1111;
-  --color-critical-100: #471718;
-  --color-critical-200: #4f1b1e;
-  --color-critical-300: #80262b;
-  --color-critical-400: #942329;
-  --color-critical-500: #bb282f;
-  --color-critical-600: #e05156;
-  --color-critical-700: #e57e81;
-
-  /* New */
-  --color-new-50: #1d1328;
-  --color-new-100: #311847;
-  --color-new-200: #35184f;
-  --color-new-300: #46196d;
-  --color-new-400: #5c1c95;
-  --color-new-500: #883dc5;
-  --color-new-600: #a762d9;
-  --color-new-700: #b884db;
-
-  /* Neutral — flipped: low numbers stay "surface", high numbers stay "content" */
-  --color-neutral-0: #0a0e14;
-  --color-neutral-50: #13181f;
-  --color-neutral-100: #1a2029;
-  --color-neutral-150: #1f2733;
-  --color-neutral-200: #212933;
-  --color-neutral-300: #313a47;
-  --color-neutral-400: #4b5563;
-  --color-neutral-500: #9ba3ae;
-  --color-neutral-600: #d1d5db;
-  --color-neutral-700: #e4e6eb;
-  --color-neutral-800: #f3f4f6;
-  --color-neutral-900: #ffffff;
+  /*
+   * Ink — "Warm Black to Black" scale.
+   * Teal-tinted darks for inverse surfaces, code blocks, overlays.
+   */
+  --color-ink-50: #3a5759;
+  --color-ink-100: #2f4a4c;
+  --color-ink-200: #294447;
+  --color-ink-300: #213a3c;
+  --color-ink-400: #1a3032;
+  --color-ink-500: #142729;
+  --color-ink-600: #0f1f22;
+  --color-ink-700: #091618;
+  --color-ink-800: #050d0e;
+  --color-ink-900: #010607;
 }

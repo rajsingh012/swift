@@ -3,7 +3,7 @@
  * Sizes mirror the iui design system (4 / 8 / 12 / 16 / 20 / 24 / 32 px).
  */
 
-@theme {
+@theme static {
   --radius-xs: 0.25rem;   /*  4px */
   --radius-sm: 0.5rem;    /*  8px */
   --radius-md: 0.75rem;   /* 12px */

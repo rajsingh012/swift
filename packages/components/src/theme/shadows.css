@@ -4,7 +4,7 @@
  * shifts between light and dark to keep depth perceivable on dark surfaces.
  */
 
-@theme {
+@theme static {
   --shadow-color-level1: rgb(11 14 27 / 0.08);
   --shadow-color-level2: rgb(11 14 27 / 0.10);
   --shadow-color-level3: rgb(11 14 27 / 0.14);
