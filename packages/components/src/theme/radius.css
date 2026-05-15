@@ -1,0 +1,15 @@
+/**
+ * Radius scale — maps to Tailwind's `rounded-*` utilities.
+ * Sizes mirror the iui design system (4 / 8 / 12 / 16 / 20 / 24 / 32 px).
+ */
+
+@theme {
+  --radius-xs: 0.25rem;   /*  4px */
+  --radius-sm: 0.5rem;    /*  8px */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.25rem;   /* 20px */
+  --radius-2xl: 1.5rem;   /* 24px */
+  --radius-3xl: 2rem;     /* 32px */
+  --radius-full: 9999px;
+}

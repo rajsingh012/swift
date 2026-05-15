@@ -1,0 +1,16 @@
+/**
+ * Swift theme entry — imports the Tailwind engine and all design tokens.
+ * Consumers get every token (colors, semantic roles, radius, shadows,
+ * typography) plus the `dark:` variant just by importing this file
+ * (re-exported as `@swift/components/styles.css`).
+ */
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@import "./palettes.css";
+@import "./semantic.css";
+@import "./radius.css";
+@import "./shadows.css";
+@import "./typography.css";

@@ -1,0 +1,30 @@
+/**
+ * Elevation shadow scale.
+ * The shadow geometry (offset/blur/spread) is fixed; only the shadow color
+ * shifts between light and dark to keep depth perceivable on dark surfaces.
+ */
+
+@theme {
+  --shadow-color-level1: rgb(11 14 27 / 0.08);
+  --shadow-color-level2: rgb(11 14 27 / 0.10);
+  --shadow-color-level3: rgb(11 14 27 / 0.14);
+  --shadow-color-level4: rgb(11 14 27 / 0.18);
+  --shadow-color-level5: rgb(11 14 27 / 0.22);
+  --shadow-color-level6: rgb(11 14 27 / 0.28);
+
+  --shadow-level1: 0 2px 4px 1px var(--shadow-color-level1);
+  --shadow-level2: 0 4px 15px -1px var(--shadow-color-level2);
+  --shadow-level3: 0 5px 20px -2px var(--shadow-color-level3);
+  --shadow-level4: 0 10px 25px -5px var(--shadow-color-level4);
+  --shadow-level5: 0 20px 40px -8px var(--shadow-color-level5);
+  --shadow-level6: 0 25px 60px -15px var(--shadow-color-level6);
+}
+
+[data-theme="dark"] {
+  --shadow-color-level1: rgb(0 0 0 / 0.40);
+  --shadow-color-level2: rgb(0 0 0 / 0.50);
+  --shadow-color-level3: rgb(0 0 0 / 0.55);
+  --shadow-color-level4: rgb(0 0 0 / 0.60);
+  --shadow-color-level5: rgb(0 0 0 / 0.65);
+  --shadow-color-level6: rgb(0 0 0 / 0.70);
+}

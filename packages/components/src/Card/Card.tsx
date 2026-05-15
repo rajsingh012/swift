@@ -10,7 +10,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
   ref,
 ) {
   const classes = [
-    'overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm',
+    'overflow-hidden rounded-lg border border-stroke bg-surface-elevated text-content shadow-level1',
     className ?? '',
   ]
     .filter(Boolean)
@@ -19,13 +19,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
   return (
     <div ref={ref} className={classes} {...rest}>
       {title ? (
-        <div className="border-b border-gray-200 px-5 py-4 text-base font-semibold">
+        <div className="border-b border-stroke px-5 py-4 text-base font-semibold text-content-strong">
           {title}
         </div>
       ) : null}
       <div className="px-5 py-5">{children}</div>
       {footer ? (
-        <div className="border-t border-gray-200 bg-gray-50 px-5 py-3">{footer}</div>
+        <div className="border-t border-stroke bg-surface-muted px-5 py-3">{footer}</div>
       ) : null}
     </div>
   )

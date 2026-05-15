@@ -1,1 +1,24 @@
-@import "tailwindcss";
+@import "./theme/index.css";
+
+/**
+ * Legacy typography component classes — re-implemented on top of the new
+ * typography tokens. Equivalent to using `text-body-md`, `text-heading-lg`,
+ * etc., but kept for callers that already use these class names.
+ */
+@layer components {
+  .body-xs   { font-size: var(--text-body-xs);   line-height: var(--text-body-xs--line-height); }
+  .body-sm   { font-size: var(--text-body-sm);   line-height: var(--text-body-sm--line-height); }
+  .body-md   { font-size: var(--text-body-md);   line-height: var(--text-body-md--line-height); }
+  .body-lg   { font-size: var(--text-body-lg);   line-height: var(--text-body-lg--line-height); }
+  .body-xl   { font-size: var(--text-body-xl);   line-height: var(--text-body-xl--line-height); }
+
+  .para-sm   { font-size: var(--text-para-sm);   line-height: var(--text-para-sm--line-height); }
+  .para-md   { font-size: var(--text-para-md);   line-height: var(--text-para-md--line-height); }
+  .para-lg   { font-size: var(--text-para-lg);   line-height: var(--text-para-lg--line-height); }
+
+  .heading-xs { font-size: var(--text-heading-xs); line-height: var(--text-heading-xs--line-height); letter-spacing: var(--text-heading-xs--letter-spacing); }
+  .heading-sm { font-size: var(--text-heading-sm); line-height: var(--text-heading-sm--line-height); letter-spacing: var(--text-heading-sm--letter-spacing); }
+  .heading-md { font-size: var(--text-heading-md); line-height: var(--text-heading-md--line-height); letter-spacing: var(--text-heading-md--letter-spacing); }
+  .heading-lg { font-size: var(--text-heading-lg); line-height: var(--text-heading-lg--line-height); letter-spacing: var(--text-heading-lg--letter-spacing); }
+  .heading-xl { font-size: var(--text-heading-xl); line-height: var(--text-heading-xl--line-height); letter-spacing: var(--text-heading-xl--letter-spacing); }
+}

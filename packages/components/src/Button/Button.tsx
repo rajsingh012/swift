@@ -12,13 +12,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-lg border border-transparent font-semibold leading-none cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+  'inline-flex items-center justify-center gap-2 rounded-md border border-transparent font-semibold leading-none cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-blue-600 text-white hover:not-disabled:bg-blue-700',
+  primary:
+    'bg-surface-brand text-content-on-brand hover:not-disabled:bg-brand-600',
   secondary:
-    'bg-gray-100 text-gray-900 border-gray-200 hover:not-disabled:bg-gray-200',
-  ghost: 'bg-transparent text-gray-900 hover:not-disabled:bg-gray-100',
+    'bg-surface-muted text-content-strong border-stroke hover:not-disabled:bg-surface-subtle',
+  ghost:
+    'bg-transparent text-content-strong hover:not-disabled:bg-surface-muted',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
