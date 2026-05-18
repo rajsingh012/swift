@@ -244,17 +244,8 @@ function RouteComponent() {
                   { label: 'success', text: 'text-content-success', bg: 'bg-surface-success-muted', labelTone: 'muted' as const },
                   { label: 'warning', text: 'text-content-warning', bg: 'bg-surface-warning-muted', labelTone: 'muted' as const },
                   { label: 'critical', text: 'text-content-critical', bg: 'bg-surface-critical-muted', labelTone: 'muted' as const },
-                  { label: 'highlight', text: 'text-content-highlight', bg: 'bg-surface-highlight-muted', labelTone: 'muted' as const },
-                  { label: 'blue', text: 'text-blue-600', bg: 'bg-blue-50', labelTone: 'muted' as const },
-                  { label: 'indigo', text: 'text-indigo-600', bg: 'bg-indigo-50', labelTone: 'muted' as const },
-                  { label: 'violet', text: 'text-violet-600', bg: 'bg-violet-50', labelTone: 'muted' as const },
-                  { label: 'pink', text: 'text-pink-600', bg: 'bg-pink-50', labelTone: 'muted' as const },
-                  { label: 'orange', text: 'text-orange-500', bg: 'bg-orange-50', labelTone: 'muted' as const },
-                  { label: 'teal', text: 'text-teal-600', bg: 'bg-teal-50', labelTone: 'muted' as const },
-                  { label: 'cyan', text: 'text-cyan-600', bg: 'bg-cyan-50', labelTone: 'muted' as const },
-                  { label: 'lime', text: 'text-lime-600', bg: 'bg-lime-50', labelTone: 'muted' as const },
-                  { label: 'inverse', text: 'text-content-inverse', bg: 'bg-surface-inverse', labelTone: 'inverse' as const },
-                ].map(({ label, text, bg, labelTone }) => (
+                  { label: 'highlight', text: 'text-content-highlight', bg: 'bg-surface-highlight-muted', labelTone: 'muted' as const }
+                ].map(({ label, text, bg }) => (
                   <div
                     key={label}
                     className={`flex flex-col items-center gap-1 rounded-lg border border-stroke p-3 ${bg}`}
@@ -262,7 +253,7 @@ function RouteComponent() {
                     <Selected size={32} className={text} />
                     <Text
                       variant="body-xs"
-                      className={labelTone === 'inverse' ? 'text-content-inverse' : 'text-content-muted'}
+                      className="text-content-strong"
                     >
                       {label}
                     </Text>

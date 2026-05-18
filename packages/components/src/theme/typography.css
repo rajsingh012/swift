@@ -1,15 +1,11 @@
 /**
- * Typography — font families plus a paired font-size + line-height scale
- * exposed as Tailwind v4 `text-*` utilities. Component classes (heading-*,
- * body-*, para-*) are kept in styles.css for legacy usage.
+ * Typography — paired font-size + line-height scale exposed as Tailwind v4
+ * `text-*` utilities. Font families (--font-sans / --font-serif / --font-mono)
+ * are declared in fonts/style.css alongside their @font-face faces.
+ * Component classes (heading-*, body-*, para-*) live in styles.css.
  */
 
 @theme static {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-
   /* Body scale */
   --text-body-xs: 0.75rem;
   --text-body-xs--line-height: 1rem;

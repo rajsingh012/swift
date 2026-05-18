@@ -9,6 +9,7 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+@import "../fonts/style.css";
 @import "./palettes.css";
 @import "./semantic.css";
 @import "./radius.css";

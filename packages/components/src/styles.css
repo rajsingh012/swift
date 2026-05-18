@@ -5,6 +5,19 @@
  * typography tokens. Equivalent to using `text-body-md`, `text-heading-lg`,
  * etc., but kept for callers that already use these class names.
  */
+
+
+ :root {
+  /* Default stacks include primary font + common fallbacks. Host apps can override fully. */
+  --font-figtree: 'Figtree', '__figtree_Fallback';
+  --font-dmmono: 'DM Mono';
+  --font-playfair: 'Playfair', '__playfair_Fallback';
+
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-serif: var(--font-playfair), ui-serif,Georgia,Cambria,"Times New Roman",Times,serif;
+  --font-mono: var(--font-dmmono), ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
 @layer components {
   .body-xs   { font-size: var(--text-body-xs);   line-height: var(--text-body-xs--line-height); }
   .body-sm   { font-size: var(--text-body-sm);   line-height: var(--text-body-sm--line-height); }

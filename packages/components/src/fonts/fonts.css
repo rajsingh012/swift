@@ -1,0 +1,74 @@
+/**
+ * @ixigo/iui Font Faces
+ * 
+ * Import this CSS file to use the design system fonts:
+ * import '@ixigo/iui/fonts/fonts.css'
+ */
+
+/* Figtree - Primary Font Family */
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/sans.regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/sans.medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/sans.semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/sans.bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* DM Mono - Monospace Font Family */
+@font-face {
+  font-family: 'DM Mono';
+  src: url('./assets/mono.regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  src: url('./assets/mono.medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Serif - Serif Font Family */
+@font-face {
+  font-family: 'IUI Serif';
+  src: url('./assets/serif.regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IUI Serif';
+  src: url('./assets/serif.bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+

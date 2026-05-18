@@ -1,0 +1,94 @@
+/**
+ * @font-face declarations for the design-system typefaces.
+ *
+ * The family tokens (--font-figtree / --font-dmmono / --font-playfair and the
+ * composite --font-sans / --font-serif / --font-mono) are owned by styles.css
+ * (:root block). Keeping just the @font-face declarations here means TTF urls
+ * resolve relative to this file, while the variable definitions stay editable
+ * in one place.
+ *
+ * Fallback @font-face declarations with metric overrides cut layout shift while
+ * the real face is fetching.
+ */
+
+/* Figtree */
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/sans.regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/sans.medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/sans.semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/sans.bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* DM Mono */
+@font-face {
+  font-family: 'DM Mono';
+  src: url('./assets/mono.regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: url('./assets/mono.medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Playfair */
+@font-face {
+  font-family: 'Playfair';
+  src: url('./assets/serif.regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Playfair';
+  src: url('./assets/serif.bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback faces with metric overrides — sized to match the real face,
+   reducing CLS while the web font is still loading. */
+@font-face {
+  font-family: '__figtree_Fallback';
+  src: local('Arial');
+  ascent-override: 93.8%;
+  descent-override: 24.7%;
+  line-gap-override: 0%;
+  size-adjust: 101.3%;
+}
+
+@font-face {
+  font-family: '__playfair_Fallback';
+  src: local('Times New Roman');
+  ascent-override: 97.4%;
+  descent-override: 22.6%;
+  line-gap-override: 0%;
+  size-adjust: 111.1%;
+}
