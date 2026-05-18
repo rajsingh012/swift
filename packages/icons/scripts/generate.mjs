@@ -47,6 +47,7 @@ mkdirSync(join(OUT_DIR, 'utils'), { recursive: true })
 
 copyFileSync(join(SRC_DIR, 'SvgIcon.tsx'), join(OUT_DIR, 'SvgIcon.tsx'))
 copyFileSync(join(SRC_DIR, 'utils', 'createSvgIcon.tsx'), join(OUT_DIR, 'utils', 'createSvgIcon.tsx'))
+copyFileSync(join(SRC_DIR, 'utils', 'download.ts'), join(OUT_DIR, 'utils', 'download.ts'))
 
 const files = readdirSync(RAW_DIR)
   .filter((f) => f.toLowerCase().endsWith('.svg'))
@@ -84,7 +85,9 @@ export default createSvgIcon(<>${inner}</>, '${componentName}')
 const indexContent =
   `// AUTO-GENERATED — do not edit.\n` +
   `export { default as SvgIcon, type SvgIconProps } from './SvgIcon'\n` +
-  `export { default as createSvgIcon } from './utils/createSvgIcon'\n\n` +
+  `export { default as createSvgIcon } from './utils/createSvgIcon'\n` +
+  `export { iconToBlob, downloadIcon } from './utils/download'\n` +
+  `export type { IconFormat, IconBlobOptions, DownloadIconOptions } from './utils/download'\n\n` +
   entries.map((name) => `export { default as ${name} } from './${name}'`).join('\n') +
   '\n'
 

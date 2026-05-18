@@ -1,17 +1,24 @@
-import { useMemo, useState, type ComponentType } from 'react'
+import { useMemo, useRef, useState, type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Text } from '@swift/components'
+import { Button, Text } from '@swift/components'
 import * as Icons from '@swift/icons'
+import { downloadIcon, type IconFormat } from '@swift/icons/download'
+import { Download } from '@swift/icons'
 import { useIconSearch } from '../lib/icon-search'
 import { CopyableImport } from '../lib/CopyableImport'
+import { useToast } from '../lib/toast'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
 })
 
-type IconComp = ComponentType<{ size?: number; className?: string }>
+type IconComp = ComponentType<{
+  size?: number
+  className?: string
+  ref?: React.Ref<SVGSVGElement>
+}>
 
-const NON_ICON_EXPORTS = new Set(['SvgIcon', 'createSvgIcon'])
+const NON_ICON_EXPORTS = new Set(['SvgIcon', 'createSvgIcon', 'iconToBlob', 'downloadIcon'])
 
 const allIcons = (Object.entries(Icons) as Array<[string, IconComp]>)
   .filter(([name]) => !NON_ICON_EXPORTS.has(name))
@@ -125,9 +132,37 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
   )
 }
 
+const DOWNLOAD_SIZES = [24, 48, 96, 256, 512] as const
+
 function RouteComponent() {
   const [selected, setSelected] = useState(allIcons[0]?.[0] ?? '')
+  const [format, setFormat] = useState<IconFormat>('svg')
+  const [size, setSize] = useState<(typeof DOWNLOAD_SIZES)[number]>(256)
+  const [color, setColor] = useState('#1d263c')
+  const [downloading, setDownloading] = useState(false)
+  const previewRef = useRef<SVGSVGElement | null>(null)
+  const toast = useToast()
   const { query } = useIconSearch()
+
+  const handleDownload = async () => {
+    const svg = previewRef.current
+    if (!svg || !selected) return
+    setDownloading(true)
+    try {
+      await downloadIcon(svg, {
+        format,
+        size,
+        color,
+        filename: `${selected}.${format}`,
+      })
+      toast.show(`${selected}.${format} downloaded`)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Download failed'
+      toast.show(message)
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase()
@@ -194,17 +229,85 @@ function RouteComponent() {
           </Text>
         ) : (
           <div className="grid gap-8">
-            <header className="flex items-center gap-4">
-              <div className="flex size-20 items-center justify-center rounded-lg border border-stroke bg-surface-muted text-content-strong">
-                <Selected size={48} />
+            <header className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className="flex size-20 items-center justify-center rounded-lg border border-stroke bg-surface-muted"
+                  style={{ color }}
+                >
+                  <Selected size={48} ref={previewRef} />
+                </div>
+                <div>
+                  <Text variant="heading-lg" fontWeight="semibold" color="primary">
+                    {selected}
+                  </Text>
+                  <Text variant="body-sm" color="secondary" className="block">
+                    {readableName(selected)}
+                  </Text>
+                </div>
               </div>
-              <div>
-                <Text variant="heading-lg" fontWeight="semibold" color="primary">
-                  {selected}
-                </Text>
-                <Text variant="body-sm" color="secondary" className="block">
-                  {readableName(selected)}
-                </Text>
+
+              <div className="flex flex-wrap items-end gap-3 rounded-xl border border-stroke bg-surface-elevated p-3">
+                <label className="flex flex-col gap-1">
+                  <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
+                    Format
+                  </Text>
+                  <select
+                    value={format}
+                    onChange={(e) => setFormat(e.target.value as IconFormat)}
+                    className="cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content"
+                  >
+                    <option value="svg">SVG</option>
+                    <option value="webp">WebP</option>
+                    <option value="png">PNG</option>
+                    <option value="jpeg">JPEG</option>
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
+                    Size
+                  </Text>
+                  <select
+                    value={size}
+                    onChange={(e) => setSize(Number(e.target.value) as (typeof DOWNLOAD_SIZES)[number])}
+                    disabled={format === 'svg'}
+                    className="cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {DOWNLOAD_SIZES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}px
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
+                    Color
+                  </Text>
+                  <div className="flex items-center gap-2 rounded-md border border-stroke bg-surface px-2 py-1">
+                    <input
+                      type="color"
+                      value={color}
+                      onChange={(e) => setColor(e.target.value)}
+                      aria-label="Pick icon color"
+                      className="size-6 cursor-pointer rounded border-0 bg-transparent p-0"
+                    />
+                    <input
+                      type="text"
+                      value={color}
+                      onChange={(e) => setColor(e.target.value)}
+                      spellCheck={false}
+                      className="w-20 bg-transparent font-mono text-sm text-content outline-none"
+                    />
+                  </div>
+                </label>
+                <Button
+                  leftIcon={<Download size={16} />}
+                  onClick={handleDownload}
+                  disabled={downloading}
+                >
+                  {downloading ? 'Preparing…' : 'Download'}
+                </Button>
               </div>
             </header>
 
@@ -339,6 +442,10 @@ function RouteComponent() {
                 <CopyableImport
                   label="Deep import"
                   code={`import ${selected} from '@swift/icons/${selected}'`}
+                />
+                <CopyableImport
+                  label="Download helper"
+                  code={`import { downloadIcon } from '@swift/icons/download'`}
                 />
               </div>
             </section>

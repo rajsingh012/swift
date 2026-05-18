@@ -18,6 +18,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./download": {
+      "types": "./dist/utils/download.d.ts",
+      "import": "./dist/utils/download.js",
+      "require": "./dist/utils/download.cjs"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js",
