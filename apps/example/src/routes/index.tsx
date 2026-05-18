@@ -301,12 +301,11 @@ function RouteComponent() {
                     />
                   </div>
                 </label>
-                <Button
-                  leftIcon={<Download size={16} />}
-                  onClick={handleDownload}
-                  disabled={downloading}
-                >
-                  {downloading ? 'Preparing…' : 'Download'}
+                <Button onClick={handleDownload} loading={downloading}>
+                  <Button.LeftIcon>
+                    <Download size={16} />
+                  </Button.LeftIcon>
+                  Download
                 </Button>
               </div>
             </header>
