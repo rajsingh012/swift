@@ -1,0 +1,32 @@
+/**
+ * Accordion content height animation via the grid-template-rows: 0fr ↔ 1fr trick.
+ * Written as plain CSS to avoid Tailwind variant escaping quirks around arbitrary
+ * values like `data-[state=closed]:grid-rows-[0fr]`.
+ */
+
+.swift-accordion-content {
+  display: grid;
+  grid-template-rows: minmax(0, 0fr);
+  min-height: 0;
+  overflow: hidden;
+  transition: grid-template-rows 200ms ease-out;
+}
+
+.swift-accordion-content[data-state="closed"] {
+  grid-template-rows: minmax(0, 0fr);
+}
+
+.swift-accordion-content[data-state="open"] {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.swift-accordion-content > .swift-accordion-content__inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-accordion-content {
+    transition: none;
+  }
+}

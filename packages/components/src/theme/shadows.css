@@ -20,6 +20,15 @@
   --shadow-level6: 0 25px 60px -15px var(--shadow-color-level6);
 }
 
+[data-theme="light"] {
+  --shadow-color-level1: rgb(11 14 27 / 0.08);
+  --shadow-color-level2: rgb(11 14 27 / 0.10);
+  --shadow-color-level3: rgb(11 14 27 / 0.14);
+  --shadow-color-level4: rgb(11 14 27 / 0.18);
+  --shadow-color-level5: rgb(11 14 27 / 0.22);
+  --shadow-color-level6: rgb(11 14 27 / 0.28);
+}
+
 [data-theme="dark"] {
   --shadow-color-level1: rgb(0 0 0 / 0.40);
   --shadow-color-level2: rgb(0 0 0 / 0.50);
