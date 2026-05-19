@@ -132,11 +132,13 @@ const ButtonRoot = forwardRef<HTMLElement, ButtonRenderProps>(function Button(
   const [ripples, setRipples] = useState<Ripple[]>([])
 
   const sizeClass =
-    variant === 'link'
-      ? linkSizeClasses[size]
-      : iconOnly
-        ? iconOnlySizeClasses[size]
-        : sizeClasses[size]
+    variant === 'unstyled'
+      ? ''
+      : variant === 'link'
+        ? linkSizeClasses[size]
+        : iconOnly
+          ? iconOnlySizeClasses[size]
+          : sizeClasses[size]
 
   const rootClassName = cx(
     baseClasses,
@@ -152,7 +154,7 @@ const ButtonRoot = forwardRef<HTMLElement, ButtonRenderProps>(function Button(
       event.preventDefault()
       return
     }
-    if (!disableRipple && variant !== 'link') {
+    if (!disableRipple && variant !== 'link' && variant !== 'unstyled') {
       const rect = event.currentTarget.getBoundingClientRect()
       const x = event.clientX - rect.left
       const y = event.clientY - rect.top

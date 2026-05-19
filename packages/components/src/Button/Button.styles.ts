@@ -1,26 +1,44 @@
 import type { ButtonSize, ButtonVariant } from './Button.types'
 
+/**
+ * Structural classes applied to every Button variant — layout, behavior,
+ * disabled handling. No visual chrome (radius, font, ring) so that
+ * `variant="unstyled"` can opt out of chrome entirely.
+ */
 export const baseClasses =
-  'relative overflow-hidden inline-flex items-center justify-center select-none ' +
-  'rounded-md font-semibold leading-none whitespace-nowrap ' +
-  'cursor-pointer transition-colors ' +
-  'outline-none focus-visible:ring-2 focus-visible:ring-stroke-brand focus-visible:ring-offset-2 ' +
+  'relative overflow-hidden inline-flex items-center select-none ' +
+  'cursor-pointer transition-colors outline-none ' +
   'aria-disabled:opacity-50 aria-disabled:cursor-not-allowed ' +
   'disabled:opacity-50 disabled:cursor-not-allowed'
 
+/**
+ * Visual chrome shared by every styled variant (everything except `unstyled`).
+ * Applied on top of baseClasses by variantClasses below.
+ */
+const chromeClasses =
+  'justify-center font-semibold leading-none whitespace-nowrap ' +
+  'focus-visible:ring-2 focus-visible:ring-stroke-brand focus-visible:ring-offset-2'
+
 export const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-surface-brand text-content-on-brand hover:not-disabled:bg-brand-600 active:not-disabled:bg-brand-700',
+    chromeClasses +
+    ' bg-surface-brand text-content-on-brand hover:not-disabled:bg-brand-600 active:not-disabled:bg-brand-700',
   secondary:
-    'bg-surface-muted text-content-strong border border-stroke hover:not-disabled:bg-surface-subtle active:not-disabled:bg-surface',
+    chromeClasses +
+    ' bg-surface-muted text-content-strong border border-stroke hover:not-disabled:bg-surface-subtle active:not-disabled:bg-surface',
   outline:
-    'bg-transparent text-content-brand border border-stroke-brand hover:not-disabled:bg-surface-brand-muted active:not-disabled:bg-surface-brand-muted',
+    chromeClasses +
+    ' bg-transparent text-content-brand border border-stroke-brand hover:not-disabled:bg-surface-brand-muted active:not-disabled:bg-surface-brand-muted',
   ghost:
-    'bg-transparent text-content-strong hover:not-disabled:bg-surface-muted',
+    chromeClasses +
+    ' bg-transparent text-content-strong hover:not-disabled:bg-surface-muted',
   danger:
-    'bg-surface-critical text-content-inverse hover:not-disabled:bg-critical-600 active:not-disabled:bg-critical-700',
+    chromeClasses +
+    ' bg-surface-critical text-content-inverse hover:not-disabled:bg-critical-600 active:not-disabled:bg-critical-700',
   link:
-    'bg-transparent text-content-brand underline-offset-2 hover:not-disabled:underline',
+    chromeClasses +
+    ' bg-transparent text-content-brand underline-offset-2 hover:not-disabled:underline',
+  unstyled: '',
 }
 
 export const sizeClasses: Record<ButtonSize, string> = {

@@ -12,6 +12,7 @@ export type ButtonVariant =
   | 'ghost'
   | 'danger'
   | 'link'
+  | 'unstyled'
 
 export type ButtonSize = 'sm' | 'md' | 'lg'
 

@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IconsRouteImport } from './routes/icons'
 import { Route as FoundationsRouteImport } from './routes/foundations'
 import { Route as ComponentsRouteImport } from './routes/components'
 import { Route as IndexRouteImport } from './routes/index'
 
+const IconsRoute = IconsRouteImport.update({
+  id: '/icons',
+  path: '/icons',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FoundationsRoute = FoundationsRouteImport.update({
   id: '/foundations',
   path: '/foundations',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/components': typeof ComponentsRoute
   '/foundations': typeof FoundationsRoute
+  '/icons': typeof IconsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/components': typeof ComponentsRoute
   '/foundations': typeof FoundationsRoute
+  '/icons': typeof IconsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/components': typeof ComponentsRoute
   '/foundations': typeof FoundationsRoute
+  '/icons': typeof IconsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/components' | '/foundations'
+  fullPaths: '/' | '/components' | '/foundations' | '/icons'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/components' | '/foundations'
-  id: '__root__' | '/' | '/components' | '/foundations'
+  to: '/' | '/components' | '/foundations' | '/icons'
+  id: '__root__' | '/' | '/components' | '/foundations' | '/icons'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComponentsRoute: typeof ComponentsRoute
   FoundationsRoute: typeof FoundationsRoute
+  IconsRoute: typeof IconsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/icons': {
+      id: '/icons'
+      path: '/icons'
+      fullPath: '/icons'
+      preLoaderRoute: typeof IconsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/foundations': {
       id: '/foundations'
       path: '/foundations'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComponentsRoute: ComponentsRoute,
   FoundationsRoute: FoundationsRoute,
+  IconsRoute: IconsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
