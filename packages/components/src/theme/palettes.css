@@ -10,17 +10,17 @@
  */
 
 @theme static {
-  /* Brand (teal) — anchored at brand-500 = #218c74 */
-  --color-brand-50: #ecf8f4;
-  --color-brand-100: #d2f0e7;
-  --color-brand-200: #a8e1d0;
-  --color-brand-300: #74cdb3;
-  --color-brand-400: #42b194;
-  --color-brand-500: #218c74;
-  --color-brand-600: #1a7361;
-  --color-brand-700: #145a4c;
-  --color-brand-800: #0e4137;
-  --color-brand-900: #082921;
+  /* Brand (emerald) — anchored at brand-500 = #27ae60 */
+  --color-brand-50: #e9f8ef;
+  --color-brand-100: #c8edd6;
+  --color-brand-200: #95dab2;
+  --color-brand-300: #5ec488;
+  --color-brand-400: #38b66f;
+  --color-brand-500: #27ae60;
+  --color-brand-600: #209250;
+  --color-brand-700: #197540;
+  --color-brand-800: #115830;
+  --color-brand-900: #093a20;
 
   /* Highlight (blue) */
   --color-highlight-50: #f0fbff;
