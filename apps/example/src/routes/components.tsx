@@ -1,11 +1,19 @@
 import { useState, type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Button, Text } from '@swift/components'
-import { Check, CreditCard, Document, GridSmall } from '@swift/icons'
+import { Button } from '@swift/components/Button'
+import { Text } from '@swift/components/Text'
+import { Check } from '@swift/icons/Check'
+import { CreditCard } from '@swift/icons/CreditCard'
+import { Document } from '@swift/icons/Document'
+import { Filter } from '@swift/icons/Filter'
+import { GridSmall } from '@swift/icons/GridSmall'
+import { Tag } from '@swift/icons/Tag'
 import {
   AccordionPanel,
+  BadgePanel,
   ButtonPanel,
   CardPanel,
+  ChipPanel,
   TextPanel,
 } from '../Components'
 
@@ -15,10 +23,12 @@ export const Route = createFileRoute('/components')({
   component: RouteComponent,
 })
 
-type ComponentName = 'Button' | 'Card' | 'Text' | 'Accordion'
+type ComponentName = 'Button' | 'Badge' | 'Chip' | 'Card' | 'Text' | 'Accordion'
 
 const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = [
   { name: 'Button', icon: Check },
+  { name: 'Badge', icon: Tag },
+  { name: 'Chip', icon: Filter },
   { name: 'Card', icon: CreditCard },
   { name: 'Text', icon: Document },
   { name: 'Accordion', icon: GridSmall },
@@ -26,6 +36,8 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
 
 const panelMap: Record<ComponentName, ComponentType> = {
   Button: ButtonPanel,
+  Badge: BadgePanel,
+  Chip: ChipPanel,
   Card: CardPanel,
   Text: TextPanel,
   Accordion: AccordionPanel,

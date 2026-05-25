@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Accordion, Text } from '@swift/components'
-import { ExpandMore } from '@swift/icons'
+import { Accordion } from '@swift/components/Accordion'
+import { Text } from '@swift/components/Text'
+import { ExpandMore } from '@swift/icons/ExpandMore'
 import { CopyableImport } from '../lib/CopyableImport'
 import { CodeBlock, SectionHeader } from './shared'
 

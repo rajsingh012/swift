@@ -1,4 +1,5 @@
 export { Text } from './Text'
+export { Text as default } from './Text'
 export type {
   TextProps,
   TextVariant,

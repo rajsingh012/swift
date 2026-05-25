@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Text } from '@swift/components'
+import { Text } from '@swift/components/Text'
 
 export function SectionHeader({ children }: { children: ReactNode }) {
   return (

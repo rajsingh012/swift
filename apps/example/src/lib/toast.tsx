@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
-import { Check } from '@swift/icons'
+import { Check } from '@swift/icons/Check'
 
 type Toast = { id: number; message: string }
 

@@ -1,9 +1,10 @@
 import { useMemo, useRef, useState, type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Button, Text } from '@swift/components'
+import { Button } from '@swift/components/Button'
+import { Text } from '@swift/components/Text'
 import * as Icons from '@swift/icons'
 import { downloadIcon, type IconFormat } from '@swift/icons/download'
-import { Download } from '@swift/icons'
+import { Download } from '@swift/icons/Download'
 import { useIconSearch } from '../lib/icon-search'
 import { CopyableImport } from '../lib/CopyableImport'
 import { useToast } from '../lib/toast'
@@ -439,7 +440,11 @@ function RouteComponent() {
                   code={`import { ${selected} } from '@swift/icons'`}
                 />
                 <CopyableImport
-                  label="Deep import"
+                  label="Named deep import"
+                  code={`import { ${selected} } from '@swift/icons/${selected}'`}
+                />
+                <CopyableImport
+                  label="Default deep import"
                   code={`import ${selected} from '@swift/icons/${selected}'`}
                 />
                 <CopyableImport

@@ -20,6 +20,36 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./Accordion": {
+      "types": "./dist/src/Accordion/index.d.ts",
+      "import": "./dist/Accordion.js",
+      "require": "./dist/Accordion.cjs"
+    },
+    "./Badge": {
+      "types": "./dist/src/Badge/index.d.ts",
+      "import": "./dist/Badge.js",
+      "require": "./dist/Badge.cjs"
+    },
+    "./Button": {
+      "types": "./dist/src/Button/index.d.ts",
+      "import": "./dist/Button.js",
+      "require": "./dist/Button.cjs"
+    },
+    "./Card": {
+      "types": "./dist/src/Card/index.d.ts",
+      "import": "./dist/Card.js",
+      "require": "./dist/Card.cjs"
+    },
+    "./Chip": {
+      "types": "./dist/src/Chip/index.d.ts",
+      "import": "./dist/Chip.js",
+      "require": "./dist/Chip.cjs"
+    },
+    "./Text": {
+      "types": "./dist/src/Text/index.d.ts",
+      "import": "./dist/Text.js",
+      "require": "./dist/Text.cjs"
+    },
     "./styles.css": "./dist/styles.css",
     "./theme.css": "./src/theme/index.css",
     "./theme/*": "./src/theme/*"

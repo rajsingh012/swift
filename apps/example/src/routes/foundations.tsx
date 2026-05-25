@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState, type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { Text } from '@swift/components'
-import { ContentCopy, GridSmallFilled, Tag, Tune } from '@swift/icons'
+import { Text } from '@swift/components/Text'
+import { ContentCopy } from '@swift/icons/ContentCopy'
+import { GridSmallFilled } from '@swift/icons/GridSmallFilled'
+import { Tag } from '@swift/icons/Tag'
+import { Tune } from '@swift/icons/Tune'
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>
 

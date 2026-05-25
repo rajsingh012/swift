@@ -1,4 +1,5 @@
 export { Accordion } from './Accordion'
+export { Accordion as default } from './Accordion'
 export type {
   AccordionContentProps,
   AccordionHeaderProps,

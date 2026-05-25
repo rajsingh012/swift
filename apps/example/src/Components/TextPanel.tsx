@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Text } from '@swift/components'
+import { Text } from '@swift/components/Text'
 import { CopyableImport } from '../lib/CopyableImport'
 import { CodeBlock, SectionHeader } from './shared'
 

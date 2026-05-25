@@ -75,7 +75,9 @@ for (const file of files) {
 
   const code = `import createSvgIcon from './utils/createSvgIcon'
 
-export default createSvgIcon(<>${inner}</>, '${componentName}')
+export const ${componentName} = createSvgIcon(<>${inner}</>, '${componentName}')
+
+export { ${componentName} as default }
 `
   writeFileSync(join(OUT_DIR, `${componentName}.tsx`), code)
   seen.set(componentName, file)
@@ -88,7 +90,7 @@ const indexContent =
   `export { default as createSvgIcon } from './utils/createSvgIcon'\n` +
   `export { iconToBlob, downloadIcon } from './utils/download'\n` +
   `export type { IconFormat, IconBlobOptions, DownloadIconOptions } from './utils/download'\n\n` +
-  entries.map((name) => `export { default as ${name} } from './${name}'`).join('\n') +
+  entries.map((name) => `export { ${name} } from './${name}'`).join('\n') +
   '\n'
 
 writeFileSync(join(OUT_DIR, 'index.ts'), indexContent)

@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Button, Text } from '@swift/components'
-import {
-  Afternoon,
-  ArrowRight,
-  Check,
-  CreditCard,
-  Document,
-  GridSmallFilled,
-  Night,
-  Search,
-  Settings,
-  Star,
-} from '@swift/icons'
+import { Button } from '@swift/components/Button'
+import { Text } from '@swift/components/Text'
+import { Afternoon } from '@swift/icons/Afternoon'
+import { ArrowRight } from '@swift/icons/ArrowRight'
+import { Check } from '@swift/icons/Check'
+import { CreditCard } from '@swift/icons/CreditCard'
+import { Document } from '@swift/icons/Document'
+import { GridSmallFilled } from '@swift/icons/GridSmallFilled'
+import { Night } from '@swift/icons/Night'
+import { Search } from '@swift/icons/Search'
+import { Settings } from '@swift/icons/Settings'
+import { Star } from '@swift/icons/Star'
 import { useTheme, type Theme } from '../lib/theme'
 
 export const Route = createFileRoute('/')({

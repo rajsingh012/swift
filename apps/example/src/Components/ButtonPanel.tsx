@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Button, Card, Text } from '@swift/components'
-import {
-  Add,
-  ArrowRight,
-  Check,
-  Delete,
-  Edit,
-  Person,
-  Search,
-  Settings,
-  Star,
-} from '@swift/icons'
+import { Button } from '@swift/components/Button'
+import { Card } from '@swift/components/Card'
+import { Text } from '@swift/components/Text'
+import { Add } from '@swift/icons/Add'
+import { ArrowRight } from '@swift/icons/ArrowRight'
+import { Check } from '@swift/icons/Check'
+import { Delete } from '@swift/icons/Delete'
+import { Edit } from '@swift/icons/Edit'
+import { Person } from '@swift/icons/Person'
+import { Search } from '@swift/icons/Search'
+import { Settings } from '@swift/icons/Settings'
+import { Star } from '@swift/icons/Star'
 import { CopyableImport } from '../lib/CopyableImport'
 import { CodeBlock, PreviewRow, SectionHeader } from './shared'
 
@@ -404,10 +404,17 @@ export function ButtonPanel() {
       <section>
         <SectionHeader>In context · Card with destructive action</SectionHeader>
         <div className="max-w-lg">
-          <Card
-            title="Saved card · Visa ····4242"
-            footer={
-              <div className="flex justify-between">
+          <Card>
+            <Card.Header divider>
+              <Card.Title>Saved card · Visa ····4242</Card.Title>
+            </Card.Header>
+            <Card.Content>
+              <Text variant="body-sm" color="secondary">
+                Expires 09/27 · Used last on 14 May 2026 for IndiGo 6E 2134.
+              </Text>
+            </Card.Content>
+            <Card.Footer divider muted>
+              <div className="flex w-full justify-between">
                 <Button variant="ghost" size="sm">
                   <Button.LeftIcon><Edit size={14} /></Button.LeftIcon>
                   Edit
@@ -417,11 +424,7 @@ export function ButtonPanel() {
                   Remove
                 </Button>
               </div>
-            }
-          >
-            <Text variant="body-sm" color="secondary">
-              Expires 09/27 · Used last on 14 May 2026 for IndiGo 6E 2134.
-            </Text>
+            </Card.Footer>
           </Card>
         </div>
       </section>
