@@ -3,8 +3,10 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@swift/components/Button'
 import { Text } from '@swift/components/Text'
 import { Check } from '@swift/icons/Check'
+import { CheckCircle } from '@swift/icons/CheckCircle'
 import { CreditCard } from '@swift/icons/CreditCard'
 import { Document } from '@swift/icons/Document'
+import { Edit } from '@swift/icons/Edit'
 import { Filter } from '@swift/icons/Filter'
 import { GridSmall } from '@swift/icons/GridSmall'
 import { Tag } from '@swift/icons/Tag'
@@ -13,7 +15,9 @@ import {
   BadgePanel,
   ButtonPanel,
   CardPanel,
+  CheckboxPanel,
   ChipPanel,
+  InputPanel,
   TextPanel,
 } from '../Components'
 
@@ -23,13 +27,23 @@ export const Route = createFileRoute('/components')({
   component: RouteComponent,
 })
 
-type ComponentName = 'Button' | 'Badge' | 'Chip' | 'Card' | 'Text' | 'Accordion'
+type ComponentName =
+  | 'Button'
+  | 'Badge'
+  | 'Chip'
+  | 'Card'
+  | 'Checkbox'
+  | 'Input'
+  | 'Text'
+  | 'Accordion'
 
 const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = [
   { name: 'Button', icon: Check },
   { name: 'Badge', icon: Tag },
   { name: 'Chip', icon: Filter },
   { name: 'Card', icon: CreditCard },
+  { name: 'Checkbox', icon: CheckCircle },
+  { name: 'Input', icon: Edit },
   { name: 'Text', icon: Document },
   { name: 'Accordion', icon: GridSmall },
 ]
@@ -39,6 +53,8 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Badge: BadgePanel,
   Chip: ChipPanel,
   Card: CardPanel,
+  Checkbox: CheckboxPanel,
+  Input: InputPanel,
   Text: TextPanel,
   Accordion: AccordionPanel,
 }
