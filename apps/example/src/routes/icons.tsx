@@ -232,10 +232,7 @@ function RouteComponent() {
           <div className="grid gap-8">
             <header className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div
-                  className="flex size-20 items-center justify-center rounded-lg border border-stroke bg-surface-muted"
-                  style={{ color }}
-                >
+                <div className="flex size-20 items-center justify-center rounded-lg border border-stroke bg-surface-muted text-content-strong">
                   <Selected size={48} ref={previewRef} />
                 </div>
                 <div>

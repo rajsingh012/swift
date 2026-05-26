@@ -40,10 +40,20 @@
       "import": "./dist/Card.js",
       "require": "./dist/Card.cjs"
     },
+    "./Checkbox": {
+      "types": "./dist/src/Checkbox/index.d.ts",
+      "import": "./dist/Checkbox.js",
+      "require": "./dist/Checkbox.cjs"
+    },
     "./Chip": {
       "types": "./dist/src/Chip/index.d.ts",
       "import": "./dist/Chip.js",
       "require": "./dist/Chip.cjs"
+    },
+    "./Input": {
+      "types": "./dist/src/Input/index.d.ts",
+      "import": "./dist/Input.js",
+      "require": "./dist/Input.cjs"
     },
     "./Text": {
       "types": "./dist/src/Text/index.d.ts",
