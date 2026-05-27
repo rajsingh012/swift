@@ -5,6 +5,7 @@ import { ContentCopy } from '@swift/icons/ContentCopy'
 import { GridSmallFilled } from '@swift/icons/GridSmallFilled'
 import { Tag } from '@swift/icons/Tag'
 import { Tune } from '@swift/icons/Tune'
+import { SidebarLayout } from '../lib/SidebarLayout'
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>
 
@@ -345,54 +346,46 @@ function FoundationsRoute() {
   }, [selected])
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-surface">
-      <aside className="flex w-72 shrink-0 flex-col border-r border-stroke bg-surface">
-        <div className="border-b border-stroke px-4 py-3.5">
-          <Text variant="body-sm" fontWeight="semibold">
-            Foundations
-          </Text>
-          <Text variant="body-xs" color="muted" className='block'>
-            {SECTIONS.length} sections
-          </Text>
-        </div>
-        <div className="flex-1 overflow-y-auto px-2 py-2">
-          <ul className="space-y-0.5">
-            {SECTIONS.map(({ name, icon: Icon }) => {
-              const isActive = name === selected
-              return (
-                <li key={name}>
-                  <button
-                    type="button"
-                    onClick={() => setSelected(name)}
-                    className={`flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
-                      isActive
-                        ? 'bg-surface-brand-muted font-semibold text-content-brand'
-                        : 'font-medium text-content hover:bg-surface-muted'
-                    }`}
-                  >
-                    <Icon size={16} className="shrink-0" />
-                    <span className="truncate">{name}</span>
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </aside>
-
-      <main className="flex-1 overflow-y-auto p-8">
-        <div className="mx-auto max-w-6xl">
-          {selected === 'Palettes' ? (
-            <PalettesPanel registerRef={registerRef} resolved={resolved} />
-          ) : selected === 'Semantic' ? (
-            <SemanticPanel registerRef={registerRef} resolved={resolved} />
-          ) : selected === 'Radius' ? (
-            <RadiusPanel />
-          ) : (
-            <ShadowsPanel />
-          )}
-        </div>
-      </main>
-    </div>
+    <SidebarLayout
+      title="Foundations"
+      subtitle={`${SECTIONS.length} sections`}
+      selectedKey={selected}
+      triggerLabel={selected}
+      sidebar={
+        <ul className="space-y-0.5">
+          {SECTIONS.map(({ name, icon: Icon }) => {
+            const isActive = name === selected
+            return (
+              <li key={name}>
+                <button
+                  type="button"
+                  onClick={() => setSelected(name)}
+                  className={`flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
+                    isActive
+                      ? 'bg-surface-brand-muted font-semibold text-content-brand'
+                      : 'font-medium text-content hover:bg-surface-muted'
+                  }`}
+                >
+                  <Icon size={16} className="shrink-0" />
+                  <span className="truncate">{name}</span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      }
+    >
+      <div className="mx-auto max-w-6xl">
+        {selected === 'Palettes' ? (
+          <PalettesPanel registerRef={registerRef} resolved={resolved} />
+        ) : selected === 'Semantic' ? (
+          <SemanticPanel registerRef={registerRef} resolved={resolved} />
+        ) : selected === 'Radius' ? (
+          <RadiusPanel />
+        ) : (
+          <ShadowsPanel />
+        )}
+      </div>
+    </SidebarLayout>
   )
 }

@@ -55,6 +55,16 @@
       "import": "./dist/Input.js",
       "require": "./dist/Input.cjs"
     },
+    "./Radio": {
+      "types": "./dist/src/Radio/index.d.ts",
+      "import": "./dist/Radio.js",
+      "require": "./dist/Radio.cjs"
+    },
+    "./Sheet": {
+      "types": "./dist/src/Sheet/index.d.ts",
+      "import": "./dist/Sheet.js",
+      "require": "./dist/Sheet.cjs"
+    },
     "./Text": {
       "types": "./dist/src/Text/index.d.ts",
       "import": "./dist/Text.js",

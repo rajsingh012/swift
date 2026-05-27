@@ -7,6 +7,7 @@ import { downloadIcon, type IconFormat } from '@swift/icons/download'
 import { Download } from '@swift/icons/Download'
 import { useIconSearch } from '../lib/icon-search'
 import { CopyableImport } from '../lib/CopyableImport'
+import { SidebarLayout } from '../lib/SidebarLayout'
 import { useToast } from '../lib/toast'
 
 export const Route = createFileRoute('/icons')({
@@ -177,26 +178,22 @@ function RouteComponent() {
   )
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-surface">
-      <aside className="flex w-72 shrink-0 flex-col border-r border-stroke bg-surface">
-       <div className="border-b border-stroke px-4 py-3.5">
-          <Text variant="body-sm" fontWeight="semibold">
-            @swift/icons
+    <SidebarLayout
+      title="@swift/icons"
+      subtitle={
+        query
+          ? `${filtered.length} of ${allIcons.length}`
+          : `${allIcons.length} icons`
+      }
+      selectedKey={selected}
+      triggerLabel={selected || 'Icons'}
+      sidebar={
+        filtered.length === 0 ? (
+          <Text variant="body-sm" color="muted" className="block px-2 py-4">
+            No icons match “{query}”.
           </Text>
-          <Text variant="body-xs" color="muted" className="block">
-            {query
-              ? `${filtered.length} of ${allIcons.length}`
-              : `${allIcons.length} icons`}
-          </Text>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-2 py-2">
-          {filtered.length === 0 ? (
-            <Text variant="body-sm" color="muted" className="block px-2 py-4">
-              No icons match “{query}”.
-            </Text>
-          ) : (
-            <ul className="space-y-0.5">
+        ) : (
+          <ul className="space-y-0.5">
               {filtered.map(([name, C]) => {
                 const isActive = name === selected
                 return (
@@ -218,13 +215,11 @@ function RouteComponent() {
                   </li>
                 )
               })}
-            </ul>
-          )}
-        </div>
-      </aside>
-
-      <main className="flex-1 overflow-y-auto p-8">
-        {!Selected ? (
+          </ul>
+        )
+      }
+    >
+      {!Selected ? (
           <Text variant="body-md" color="muted">
             Select an icon from the sidebar.
           </Text>
@@ -317,7 +312,7 @@ function RouteComponent() {
 
             <section>
               <SectionHeader>Sizes</SectionHeader>
-              <div className="flex items-end gap-6">
+              <div className="flex flex-wrap items-end gap-6">
                 {[
                   { size: 16, color: 'text-blue-600' },
                   { size: 20, color: 'text-emerald-600' },
@@ -460,7 +455,6 @@ function RouteComponent() {
             </section>
           </div>
         )}
-      </main>
-    </div>
+    </SidebarLayout>
   )
 }

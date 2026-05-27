@@ -4,6 +4,7 @@ import { Text } from '@swift/components/Text'
 import { Mail } from '@swift/icons/Mail'
 import { Person } from '@swift/icons/Person'
 import { Search } from '@swift/icons/Search'
+import { CopyableImport } from '../lib/CopyableImport'
 import { CodeBlock, PreviewRow, SectionHeader } from './shared'
 
 const DESCRIPTION =
@@ -702,6 +703,45 @@ export function InputPanel() {
       </section>
 
       <section>
+        <SectionHeader>Accessibility</SectionHeader>
+        <div className="grid gap-2 rounded-xl border border-stroke bg-surface-elevated p-5">
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Label association.</strong> <code>Input.Label</code> sets <code>htmlFor</code> from the auto-generated input id, so clicking the label focuses the field. The simple <code>&lt;Input label=&quot;…&quot; /&gt;</code> API wires this up for you.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Describedby chain.</strong> <code>aria-describedby</code> on the input is built from the helper text and error message ids. When <code>invalid</code> flips to true the error id is appended automatically, so assistive tech announces both helper and error context.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Invalid + error.</strong> <code>invalid</code> sets <code>aria-invalid</code> on the input and switches chrome to critical. <code>errorMessage</code> renders with <code>role=&quot;alert&quot;</code> and <code>aria-live=&quot;polite&quot;</code> so the message is announced when it appears.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Required.</strong> Forwards <code>required</code> to the native input, sets <code>aria-required</code>, and renders a visible critical-coloured asterisk after the label.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Focus ring.</strong> A 2px coloured ring lights the wrapper on <code>focus-within</code> — brand by default, semantic tint for success/warning, critical for invalid. The flushed variant skips the ring (it would clash with the underline) and just deepens the border.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Disabled vs readOnly.</strong> <code>disabled</code> dims the chrome, sets the native attribute, and removes the input from the tab order. <code>readOnly</code> keeps the input focusable and selectable but blocks edits — different states, different intent.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Loading.</strong> Sets <code>aria-busy</code> on the wrapper and renders a spinner in the end slot. The input itself stays editable — pair with <code>readOnly</code> if you need to lock the field during async validation.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Password toggle.</strong> The eye button is a real <code>&lt;button&gt;</code> with <code>aria-pressed</code> reflecting visibility, and <code>aria-label</code> that swaps between &ldquo;Show password&rdquo; and &ldquo;Hide password&rdquo;.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Clear button.</strong> Rendered with <code>aria-label=&quot;Clear input&quot;</code>. Hidden when the field is empty, disabled, or read-only so screen readers don&apos;t announce a no-op affordance.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Floating label.</strong> Pure CSS via <code>:placeholder-shown</code> + <code>:peer-focus</code> — no JS state. A single-space placeholder is injected when the consumer doesn&apos;t supply one so the float animation works for empty fields.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Input.Group (OTP).</strong> Container renders as <code>role=&quot;group&quot;</code>. Cells use <code>inputMode=&quot;numeric&quot;</code> for the numeric type, <code>autoComplete=&quot;one-time-code&quot;</code> on the first cell so iOS surfaces the SMS code, and per-cell <code>aria-label</code>s like &ldquo;Digit 3&rdquo;. Backspace, arrow keys, Home/End, and paste-distribute are wired explicitly.
+          </Text>
+        </div>
+      </section>
+
+      <section>
         <SectionHeader>Props · Input</SectionHeader>
         <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[220px_1fr_140px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
@@ -723,7 +763,7 @@ export function InputPanel() {
               <Text variant="body-sm" fontFamily="mono" fontWeight="semibold" color="primary">
                 {name}
               </Text>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex min-w-0 flex-col gap-1.5">
                 <Text
                   variant="body-xs"
                   fontFamily="mono"
@@ -770,7 +810,7 @@ export function InputPanel() {
               <Text variant="body-sm" fontFamily="mono" fontWeight="semibold" color="primary">
                 {name}
               </Text>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex min-w-0 flex-col gap-1.5">
                 <Text
                   variant="body-xs"
                   fontFamily="mono"
@@ -832,7 +872,7 @@ export function InputPanel() {
                       <Text variant="body-sm" fontFamily="mono" fontWeight="semibold" color="primary">
                         {propName}
                       </Text>
-                      <div className="flex flex-col gap-1.5">
+                      <div className="flex min-w-0 flex-col gap-1.5">
                         <Text
                           variant="body-xs"
                           fontFamily="mono"
@@ -858,6 +898,24 @@ export function InputPanel() {
               ) : null}
             </div>
           ))}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeader>Import</SectionHeader>
+        <div className="grid gap-3">
+          <CopyableImport
+            label="Named import"
+            code={`import { Input } from '@swift/components'`}
+          />
+          <CopyableImport
+            label="Deep import"
+            code={`import Input from '@swift/components/Input'`}
+          />
+          <CopyableImport
+            label="With types"
+            code={`import { Input, type InputProps, type InputSize, type InputVariant, type InputState, type InputGroupProps } from '@swift/components'`}
+          />
         </div>
       </section>
 

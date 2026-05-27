@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Checkbox, CheckboxGroup } from '@swift/components/Checkbox'
 import { Text } from '@swift/components/Text'
+import { CopyableImport } from '../lib/CopyableImport'
 import { CodeBlock, PreviewRow, SectionHeader } from './shared'
 
 const DESCRIPTION =
@@ -703,6 +704,42 @@ export function CheckboxPanel() {
       </section>
 
       <section>
+        <SectionHeader>Accessibility</SectionHeader>
+        <div className="grid gap-2 rounded-xl border border-stroke bg-surface-elevated p-5">
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Native input.</strong> The box delegates to a real <code>&lt;input type=&quot;checkbox&quot;&gt;</code> overlaid at <code>opacity:0</code>. Clicks on the box, label, and Space-key activation all route through it — so screen readers, native form submission, and the browser&apos;s autofill heuristics work without extra wiring.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">aria-checked.</strong> Set to <code>true</code> / <code>false</code> / <code>&quot;mixed&quot;</code>. The indeterminate state is mirrored onto the DOM via <code>input.indeterminate = true</code> (it&apos;s a property, not a reflected attribute) and serialises as unchecked in form data.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Keyboard.</strong> <code>Space</code> toggles, <code>Tab</code> / <code>Shift+Tab</code> move focus. Native behaviour preserved — no custom key handlers.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Focus ring.</strong> 2px brand ring on <code>:focus-visible</code> only, so mouse users don&apos;t see a ring after click. Switches to critical-coloured when <code>invalid</code>.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Label association.</strong> <code>Checkbox.Label</code> sets <code>htmlFor</code> from the input id automatically. Clicking anywhere on the label toggles the box — including in the simple <code>&lt;Checkbox&gt;children&lt;/Checkbox&gt;</code> API.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Disabled vs readOnly.</strong> <code>disabled</code> forwards to the native input and removes it from the tab order. <code>readOnly</code> is non-standard for checkboxes — the component intercepts the change event, re-asserts the visual state, sets <code>aria-readonly</code>, and the input stays focusable.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Required.</strong> Forwards <code>required</code> to the native input, sets <code>aria-required</code>, and renders a visible critical-coloured asterisk after the label.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Invalid + error.</strong> <code>invalid</code> sets <code>aria-invalid</code> and flips the chrome to critical. <code>errorMessage</code> renders with <code>role=&quot;alert&quot;</code> and <code>aria-live=&quot;polite&quot;</code> so the message is announced when it appears.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">Describedby chain.</strong> <code>aria-describedby</code> on the input automatically links both the description and (when invalid) the error message ids — assistive tech announces them after the label.
+          </Text>
+          <Text variant="body-sm">
+            <strong className="text-content-strong">CheckboxGroup.</strong> Group container renders as <code>role=&quot;group&quot;</code> with <code>aria-labelledby</code> pointing at the group label, plus <code>aria-disabled</code> / <code>aria-invalid</code> / <code>aria-required</code> when those flags are set. Cascades to every child without re-stating per-item.
+          </Text>
+        </div>
+      </section>
+
+      <section>
         <SectionHeader>Props · Checkbox</SectionHeader>
         <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[220px_1fr_140px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
@@ -724,7 +761,7 @@ export function CheckboxPanel() {
               <Text variant="body-sm" fontFamily="mono" fontWeight="semibold" color="primary">
                 {name}
               </Text>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex min-w-0 flex-col gap-1.5">
                 <Text
                   variant="body-xs"
                   fontFamily="mono"
@@ -771,7 +808,7 @@ export function CheckboxPanel() {
               <Text variant="body-sm" fontFamily="mono" fontWeight="semibold" color="primary">
                 {name}
               </Text>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex min-w-0 flex-col gap-1.5">
                 <Text
                   variant="body-xs"
                   fontFamily="mono"
@@ -831,7 +868,7 @@ export function CheckboxPanel() {
                   <Text variant="body-sm" fontFamily="mono" fontWeight="semibold" color="primary">
                     {propName}
                   </Text>
-                  <div className="flex flex-col gap-1.5">
+                  <div className="flex min-w-0 flex-col gap-1.5">
                     <Text
                       variant="body-xs"
                       fontFamily="mono"
@@ -855,6 +892,24 @@ export function CheckboxPanel() {
               ))}
             </div>
           ))}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeader>Import</SectionHeader>
+        <div className="grid gap-3">
+          <CopyableImport
+            label="Named import"
+            code={`import { Checkbox, CheckboxGroup } from '@swift/components'`}
+          />
+          <CopyableImport
+            label="Deep import"
+            code={`import { Checkbox, CheckboxGroup } from '@swift/components/Checkbox'`}
+          />
+          <CopyableImport
+            label="With types"
+            code={`import { Checkbox, CheckboxGroup, type CheckboxProps, type CheckboxState, type CheckboxSize, type CheckboxGroupProps } from '@swift/components'`}
+          />
         </div>
       </section>
 

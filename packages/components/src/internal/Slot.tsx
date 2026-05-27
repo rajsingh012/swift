@@ -14,7 +14,7 @@ type AnyProps = Record<string, unknown>
 
 /**
  * Merges Slot props onto a single child element — the minimal subset of
- * Radix's Slot needed by `<Card asChild>`. We:
+ * Radix's Slot used by `asChild` across the library. We:
  *   - compose `className` (Slot's wins cascade order, child's appended)
  *   - merge `style`
  *   - chain event handlers (child runs first; Slot's runs unless the
@@ -83,7 +83,7 @@ export const Slot = forwardRef<HTMLElement, SlotProps>(function Slot(
   return cloneElement(child, merged)
 })
 
-function composeRefs<T>(...refs: Array<Ref<T> | undefined>) {
+export function composeRefs<T>(...refs: Array<Ref<T> | undefined>) {
   return (node: T) => {
     for (const r of refs) {
       if (!r) continue

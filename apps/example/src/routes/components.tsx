@@ -1,10 +1,11 @@
-import { useState, type ComponentType } from 'react'
+import { type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@swift/components/Button'
-import { Text } from '@swift/components/Text'
 import { Check } from '@swift/icons/Check'
 import { CheckCircle } from '@swift/icons/CheckCircle'
+import { CheckCircleFilled } from '@swift/icons/CheckCircleFilled'
 import { CreditCard } from '@swift/icons/CreditCard'
+import { ArrowRightLong } from '@swift/icons/ArrowRightLong'
 import { Document } from '@swift/icons/Document'
 import { Edit } from '@swift/icons/Edit'
 import { Filter } from '@swift/icons/Filter'
@@ -18,14 +19,13 @@ import {
   CheckboxPanel,
   ChipPanel,
   InputPanel,
+  RadioPanel,
+  SheetPanel,
   TextPanel,
 } from '../Components'
+import { SidebarLayout } from '../lib/SidebarLayout'
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>
-
-export const Route = createFileRoute('/components')({
-  component: RouteComponent,
-})
 
 type ComponentName =
   | 'Button'
@@ -33,19 +33,23 @@ type ComponentName =
   | 'Chip'
   | 'Card'
   | 'Checkbox'
+  | 'Radio'
   | 'Input'
   | 'Text'
   | 'Accordion'
+  | 'Sheet'
 
 const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = [
+  { name: 'Accordion', icon: GridSmall },
   { name: 'Button', icon: Check },
   { name: 'Badge', icon: Tag },
   { name: 'Chip', icon: Filter },
   { name: 'Card', icon: CreditCard },
   { name: 'Checkbox', icon: CheckCircle },
+  { name: 'Radio', icon: CheckCircleFilled },
   { name: 'Input', icon: Edit },
+  { name: 'Sheet', icon: ArrowRightLong },
   { name: 'Text', icon: Document },
-  { name: 'Accordion', icon: GridSmall },
 ]
 
 const panelMap: Record<ComponentName, ComponentType> = {
@@ -54,56 +58,74 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Chip: ChipPanel,
   Card: CardPanel,
   Checkbox: CheckboxPanel,
+  Radio: RadioPanel,
   Input: InputPanel,
   Text: TextPanel,
   Accordion: AccordionPanel,
+  Sheet: SheetPanel,
 }
 
+const DEFAULT_SELECTED: ComponentName = 'Accordion'
+
+const isComponentName = (v: unknown): v is ComponentName =>
+  typeof v === 'string' && Object.prototype.hasOwnProperty.call(panelMap, v)
+
+type ComponentsSearch = { c?: ComponentName }
+
+export const Route = createFileRoute('/components')({
+  validateSearch: (search: Record<string, unknown>): ComponentsSearch =>
+    isComponentName(search.c) ? { c: search.c } : {},
+  component: RouteComponent,
+})
+
 function RouteComponent() {
-  const [selected, setSelected] = useState<ComponentName>('Button')
+  const { c } = Route.useSearch()
+  const navigate = Route.useNavigate()
+  const selected: ComponentName = c ?? DEFAULT_SELECTED
   const Panel = panelMap[selected]
 
-  return (
-    <div className="flex h-full w-full overflow-hidden bg-surface">
-      <aside className="flex w-72 shrink-0 flex-col border-r border-stroke bg-surface">
-        <div className="border-b border-stroke px-4 py-3.5">
-          <Text variant="body-sm" fontWeight="semibold">
-            @swift/components
-          </Text>
-          <Text variant="body-xs" color="muted" className="block">
-            {components.length} components
-          </Text>
-        </div>
-        <div className="flex-1 overflow-y-auto px-2 py-2">
-          <ul className="space-y-0.5">
-            {components.map(({ name, icon: Icon }) => {
-              const isActive = name === selected
-              return (
-                <li key={name}>
-                  <Button
-                    variant="unstyled"
-                    onClick={() => setSelected(name)}
-                    classes={{
-                      root: `flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
-                        isActive
-                          ? 'bg-surface-brand-muted font-semibold text-content-brand'
-                          : 'font-medium text-content hover:bg-surface-muted'
-                      }`,
-                    }}
-                  >
-                    <Icon size={16} className="shrink-0" />
-                    <span className="truncate">{name}</span>
-                  </Button>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </aside>
+  const setSelected = (name: ComponentName) => {
+    // `replace: true` keeps the back button useful — tab switches don't
+    // pollute browser history, but the URL is still shareable + survives reload.
+    navigate({
+      search: (prev: ComponentsSearch) => ({ ...prev, c: name }),
+      replace: true,
+    })
+  }
 
-      <main className="flex-1 overflow-y-auto p-8">
-        <Panel />
-      </main>
-    </div>
+  return (
+    <SidebarLayout
+      title="@swift/components"
+      subtitle={`${components.length} components`}
+      selectedKey={selected}
+      triggerLabel={selected}
+      sidebar={
+        <ul className="space-y-0.5">
+          {components.map(({ name, icon: Icon }) => {
+            const isActive = name === selected
+            return (
+              <li key={name}>
+                <Button
+                  variant="unstyled"
+                  onClick={() => setSelected(name)}
+                  classes={{
+                    root: `flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
+                      isActive
+                        ? 'bg-surface-brand-muted font-semibold text-content-brand'
+                        : 'font-medium text-content hover:bg-surface-muted'
+                    }`,
+                  }}
+                >
+                  <Icon size={16} className="shrink-0" />
+                  <span className="truncate">{name}</span>
+                </Button>
+              </li>
+            )
+          })}
+        </ul>
+      }
+    >
+      <Panel />
+    </SidebarLayout>
   )
 }

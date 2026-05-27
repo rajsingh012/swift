@@ -20,7 +20,7 @@ import {
   radiusClasses,
   variantClasses,
 } from './Card.styles'
-import { Slot } from './Slot'
+import { Slot } from '../internal/Slot'
 import type { CardComponent, CardOwnProps } from './Card.types'
 
 type CardRenderProps = CardOwnProps &
