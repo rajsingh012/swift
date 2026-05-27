@@ -315,7 +315,7 @@ export function AccordionPanel() {
               <Text variant="body-sm" fontFamily="mono" fontWeight="semibold" color="primary">
                 {name}
               </Text>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex min-w-0 flex-col gap-1.5">
                 <Text variant="body-xs" fontFamily="mono" color="secondary" className="wrap-break-word">
                   {type}
                 </Text>

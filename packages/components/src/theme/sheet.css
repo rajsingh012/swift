@@ -1,0 +1,177 @@
+/**
+ * Sheet (drawer / slide-over) — sizing, surface tokens, and slide/fade
+ * animations. Written as plain CSS so the per-side keyframes and the
+ * data-state exit animations stay readable (Tailwind arbitrary-variant
+ * escaping gets ugly for `data-[side=...][state=...]` keyframe combos).
+ *
+ * Every visual is driven by a token so consumers can retheme a single
+ * sheet inline (`style={{ '--sheet-width': '30rem' }}`) or globally.
+ */
+
+.swift-sheet-content {
+  --sheet-bg: var(--color-surface-elevated);
+  --sheet-overlay-bg: var(--color-surface-overlay);
+  --sheet-radius: var(--radius-lg);
+  --sheet-shadow: var(--shadow-level5);
+  --sheet-animation-duration: 320ms;
+  --sheet-ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+  background: var(--sheet-bg);
+  box-shadow: var(--sheet-shadow);
+}
+
+/* ── Sizing ───────────────────────────────────────────────────────── */
+/* Horizontal drawers are sized by width; vertical ones by height. */
+
+.swift-sheet-content[data-side="left"],
+.swift-sheet-content[data-side="right"] {
+  width: var(--sheet-width, 24rem);
+  max-width: 100vw;
+}
+
+.swift-sheet-content[data-side="left"][data-size="sm"],
+.swift-sheet-content[data-side="right"][data-size="sm"] {
+  --sheet-width: 20rem;
+}
+.swift-sheet-content[data-side="left"][data-size="md"],
+.swift-sheet-content[data-side="right"][data-size="md"] {
+  --sheet-width: 24rem;
+}
+.swift-sheet-content[data-side="left"][data-size="lg"],
+.swift-sheet-content[data-side="right"][data-size="lg"] {
+  --sheet-width: 32rem;
+}
+.swift-sheet-content[data-side="left"][data-size="full"],
+.swift-sheet-content[data-side="right"][data-size="full"] {
+  --sheet-width: 100vw;
+}
+
+.swift-sheet-content[data-side="top"],
+.swift-sheet-content[data-side="bottom"] {
+  height: var(--sheet-height, 50vh);
+  max-height: 100vh;
+}
+
+.swift-sheet-content[data-side="top"][data-size="sm"],
+.swift-sheet-content[data-side="bottom"][data-size="sm"] {
+  --sheet-height: 33vh;
+}
+.swift-sheet-content[data-side="top"][data-size="md"],
+.swift-sheet-content[data-side="bottom"][data-size="md"] {
+  --sheet-height: 50vh;
+}
+.swift-sheet-content[data-side="top"][data-size="lg"],
+.swift-sheet-content[data-side="bottom"][data-size="lg"] {
+  --sheet-height: 80vh;
+}
+.swift-sheet-content[data-side="top"][data-size="full"],
+.swift-sheet-content[data-side="bottom"][data-size="full"] {
+  --sheet-height: 100vh;
+}
+
+/* Round only the edge that faces into the viewport. */
+.swift-sheet-content[data-side="bottom"] {
+  border-top-left-radius: var(--sheet-radius);
+  border-top-right-radius: var(--sheet-radius);
+  /* iOS home-indicator safe area for bottom sheets. */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.swift-sheet-content[data-side="top"] {
+  border-bottom-left-radius: var(--sheet-radius);
+  border-bottom-right-radius: var(--sheet-radius);
+}
+
+/* ── Overlay ──────────────────────────────────────────────────────── */
+
+.swift-sheet-overlay {
+  background: var(--sheet-overlay-bg, var(--color-surface-overlay));
+}
+
+/* ── Enter / exit animations ──────────────────────────────────────── */
+
+.swift-sheet-content[data-state="open"] {
+  animation: var(--sheet-animation-duration) var(--sheet-ease) both;
+}
+.swift-sheet-content[data-state="closed"] {
+  animation: var(--sheet-animation-duration) var(--sheet-ease) both;
+}
+
+.swift-sheet-content[data-side="right"][data-state="open"] {
+  animation-name: swift-sheet-in-right;
+}
+.swift-sheet-content[data-side="right"][data-state="closed"] {
+  animation-name: swift-sheet-out-right;
+}
+.swift-sheet-content[data-side="left"][data-state="open"] {
+  animation-name: swift-sheet-in-left;
+}
+.swift-sheet-content[data-side="left"][data-state="closed"] {
+  animation-name: swift-sheet-out-left;
+}
+.swift-sheet-content[data-side="top"][data-state="open"] {
+  animation-name: swift-sheet-in-top;
+}
+.swift-sheet-content[data-side="top"][data-state="closed"] {
+  animation-name: swift-sheet-out-top;
+}
+.swift-sheet-content[data-side="bottom"][data-state="open"] {
+  animation-name: swift-sheet-in-bottom;
+}
+.swift-sheet-content[data-side="bottom"][data-state="closed"] {
+  animation-name: swift-sheet-out-bottom;
+}
+
+.swift-sheet-overlay[data-state="open"] {
+  animation: swift-sheet-fade-in var(--sheet-animation-duration, 320ms) ease both;
+}
+.swift-sheet-overlay[data-state="closed"] {
+  animation: swift-sheet-fade-out var(--sheet-animation-duration, 320ms) ease both;
+}
+
+@keyframes swift-sheet-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes swift-sheet-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+@keyframes swift-sheet-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes swift-sheet-out-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+@keyframes swift-sheet-in-top {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+@keyframes swift-sheet-out-top {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}
+@keyframes swift-sheet-in-bottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes swift-sheet-out-bottom {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+@keyframes swift-sheet-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes swift-sheet-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-sheet-content,
+  .swift-sheet-overlay {
+    animation-duration: 1ms !important;
+  }
+}
