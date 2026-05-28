@@ -439,10 +439,6 @@ function RouteComponent() {
                   label="Default deep import"
                   code={`import ${selected} from '@swift/icons/${selected}'`}
                 />
-                <CopyableImport
-                  label="Download helper"
-                  code={`import { downloadIcon } from '@swift/icons/download'`}
-                />
               </div>
             </section>
 

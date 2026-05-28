@@ -527,7 +527,19 @@ export function InputPanel() {
 
       <section>
         <SectionHeader>Variants · floating label</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* Floating labels animate via pure CSS (peer-placeholder-shown) —
+    no JS state. Works for controlled and uncontrolled inputs. */}
+<Input
+  variant="outlined"
+  labelPlacement="floating"
+  label="Full name"
+  startAdornment={<Person size={16} />}
+/>
+
+<Input variant="filled"  labelPlacement="floating" label="Email" />
+<Input variant="flushed" labelPlacement="floating" label="Phone" />`}
+        >
           <Input
             variant="outlined"
             labelPlacement="floating"
@@ -621,7 +633,20 @@ export function InputPanel() {
 
       <section>
         <SectionHeader>End-slot · clear · password · loading</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* End-slot order: clear → password toggle → loading spinner → endAdornment. */}
+<Input label="Clearable" clearable defaultValue="Type to see ✕" />
+<Input label="Password" type="password" showPasswordToggle />
+<Input label="Async validating" loading defaultValue="checking@example.com" />
+<Input
+  label="All four stacked"
+  type="password"
+  clearable
+  showPasswordToggle
+  loading
+  endAdornment={<Text variant="body-xs" color="muted">USD</Text>}
+/>`}
+        >
           <Input
             label="Clearable"
             defaultValue="Type to see ✕"

@@ -332,7 +332,20 @@ export function ChipPanel() {
       {/* ── Selected toggle ──────────────────────────────────── */}
       <section>
         <SectionHeader>Selected · toggle state</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Chip
+  selected={favourited}
+  onSelectedChange={setFavourited}
+  variant="info"
+  startIcon={<Star />}
+>
+  {favourited ? 'Favourited' : 'Add to favourites'}
+</Chip>
+
+{/* Selected chips paint a filled look regardless of base appearance. */}
+<Chip selected variant="success" appearance="outline">Outline · selected</Chip>
+<Chip selected showCheckOnSelected={false} variant="error">No leading check</Chip>`}
+        >
           <Chip
             selected={favourited}
             onSelectedChange={setFavourited}
@@ -441,7 +454,18 @@ export function ChipPanel() {
       {/* ── With avatar / user chips ─────────────────────── */}
       <section>
         <SectionHeader>Avatar · user / brand chips</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Chip avatar={<Avatar>AR</Avatar>}>Anika R.</Chip>
+
+<Chip
+  avatar={<img src={url} alt="" className="h-full w-full object-cover" />}
+  variant="info"
+  appearance="outline"
+  size="lg"
+>
+  Jordan P. · Designer
+</Chip>`}
+        >
           <Chip
             avatar={
               <span className="flex h-full w-full items-center justify-center bg-surface-brand text-[10px] font-semibold text-content-on-brand">
@@ -485,7 +509,17 @@ export function ChipPanel() {
       {/* ── Loading / disabled ─────────────────────────────── */}
       <section>
         <SectionHeader>Loading & disabled</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Chip loading={pending} onClick={save} variant="primary">
+  {pending ? 'Saving…' : 'Click to simulate'}
+</Chip>
+
+<Chip loading variant="success" startIcon={<Check />}>Verifying</Chip>
+
+<Chip disabled variant="primary">Disabled</Chip>
+<Chip disabled selected variant="success">Disabled · selected</Chip>
+<Chip disabled removable onRemove={…}>Disabled · removable</Chip>`}
+        >
           <Chip loading={pending} onClick={triggerLoading} variant="primary">
             {pending ? 'Saving…' : 'Click to simulate'}
           </Chip>
@@ -501,7 +535,21 @@ export function ChipPanel() {
       {/* ── Polymorphic ────────────────────────────────────── */}
       <section>
         <SectionHeader>Polymorphism · the `as` prop</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Chip
+  as="a"
+  href="https://example.com"
+  target="_blank"
+  rel="noreferrer"
+  variant="info"
+  appearance="outline"
+  startIcon={<Location />}
+>
+  Open in Maps
+</Chip>
+
+<Chip as="button" type="submit" variant="primary">Submit form</Chip>`}
+        >
           <Chip
             as="a"
             href="https://example.com"

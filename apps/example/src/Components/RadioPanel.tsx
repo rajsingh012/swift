@@ -417,7 +417,13 @@ export function RadioPanel() {
 
       <section>
         <SectionHeader>Basic · uncontrolled</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<RadioGroup defaultValue="economy" orientation="horizontal">
+  <Radio value="economy">Economy</Radio>
+  <Radio value="premium">Premium Economy</Radio>
+  <Radio value="business">Business</Radio>
+</RadioGroup>`}
+        >
           <RadioGroup defaultValue="economy" orientation="horizontal">
             <Radio value="economy">Economy</Radio>
             <Radio value="premium">Premium Economy</Radio>

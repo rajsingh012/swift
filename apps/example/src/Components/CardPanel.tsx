@@ -178,7 +178,22 @@ export function CardPanel() {
       {/* ── Compound architecture ──────────────────────────── */}
       <section>
         <SectionHeader>Compound architecture · the recommended way</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Card>
+  <Card.Header divider>
+    <Card.Title>Flight details</Card.Title>
+    <Card.Description>Delhi → Mumbai · IndiGo 6E 2134</Card.Description>
+  </Card.Header>
+  <Card.Content>
+    {/* …layout… */}
+  </Card.Content>
+  <Card.Footer divider muted>
+    <Button size="sm">
+      Book now <Button.RightIcon><ArrowRight size={14} /></Button.RightIcon>
+    </Button>
+  </Card.Footer>
+</Card>`}
+        >
           <Card className="w-full max-w-md">
             <Card.Header divider>
               <Card.Title>Flight details</Card.Title>
@@ -283,7 +298,13 @@ export function CardPanel() {
       {/* ── Radius ─────────────────────────────────────────── */}
       <section>
         <SectionHeader>Radius</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Card radius="none">…</Card>
+<Card radius="sm">…</Card>
+<Card radius="md">…</Card>
+<Card radius="lg">…</Card>
+<Card radius="full">…</Card>`}
+        >
           {(['none', 'sm', 'md', 'lg', 'full'] as const).map((r) => (
             <Card key={r} radius={r} className="w-32">
               <Card.Content>
@@ -299,7 +320,16 @@ export function CardPanel() {
       {/* ── Clickable ──────────────────────────────────────── */}
       <section>
         <SectionHeader>Clickable · interactive cards</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* clickable implicitly renders the root as <button>
+    (or wires ARIA button semantics when 'as' is non-native). */}
+<Card clickable variant="elevated" onClick={() => save()}>
+  <Card.Content>
+    <Text fontWeight="semibold">Goa beach getaway</Text>
+    <Text variant="body-xs" color="muted">4 nights · ₹18,200</Text>
+  </Card.Content>
+</Card>`}
+        >
           <Card
             clickable
             variant="elevated"
@@ -343,7 +373,20 @@ export function CardPanel() {
       {/* ── Polymorphic ─────────────────────────────────────── */}
       <section>
         <SectionHeader>Polymorphism · the `as` prop</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Card as="article">
+  <Card.Header>
+    <Card.Title>Semantic article</Card.Title>
+    <Card.Description>For SEO and accessibility.</Card.Description>
+  </Card.Header>
+</Card>
+
+<Card as="a" href="…" target="_blank" rel="noreferrer" clickable variant="outlined">
+  <Card.Content>
+    <Text fontWeight="semibold">Native anchor card</Text>
+  </Card.Content>
+</Card>`}
+        >
           <Card as="article" className="w-72">
             <Card.Header>
               <Card.Title>Semantic article</Card.Title>
@@ -366,7 +409,17 @@ export function CardPanel() {
       {/* ── asChild ────────────────────────────────────────── */}
       <section>
         <SectionHeader>asChild · merge into a router Link</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* No extra wrapper — Card's className, data-*, click handler,
+    and ref all merge onto the Link. */}
+<Card asChild clickable variant="outlined">
+  <Link to="/">
+    <Card.Content>
+      <Text fontWeight="semibold">TanStack Router Link</Text>
+    </Card.Content>
+  </Link>
+</Card>`}
+        >
           <Card asChild clickable variant="outlined" className="block w-72 no-underline">
             <Link to="/">
               <Card.Content>
@@ -386,7 +439,11 @@ export function CardPanel() {
       {/* ── Loading ────────────────────────────────────────── */}
       <section>
         <SectionHeader>Loading · built-in skeleton</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* Built-in skeleton + aria-busy. For custom placeholders,
+    leave 'loading' off and render your own. */}
+<Card loading />`}
+        >
           <Card loading className="w-72" />
           <Card className="w-72">
             <Card.Content>
@@ -409,7 +466,23 @@ export function CardPanel() {
       {/* ── Media ──────────────────────────────────────────── */}
       <section>
         <SectionHeader>Card.Media · product cards</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Card clickable variant="elevated">
+  <Card.Media src="…image.jpg" alt="Beach" aspectRatio="16 / 9" />
+  <Card.Header>
+    <Card.Title>Palolem beach stay</Card.Title>
+    <Card.Description>Goa · 4 nights · breakfast included</Card.Description>
+  </Card.Header>
+  <Card.Footer divider>
+    <Text variant="heading-sm" fontWeight="bold">₹18,200</Text>
+  </Card.Footer>
+</Card>
+
+{/* Or drop any node — video, iframe, gradient — instead of an image. */}
+<Card.Media aspectRatio="16 / 9">
+  <div className="…"><Hotel size={48} /></div>
+</Card.Media>`}
+        >
           <Card clickable variant="elevated" className="w-72 text-left">
             <Card.Media
               src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=70"
@@ -448,7 +521,24 @@ export function CardPanel() {
       {/* ── Actions ────────────────────────────────────────── */}
       <section>
         <SectionHeader>Card.Actions · button row</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Card>
+  <Card.Header>
+    <Card.Title>Delete this saved card?</Card.Title>
+    <Card.Description>This action cannot be undone.</Card.Description>
+  </Card.Header>
+  <Card.Actions divider align="end">
+    <Button variant="ghost" size="sm">Cancel</Button>
+    <Button variant="danger" size="sm">
+      <Button.LeftIcon><Edit size={14} /></Button.LeftIcon>
+      Delete
+    </Button>
+  </Card.Actions>
+</Card>
+
+{/* align: start | center | end | between */}
+<Card.Actions divider align="between" muted>…</Card.Actions>`}
+        >
           <Card className="w-80">
             <Card.Header>
               <Card.Title>Delete this saved card?</Card.Title>
@@ -489,7 +579,11 @@ export function CardPanel() {
       {/* ── Disabled ───────────────────────────────────────── */}
       <section>
         <SectionHeader>Disabled</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Card disabled>…</Card>
+{/* clickable + disabled: handlers blocked, aria-disabled set. */}
+<Card disabled clickable>…</Card>`}
+        >
           <Card disabled className="w-64">
             <Card.Content>
               <Text variant="body-sm" fontWeight="semibold">Disabled card</Text>

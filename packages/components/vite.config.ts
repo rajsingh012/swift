@@ -23,6 +23,7 @@ export default defineConfig({
         Checkbox: resolve(__dirname, 'src/Checkbox/index.ts'),
         Chip: resolve(__dirname, 'src/Chip/index.ts'),
         Input: resolve(__dirname, 'src/Input/index.ts'),
+        ListItem: resolve(__dirname, 'src/ListItem/index.ts'),
         Radio: resolve(__dirname, 'src/Radio/index.ts'),
         Sheet: resolve(__dirname, 'src/Sheet/index.ts'),
         Text: resolve(__dirname, 'src/Text/index.ts'),

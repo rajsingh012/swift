@@ -194,7 +194,15 @@ export function ButtonPanel() {
 
       <section>
         <SectionHeader>Unstyled · primitive mode</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* You keep focus, disabled, polymorphism, and a11y — own every visual. */}
+<Button
+  variant="unstyled"
+  className="rounded-full bg-linear-to-r from-violet-600 to-pink-600 px-6 py-2.5 text-sm font-semibold text-white"
+>
+  Fully custom CTA
+</Button>`}
+        >
           <Button
             variant="unstyled"
             className="rounded-full bg-linear-to-r from-violet-600 to-pink-600 px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2"
@@ -252,7 +260,24 @@ export function ButtonPanel() {
 
       <section>
         <SectionHeader>With icons · compound slots</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Button>
+  <Button.LeftIcon><Check size={16} /></Button.LeftIcon>
+  Confirm
+</Button>
+
+<Button variant="ghost">
+  Continue
+  <Button.RightIcon><ArrowRight size={16} /></Button.RightIcon>
+</Button>
+
+{/* Slots render in source order — full layout control, no ordering props. */}
+<Button variant="outline">
+  <Button.LeftIcon><Edit size={16} /></Button.LeftIcon>
+  <Button.Label>Edit booking</Button.Label>
+  <Button.RightIcon><ArrowRight size={16} /></Button.RightIcon>
+</Button>`}
+        >
           <Button>
             <Button.LeftIcon><Check size={16} /></Button.LeftIcon>
             Confirm
@@ -278,7 +303,16 @@ export function ButtonPanel() {
 
       <section>
         <SectionHeader>Icon-only</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* iconOnly buttons require aria-label — no visible text for SR. */}
+<Button iconOnly aria-label="Add to favourites">
+  <Star size={16} />
+</Button>
+
+<Button variant="ghost" size="sm" iconOnly aria-label="Search">
+  <Search size={14} />
+</Button>`}
+        >
           <Button iconOnly aria-label="Add to favourites">
             <Star size={16} />
           </Button>
@@ -302,7 +336,17 @@ export function ButtonPanel() {
 
       <section>
         <SectionHeader>Loading</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* Content stays mounted but hidden — width is preserved so the layout
+    never jumps. Clicks are suppressed and aria-busy is set. */}
+<Button loading>Saving…</Button>
+<Button variant="danger" loading>Deleting</Button>
+
+<Button onClick={triggerLoad} loading={isLoading}>
+  <Button.LeftIcon><Check size={16} /></Button.LeftIcon>
+  Click to simulate
+</Button>`}
+        >
           <Button loading>Saving…</Button>
           <Button variant="secondary" loading>
             Loading
@@ -322,7 +366,17 @@ export function ButtonPanel() {
 
       <section>
         <SectionHeader>Polymorphism · the `as` prop</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Button>Native button</Button>
+
+<Button as="a" href="https://example.com" target="_blank" rel="noreferrer">
+  <Button.LeftIcon><ArrowRight size={16} /></Button.LeftIcon>
+  External link
+</Button>
+
+{/* TS narrows the rest of the props to the chosen element. */}
+<Button as={Link} to="/" variant="secondary">Router Link</Button>`}
+        >
           <Button>Native button</Button>
           <Button as="a" href="https://example.com" target="_blank" rel="noreferrer">
             <Button.LeftIcon><ArrowRight size={16} /></Button.LeftIcon>
@@ -339,7 +393,23 @@ export function ButtonPanel() {
 
       <section>
         <SectionHeader>Slot className overrides</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* Target individual slots — composes with built-in classes. */}
+<Button
+  classes={{ root: 'rounded-full', leftIcon: 'text-content-highlight' }}
+>
+  <Button.LeftIcon><Star size={16} /></Button.LeftIcon>
+  Pill button
+</Button>
+
+<Button
+  variant="secondary"
+  classes={{ loader: 'text-content-brand' }}
+  loading
+>
+  Custom loader colour
+</Button>`}
+        >
           <Button
             classes={{
               root: 'rounded-full',
@@ -371,7 +441,11 @@ export function ButtonPanel() {
 
       <section>
         <SectionHeader>Disabled</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Button disabled>Primary</Button>
+<Button variant="secondary" disabled>Secondary</Button>
+<Button variant="danger" disabled>Danger</Button>`}
+        >
           <Button disabled>Primary</Button>
           <Button variant="secondary" disabled>Secondary</Button>
           <Button variant="outline" disabled>Outline</Button>

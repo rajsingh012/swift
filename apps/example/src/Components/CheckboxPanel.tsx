@@ -506,7 +506,10 @@ export function CheckboxPanel() {
 
       <section>
         <SectionHeader>Basic</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Checkbox defaultChecked>Accept terms and conditions</Checkbox>
+<Checkbox>Subscribe to newsletter</Checkbox>`}
+        >
           <Checkbox defaultChecked>Accept terms and conditions</Checkbox>
           <Checkbox>Subscribe to newsletter</Checkbox>
         </PreviewRow>
@@ -567,7 +570,16 @@ export function CheckboxPanel() {
 
       <section>
         <SectionHeader>Controlled · indeterminate cycle</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* checked can be boolean | 'indeterminate'. */}
+const [checked, setChecked] = useState<boolean | 'indeterminate'>(false)
+
+<Checkbox checked={checked} onCheckedChange={setChecked}>
+  Click to toggle
+</Checkbox>
+
+<button onClick={() => setChecked('indeterminate')}>Set indeterminate</button>`}
+        >
           <Checkbox
             checked={controlled}
             onCheckedChange={(next) => setControlled(next)}

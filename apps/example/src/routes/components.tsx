@@ -19,6 +19,7 @@ import {
   CheckboxPanel,
   ChipPanel,
   InputPanel,
+  ListItemPanel,
   RadioPanel,
   SheetPanel,
   TextPanel,
@@ -35,6 +36,7 @@ type ComponentName =
   | 'Checkbox'
   | 'Radio'
   | 'Input'
+  | 'ListItem'
   | 'Text'
   | 'Accordion'
   | 'Sheet'
@@ -48,6 +50,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Checkbox', icon: CheckCircle },
   { name: 'Radio', icon: CheckCircleFilled },
   { name: 'Input', icon: Edit },
+  { name: 'ListItem', icon: Document },
   { name: 'Sheet', icon: ArrowRightLong },
   { name: 'Text', icon: Document },
 ]
@@ -60,6 +63,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Checkbox: CheckboxPanel,
   Radio: RadioPanel,
   Input: InputPanel,
+  ListItem: ListItemPanel,
   Text: TextPanel,
   Accordion: AccordionPanel,
   Sheet: SheetPanel,

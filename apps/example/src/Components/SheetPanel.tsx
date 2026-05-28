@@ -81,7 +81,32 @@ export function SheetPanel() {
       {/* Basic ─────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Basic · uncontrolled · asChild trigger</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Sheet>
+  <Sheet.Trigger asChild>
+    <Button variant="primary">Open filters</Button>
+  </Sheet.Trigger>
+  <Sheet.Portal>
+    <Sheet.Overlay />
+    <Sheet.Content side="right">
+      <Sheet.Header>
+        <Sheet.Title>Flight filters</Sheet.Title>
+        <Sheet.Description>Narrow your results.</Sheet.Description>
+        <Sheet.Close />
+      </Sheet.Header>
+      <Sheet.Body>{/* filter controls */}</Sheet.Body>
+      <Sheet.Footer>
+        <Sheet.Close asChild>
+          <Button variant="outline">Cancel</Button>
+        </Sheet.Close>
+        <Sheet.Close asChild>
+          <Button>Apply filters</Button>
+        </Sheet.Close>
+      </Sheet.Footer>
+    </Sheet.Content>
+  </Sheet.Portal>
+</Sheet>`}
+        >
           <Sheet>
             <Sheet.Trigger asChild>
               <Button variant="primary">Open filters</Button>
@@ -99,7 +124,12 @@ export function SheetPanel() {
       {/* Sides ─────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Side positioning</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Sheet.Content side="left">   …</Sheet.Content>
+<Sheet.Content side="right">  …</Sheet.Content>
+<Sheet.Content side="top">    …</Sheet.Content>
+<Sheet.Content side="bottom"> …</Sheet.Content>`}
+        >
           {SIDES.map((s) => (
             <Button
               key={s}
@@ -126,7 +156,15 @@ export function SheetPanel() {
       {/* Sizes ─────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Sizes (sm · md · lg · full)</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Sheet.Content side="right" size="sm" />
+<Sheet.Content side="right" size="md" />   {/* default */}
+<Sheet.Content side="right" size="lg" />
+<Sheet.Content side="right" size="full" />
+
+{/* Width is driven by the --sheet-width token —
+    consumers can override per-sheet: style={{ '--sheet-width': '30rem' }} */}`}
+        >
           {SIZES.map((sz) => (
             <Button
               key={sz}
@@ -164,7 +202,24 @@ export function SheetPanel() {
       {/* Controlled ────────────────────────────────────────── */}
       <section>
         <SectionHeader>Controlled · initial focus</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`const [open, setOpen] = useState(false)
+const nameRef = useRef<HTMLInputElement>(null)
+
+<Button onClick={() => setOpen(true)}>Edit profile</Button>
+
+<Sheet open={open} onOpenChange={setOpen}>
+  <Sheet.Portal>
+    <Sheet.Overlay />
+    {/* Focus lands on the name field on open. */}
+    <Sheet.Content side="right" initialFocusRef={nameRef}>
+      <Sheet.Body>
+        <input ref={nameRef} defaultValue="Raj" />
+      </Sheet.Body>
+    </Sheet.Content>
+  </Sheet.Portal>
+</Sheet>`}
+        >
           <Button variant="primary" onClick={() => setControlledOpen(true)}>
             Edit profile
           </Button>
@@ -209,7 +264,19 @@ export function SheetPanel() {
       {/* Non-modal ─────────────────────────────────────────── */}
       <section>
         <SectionHeader>Non-modal · background stays interactive</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* No overlay, no scroll lock, no inert background. */}
+<Sheet modal={false}>
+  <Sheet.Trigger asChild>
+    <Button variant="secondary">Open inspector</Button>
+  </Sheet.Trigger>
+  <Sheet.Portal>
+    <Sheet.Content side="right" size="sm">
+      …
+    </Sheet.Content>
+  </Sheet.Portal>
+</Sheet>`}
+        >
           <Sheet modal={false}>
             <Sheet.Trigger asChild>
               <Button variant="secondary">Open inspector</Button>
@@ -238,7 +305,18 @@ export function SheetPanel() {
       {/* Prevent close ─────────────────────────────────────── */}
       <section>
         <SectionHeader>Prevent close · unsaved form</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* Useful for payment flows / dirty forms where an
+    accidental dismiss loses data. */}
+<Sheet.Content
+  side="right"
+  closeOnEscape={false}
+  closeOnInteractOutside={false}
+>
+  {/* …or use onEscapeKeyDown / onInteractOutside
+       and call event.preventDefault() conditionally. */}
+</Sheet.Content>`}
+        >
           <Sheet>
             <Sheet.Trigger asChild>
               <Button variant="primary">Open payment</Button>
@@ -279,7 +357,28 @@ export function SheetPanel() {
       {/* Nested ────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Nested overlays · Esc closes top-most first</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* Nested Sheets work out of the box — focus is trapped in the
+    top-most sheet, the outer becomes inert, and Esc closes only
+    the top one. */}
+<Sheet>
+  <Sheet.Trigger asChild><Button>Open outer</Button></Sheet.Trigger>
+  <Sheet.Portal>
+    <Sheet.Overlay />
+    <Sheet.Content side="right">
+      <Sheet.Body>
+        <Sheet>
+          <Sheet.Trigger asChild><Button>Open inner</Button></Sheet.Trigger>
+          <Sheet.Portal>
+            <Sheet.Overlay />
+            <Sheet.Content side="left" size="sm">…</Sheet.Content>
+          </Sheet.Portal>
+        </Sheet>
+      </Sheet.Body>
+    </Sheet.Content>
+  </Sheet.Portal>
+</Sheet>`}
+        >
           <Sheet>
             <Sheet.Trigger asChild>
               <Button variant="secondary">Open outer</Button>

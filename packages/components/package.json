@@ -55,6 +55,11 @@
       "import": "./dist/Input.js",
       "require": "./dist/Input.cjs"
     },
+    "./ListItem": {
+      "types": "./dist/src/ListItem/index.d.ts",
+      "import": "./dist/ListItem.js",
+      "require": "./dist/ListItem.cjs"
+    },
     "./Radio": {
       "types": "./dist/src/Radio/index.d.ts",
       "import": "./dist/Radio.js",

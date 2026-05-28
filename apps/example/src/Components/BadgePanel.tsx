@@ -300,7 +300,12 @@ export function BadgePanel() {
       {/* ── Radius / pill ───────────────────────────────────────── */}
       <section>
         <SectionHeader>Radius</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Badge radius="sm" variant="success">sm</Badge>
+<Badge radius="md" variant="success">md (default)</Badge>
+<Badge radius="full" variant="success">full</Badge>
+<Badge pill variant="info">pill shorthand</Badge>`}
+        >
           <Badge radius="sm" variant="success">sm</Badge>
           <Badge radius="md" variant="success">md (default)</Badge>
           <Badge radius="full" variant="success">full</Badge>
@@ -314,7 +319,12 @@ export function BadgePanel() {
       {/* ── Dot ─────────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Dot · leading indicator</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Badge dot variant="success">Online</Badge>
+<Badge dot variant="warning">Pending review</Badge>
+<Badge dot variant="error">Down</Badge>
+<Badge dot variant="info" appearance="outline">Live</Badge>`}
+        >
           <Badge dot variant="success">Online</Badge>
           <Badge dot variant="warning">Pending review</Badge>
           <Badge dot variant="error">Down</Badge>
@@ -329,7 +339,15 @@ export function BadgePanel() {
       {/* ── Status ──────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Status · dot-only presence indicators</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* No children → collapses to a coloured dot.
+    Auto-sets aria-label="Status: online" (etc). */}
+<Badge status="online" />
+<Badge status="away" />
+<Badge status="busy" />
+<Badge status="offline" />
+<Badge status="online" size="lg" />`}
+        >
           <div className="flex items-center gap-2">
             <Badge status="online" />
             <Text variant="body-sm">Online</Text>
@@ -359,7 +377,26 @@ export function BadgePanel() {
       {/* ── Count / notification ───────────────────────────────── */}
       <section>
         <SectionHeader>Count · notification pips</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Badge count={3}   variant="error" pill appearance="solid" />
+<Badge count={42}  variant="error" pill appearance="solid" />
+<Badge count={120} max={99} variant="error" pill appearance="solid" />
+
+{/* Anchored to an icon button */}
+<div className="relative inline-flex">
+  <Button variant="secondary" iconOnly aria-label="Notifications">
+    <Notifications size={20} />
+  </Button>
+  <Badge
+    count={7}
+    variant="error"
+    pill
+    appearance="solid"
+    size="sm"
+    className="absolute -top-1 -right-1"
+  />
+</div>`}
+        >
           <Badge count={3} variant="error" pill appearance="solid" />
           <Badge count={42} variant="error" pill appearance="solid" />
           <Badge count={120} max={99} variant="error" pill appearance="solid" />
@@ -409,7 +446,14 @@ export function BadgePanel() {
       {/* ── Icons ───────────────────────────────────────────────── */}
       <section>
         <SectionHeader>With icons</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Badge variant="success" startIcon={<Check />}>Verified</Badge>
+<Badge variant="info"    startIcon={<InfoCircle />}>Beta</Badge>
+<Badge variant="warning" startIcon={<Alert />}>Action required</Badge>
+<Badge variant="default" endIcon={<ArrowRight />} clickable onClick={…}>
+  Upgrade
+</Badge>`}
+        >
           <Badge variant="success" startIcon={<Check />}>Verified</Badge>
           <Badge variant="info" startIcon={<InfoCircle />}>Beta</Badge>
           <Badge variant="warning" startIcon={<Alert />}>Action required</Badge>
@@ -426,7 +470,21 @@ export function BadgePanel() {
       {/* ── Removable / chips ───────────────────────────────────── */}
       <section>
         <SectionHeader>Removable · filter chips</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{tags.map((tag) => (
+  <Badge
+    key={tag}
+    variant="default"
+    appearance="outline"
+    pill
+    startIcon={<Tag />}
+    removable
+    onRemove={() => setTags((t) => t.filter((x) => x !== tag))}
+  >
+    {tag}
+  </Badge>
+))}`}
+        >
           {tags.length === 0 ? (
             <Text variant="body-sm" color="muted">
               All tags removed.{' '}
@@ -462,7 +520,24 @@ export function BadgePanel() {
       {/* ── Clickable ───────────────────────────────────────────── */}
       <section>
         <SectionHeader>Clickable</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* role="button", tabIndex=0, Enter/Space activation. */}
+<Badge clickable onClick={…} variant="info" startIcon={<Flash />}>
+  Upgrade to Pro
+</Badge>
+
+<Badge
+  clickable
+  removable
+  onClick={…}
+  onRemove={…}
+  variant="default"
+  appearance="soft"
+  startIcon={<Star />}
+>
+  Saved filter
+</Badge>`}
+        >
           <Badge clickable onClick={() => setClickCount((c) => c + 1)} variant="info" startIcon={<Flash />}>
             Upgrade to Pro
           </Badge>
@@ -499,7 +574,23 @@ export function BadgePanel() {
       {/* ── Polymorphic ─────────────────────────────────────────── */}
       <section>
         <SectionHeader>Polymorphism · the `as` prop</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Badge
+  as="a"
+  href="https://example.com"
+  target="_blank"
+  rel="noreferrer"
+  variant="info"
+  appearance="outline"
+  endIcon={<ArrowRight />}
+>
+  Read the docs
+</Badge>
+
+<Badge as="button" type="button" onClick={…} variant="success" startIcon={<Check />}>
+  Mark complete
+</Badge>`}
+        >
           <Badge as="a" href="https://example.com" target="_blank" rel="noreferrer" variant="info" appearance="outline" endIcon={<ArrowRight />}>
             Read the docs
           </Badge>
@@ -515,7 +606,12 @@ export function BadgePanel() {
       {/* ── Loading ─────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Loading</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`{/* Spinner replaces the leading slot, aria-busy set,
+    remove + click blocked. */}
+<Badge loading variant="info">Deploying</Badge>
+<Badge loading variant="warning" appearance="outline">Syncing</Badge>`}
+        >
           <Badge loading variant="info">Deploying</Badge>
           <Badge loading variant="warning" appearance="outline">Syncing</Badge>
           <Badge
@@ -536,7 +632,14 @@ export function BadgePanel() {
       {/* ── Disabled ────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Disabled</SectionHeader>
-        <PreviewRow>
+        <PreviewRow
+          code={`<Badge disabled>Default</Badge>
+<Badge disabled variant="success">Success</Badge>
+<Badge disabled variant="error" removable onRemove={…}>Removable</Badge>
+<Badge disabled clickable onClick={…} variant="info" startIcon={<Flash />}>
+  Clickable
+</Badge>`}
+        >
           <Badge disabled>Default</Badge>
           <Badge disabled variant="success">Success</Badge>
           <Badge disabled variant="error" removable onRemove={() => undefined}>Removable</Badge>

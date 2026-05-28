@@ -1,0 +1,66 @@
+/**
+ * ListItem — surface tokens for the row chrome. Everything visible
+ * (hover background, selected tint, radius, padding, gap) routes
+ * through a single CSS custom property so a consumer can override
+ * one row inline or theme the whole library globally.
+ *
+ *   <ListItem style={{ '--list-item-hover-bg': '#eee' }} />
+ *
+ * `data-state` attributes ride alongside so external CSS / animation
+ * libraries can hook in without depending on Tailwind class strings.
+ */
+
+.swift-list-item {
+  --list-item-padding-x: 1rem;            /* 16px */
+  --list-item-gap: 0.75rem;               /* 12px (matches slot-gap-md) */
+  --list-item-radius: 0px;
+  --list-item-bg: transparent;
+
+  /* Resting interaction surfaces. `muted` (neutral-50 / neutral-800) is the
+     right anchor: a step lighter than the border token (neutral-200), so
+     hairline borders on nested controls (checkbox, switch, badge) stay
+     visible during hover. `subtle` would camouflage them. */
+  --list-item-hover-bg: var(--color-surface-muted);
+  --list-item-press-bg: var(--color-surface-subtle);
+
+  /* Selected / active each carry their own tint; the *-hover variants
+     deepen the same hue 8 % toward the strong content color, so hovering
+     a selected row gives feedback without re-painting the identity. */
+  --list-item-selected-bg: var(--color-surface-brand-muted);
+  --list-item-selected-hover-bg: color-mix(in srgb, var(--color-surface-brand-muted) 92%, var(--color-content-brand));
+
+  --list-item-active-bg: var(--color-surface-subtle);
+  --list-item-active-hover-bg: color-mix(in srgb, var(--color-surface-subtle) 88%, var(--color-content-strong));
+  --list-item-active-accent: var(--color-stroke-brand);
+
+  padding-inline: var(--list-item-padding-x);
+}
+
+/* Active state gets a leading accent bar that flips for RTL. */
+.swift-list-item[data-active="true"]::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 2px;
+  background: var(--list-item-active-accent);
+}
+
+/* When the row is rendered as an <a> or <button>, kill the host's
+   default chrome so our tokens own the look. */
+.swift-list-item {
+  color: inherit;
+  text-decoration: none;
+  background-image: none;
+  appearance: none;
+  border: 0;
+  font: inherit;
+}
+.swift-list-item:where(button) {
+  text-align: inherit;
+}
+
+/* Loading skeleton — used by the built-in `loading` prop. */
+.swift-list-item[data-loading="true"] {
+  pointer-events: none;
+}
