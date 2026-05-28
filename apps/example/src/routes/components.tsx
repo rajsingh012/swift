@@ -22,6 +22,7 @@ import {
   ListItemPanel,
   RadioPanel,
   SheetPanel,
+  SliderPanel,
   TextPanel,
 } from '../Components'
 import { SidebarLayout } from '../lib/SidebarLayout'
@@ -39,6 +40,7 @@ type ComponentName =
   | 'ListItem'
   | 'Radio'
   | 'Sheet'
+  | 'Slider'
   | 'Text'
 
 // Sidebar list — kept alphabetically ascending. New components should be
@@ -54,6 +56,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'ListItem', icon: Document },
   { name: 'Radio', icon: CheckCircleFilled },
   { name: 'Sheet', icon: ArrowRightLong },
+  { name: 'Slider', icon: Filter },
   { name: 'Text', icon: Document },
 ]
 
@@ -68,6 +71,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   ListItem: ListItemPanel,
   Radio: RadioPanel,
   Sheet: SheetPanel,
+  Slider: SliderPanel,
   Text: TextPanel,
 }
 
