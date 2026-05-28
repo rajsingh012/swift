@@ -12,6 +12,254 @@ const DESCRIPTION =
 const SIDES: ReadonlyArray<SheetSide> = ['left', 'right', 'top', 'bottom']
 const SIZES: ReadonlyArray<SheetSize> = ['sm', 'md', 'lg', 'full']
 
+type PropRow = {
+  name: string
+  type: string
+  defaultValue?: string
+  description: string
+}
+
+/**
+ * Three-column props table — Prop · Type · Default · Description.
+ * Same structure ButtonPanel uses; lifted here because SheetPanel needs
+ * two of them (root + Content) and inlining the JSX twice would just be
+ * noise.
+ */
+function PropsTable({ rows }: { rows: ReadonlyArray<PropRow> }) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+      <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
+        <Text
+          variant="body-xs"
+          fontWeight="bold"
+          color="secondary"
+          className="tracking-wider uppercase"
+        >
+          Prop
+        </Text>
+        <Text
+          variant="body-xs"
+          fontWeight="bold"
+          color="secondary"
+          className="tracking-wider uppercase"
+        >
+          Type
+        </Text>
+        <Text
+          variant="body-xs"
+          fontWeight="bold"
+          color="secondary"
+          className="tracking-wider uppercase"
+        >
+          Default
+        </Text>
+      </div>
+      {rows.map(({ name, type, defaultValue, description }) => (
+        <div
+          key={name}
+          className="grid gap-2 border-b border-stroke-muted px-6 py-5 last:border-0 md:grid-cols-[200px_1fr_120px] md:items-start md:gap-6"
+        >
+          <Text
+            variant="body-sm"
+            fontFamily="mono"
+            fontWeight="semibold"
+            color="primary"
+          >
+            {name}
+          </Text>
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <Text
+              variant="body-xs"
+              fontFamily="mono"
+              color="secondary"
+              className="wrap-break-word"
+            >
+              {type}
+            </Text>
+            <Text variant="body-sm" color="secondary">
+              {description}
+            </Text>
+          </div>
+          <Text
+            variant="body-xs"
+            fontFamily="mono"
+            color={defaultValue ? 'inherit' : 'muted'}
+          >
+            {defaultValue ?? '—'}
+          </Text>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** Props on the Sheet root (<Sheet>) — controls open state + modality. */
+const SHEET_ROOT_PROPS: ReadonlyArray<PropRow> = [
+  {
+    name: 'open',
+    type: 'boolean',
+    description:
+      'Controlled open state. Pair with `onOpenChange` to drive the sheet from external state (a query param, a side-panel toggle, a form save flow).',
+  },
+  {
+    name: 'defaultOpen',
+    type: 'boolean',
+    defaultValue: 'false',
+    description:
+      'Uncontrolled initial state. Ignored when `open` is provided. Use this for self-contained sheets that own their own open/close.',
+  },
+  {
+    name: 'onOpenChange',
+    type: '(open: boolean) => void',
+    description:
+      'Fires with the next open state on every open/close request — Trigger click, Close click, Esc, outside click. Required when `open` is controlled.',
+  },
+  {
+    name: 'modal',
+    type: 'boolean',
+    defaultValue: 'true',
+    description:
+      'Modal blocks the background — overlay, scroll lock, `inert` siblings. Set false for non-modal inspectors / side panels that should leave the page interactive.',
+  },
+  {
+    name: 'children',
+    type: 'ReactNode',
+    description:
+      'The compound parts — typically `<Sheet.Trigger>` and `<Sheet.Portal>` with the content tree inside.',
+  },
+]
+
+/** Props on <Sheet.Content> — the actual dialog surface. */
+const SHEET_CONTENT_PROPS: ReadonlyArray<PropRow> = [
+  {
+    name: 'side',
+    type: `'left' | 'right' | 'top' | 'bottom'`,
+    defaultValue: `'right'`,
+    description:
+      'Which edge the sheet slides in from. Drives the slide animation direction and the rounded-corner side (`top` / `bottom` round the inward-facing edge).',
+  },
+  {
+    name: 'size',
+    type: `'sm' | 'md' | 'lg' | 'full'`,
+    defaultValue: `'md'`,
+    description:
+      'Sets `--sheet-width` (left/right) or `--sheet-height` (top/bottom). Override the token inline (`style={{ "--sheet-width": "30rem" }}`) for one-off sizes.',
+  },
+  {
+    name: 'forceMount',
+    type: 'boolean',
+    defaultValue: 'false',
+    description:
+      'Keep the content mounted while closed. Use when an external animation library (Framer Motion, AutoAnimate) owns the exit transition and needs to keep the DOM around.',
+  },
+  {
+    name: 'closeOnEscape',
+    type: 'boolean',
+    defaultValue: 'true',
+    description:
+      'Dismiss on Escape. Set false for payment / dirty-form flows where an accidental Esc would lose data. The top-most open sheet handles the key — nested sheets close one at a time.',
+  },
+  {
+    name: 'closeOnInteractOutside',
+    type: 'boolean',
+    defaultValue: 'true',
+    description:
+      'Dismiss on pointer-down outside the content. Pair with `closeOnEscape={false}` to make the sheet only closeable via its explicit affordances.',
+  },
+  {
+    name: 'initialFocusRef',
+    type: 'RefObject<HTMLElement | null>',
+    description:
+      'Element to focus when the sheet opens. Falls back to the first focusable descendant, then to the content root. Useful for landing focus on a name field in an edit flow.',
+  },
+  {
+    name: 'onEscapeKeyDown',
+    type: '(event: KeyboardEvent) => void',
+    description:
+      'Fires when Esc is pressed (top-most sheet only). Call `event.preventDefault()` to keep the sheet open conditionally — e.g. only when there are unsaved changes.',
+  },
+  {
+    name: 'onInteractOutside',
+    type: '(event: PointerEvent) => void',
+    description:
+      'Fires on pointer-down outside the content. `preventDefault()` keeps the sheet open. Use this to confirm dismissal of dirty forms before closing.',
+  },
+  {
+    name: 'onOpenAutoFocus',
+    type: '(event: Event) => void',
+    description:
+      'Fires just before focus moves into the sheet on open. `preventDefault()` skips the built-in auto-focus so you can manage focus yourself.',
+  },
+  {
+    name: 'onCloseAutoFocus',
+    type: '(event: Event) => void',
+    description:
+      'Fires just before focus is restored to the trigger on close. `preventDefault()` skips the restore — useful when navigating away after a successful save.',
+  },
+  {
+    name: 'className',
+    type: 'string',
+    description:
+      'Appended to the content surface. Use for size overrides (`w-96`), padding tweaks, or custom borders beyond the default token-driven chrome.',
+  },
+  {
+    name: 'ref',
+    type: 'Ref<HTMLDivElement>',
+    description:
+      'Forwarded to the rendered content element. Useful for measuring, scrolling, or custom interaction adapters.',
+  },
+  {
+    name: '...rest',
+    type: 'HTMLAttributes<HTMLDivElement>',
+    description:
+      'Standard div attributes pass through (id, role overrides, data-*, aria-*, event handlers). `role` defaults to `"dialog"` — override at your own risk.',
+  },
+]
+
+/** Quick reference to every compound part exported off the Sheet namespace. */
+const SHEET_COMPOUND_PARTS: ReadonlyArray<{ name: string; desc: string }> = [
+  {
+    name: 'Sheet.Trigger',
+    desc: 'The element that opens the sheet. Renders a `<button>` by default; pass `asChild` to merge props onto a single child (e.g. your own Button component) for custom chrome without a wrapper.',
+  },
+  {
+    name: 'Sheet.Portal',
+    desc: 'Renders its children into a portal so the overlay + content escape transformed / overflow-clipped ancestors. Defaults to `document.body`; override with `container`.',
+  },
+  {
+    name: 'Sheet.Overlay',
+    desc: 'The dimmed backdrop. Listens to its own `data-state` for fade animations. Omit it entirely for non-modal sheets — the content slides in over a still-interactive page.',
+  },
+  {
+    name: 'Sheet.Content',
+    desc: 'The sliding panel itself. Owns the focus trap, scroll lock, Esc / outside dismissal, and the slide animation. The only required prop is none — `side="right" size="md"` are sensible defaults.',
+  },
+  {
+    name: 'Sheet.Header',
+    desc: 'Padded top region. Wraps `Sheet.Title` + `Sheet.Description`. Pairs visually with `Sheet.Close` which positions itself in the top-right corner of this section.',
+  },
+  {
+    name: 'Sheet.Title',
+    desc: 'The dialog\'s accessible name. Auto-registers its id so the parent content gets `aria-labelledby` only when present. Pass `as="h2"` etc. to control the heading level.',
+  },
+  {
+    name: 'Sheet.Description',
+    desc: 'Secondary text under the title. Auto-registers its id for `aria-describedby`. Omit it entirely if the title alone is enough context.',
+  },
+  {
+    name: 'Sheet.Body',
+    desc: 'The scrollable middle region. `overflow-y-auto` by default — a long form scrolls inside the sheet while the Header / Footer stay pinned.',
+  },
+  {
+    name: 'Sheet.Footer',
+    desc: 'Pinned actions row at the bottom. Stacks vertically on mobile (`flex-col-reverse`), right-aligns on `sm+` viewports. Place primary action last so it lands at the bottom of the mobile stack.',
+  },
+  {
+    name: 'Sheet.Close',
+    desc: 'Dismiss affordance. Renders the corner X by default; pass `asChild` to wrap your own Button (`<Sheet.Close asChild><Button>Cancel</Button></Sheet.Close>`).',
+  },
+]
+
 /** Reusable demo content so each example stays focused on the behaviour. */
 function FilterSheetBody() {
   return (
@@ -459,6 +707,43 @@ const nameRef = useRef<HTMLInputElement>(null)
             and fade animations collapse to ~0ms under{' '}
             <code>prefers-reduced-motion</code>.
           </Text>
+        </div>
+      </section>
+
+      {/* Sheet (root) props ────────────────────────────────── */}
+      <section>
+        <SectionHeader>Sheet · root props</SectionHeader>
+        <PropsTable rows={SHEET_ROOT_PROPS} />
+      </section>
+
+      {/* Sheet.Content props ───────────────────────────────── */}
+      <section>
+        <SectionHeader>Sheet.Content · props</SectionHeader>
+        <PropsTable rows={SHEET_CONTENT_PROPS} />
+      </section>
+
+      {/* Compound parts ────────────────────────────────────── */}
+      <section>
+        <SectionHeader>Compound parts</SectionHeader>
+        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+          {SHEET_COMPOUND_PARTS.map(({ name, desc }) => (
+            <div
+              key={name}
+              className="grid gap-1 border-b border-stroke-muted px-6 py-4 last:border-0 md:grid-cols-[200px_1fr] md:items-start md:gap-6"
+            >
+              <Text
+                variant="body-sm"
+                fontFamily="mono"
+                fontWeight="semibold"
+                color="primary"
+              >
+                {name}
+              </Text>
+              <Text variant="body-sm" color="secondary">
+                {desc}
+              </Text>
+            </div>
+          ))}
         </div>
       </section>
 
