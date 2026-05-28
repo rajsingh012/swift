@@ -26,6 +26,7 @@ export default defineConfig({
         ListItem: resolve(__dirname, 'src/ListItem/index.ts'),
         Radio: resolve(__dirname, 'src/Radio/index.ts'),
         Sheet: resolve(__dirname, 'src/Sheet/index.ts'),
+        Slider: resolve(__dirname, 'src/Slider/index.ts'),
         Text: resolve(__dirname, 'src/Text/index.ts'),
       },
       formats: ['es', 'cjs'],

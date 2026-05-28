@@ -1,0 +1,47 @@
+/**
+ * Slider — token-driven chrome. Every visible dimension and colour
+ * resolves through a `--slider-*` custom property so consumers can
+ * retheme one slider inline (`style={{ '--slider-thumb-size': '20px' }}`)
+ * or globally via a higher-level selector.
+ *
+ * Defaults are calibrated for a 4 px track + 16 px thumb — the thumb
+ * overhangs the track by 6 px on each side, which is the sweet spot
+ * for touch (the thumb feels grabbable) and desktop (the track stays
+ * thin enough to read as a "slider", not a "scrollbar").
+ */
+
+.swift-slider {
+  --slider-track-size: 4px;
+  --slider-thumb-size: 16px;
+
+  /* `stroke-muted` collapses to neutral-800 in dark mode — the same value
+     as `surface-elevated` — so the unfilled rail vanishes against the
+     panel. `stroke` keeps a step of contrast in both themes:
+     light → neutral-200 on neutral-0; dark → neutral-700 on neutral-900. */
+  --slider-track-bg: var(--color-stroke);
+  --slider-range-bg: var(--color-surface-brand);
+  --slider-thumb-bg: var(--color-surface);
+  --slider-thumb-border: var(--color-stroke-brand);
+
+  /* Two-layer shadow — a tight ambient for the rim, a softer one for
+     depth on hover/drag. Stays in oklab-ish neutrals so it reads
+     correctly on dark surfaces too. */
+  --slider-thumb-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 0 0 1px rgb(0 0 0 / 0.04);
+
+  /* Focus ring colour — 30 % brand. `color-mix` keeps it in sync if a
+     consumer overrides --color-stroke-brand to a different hue. */
+  --slider-focus-ring: color-mix(in srgb, var(--color-stroke-brand) 30%, transparent);
+
+  /* Mark dots — two-colour scheme so they stay visible on both halves
+     of the rail. Inactive: strong-stroke grey on the unfilled portion.
+     Active (mark falls inside the value range): content-on-brand white
+     on the brand-coloured filled portion. */
+  --slider-mark-dot-bg: var(--color-stroke-strong);
+  --slider-mark-active-dot-bg: var(--color-content-on-brand);
+}
+
+/* Disabled state — paint the range with a neutral so the "filled" portion
+   doesn't still read as the brand colour against the dimmed root. */
+.swift-slider[data-disabled="true"] .swift-slider-range {
+  background: var(--color-stroke-strong);
+}

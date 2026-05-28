@@ -70,6 +70,11 @@
       "import": "./dist/Sheet.js",
       "require": "./dist/Sheet.cjs"
     },
+    "./Slider": {
+      "types": "./dist/src/Slider/index.d.ts",
+      "import": "./dist/Slider.js",
+      "require": "./dist/Slider.cjs"
+    },
     "./Text": {
       "types": "./dist/src/Text/index.d.ts",
       "import": "./dist/Text.js",
