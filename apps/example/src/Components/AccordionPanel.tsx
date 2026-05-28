@@ -3,7 +3,7 @@ import { Accordion } from '@swift/components/Accordion'
 import { Text } from '@swift/components/Text'
 import { ExpandMore } from '@swift/icons/ExpandMore'
 import { CopyableImport } from '../lib/CopyableImport'
-import { CodeBlock, SectionHeader } from './shared'
+import { CodeBlock, PreviewRow, SectionHeader } from './shared'
 
 const DESCRIPTION =
   'Compound accordion with single/multiple expansion, controlled/uncontrolled state, collapsible mode, keyboard roving focus, render-prop based asChild, and data-state driven CSS animation.'
@@ -86,59 +86,83 @@ export function AccordionPanel() {
 
       <section>
         <SectionHeader>Single · collapsible</SectionHeader>
-        <Accordion type="single" collapsible defaultValue="overview">
-          <Accordion.Item value="overview">
-            <Accordion.Header>
-              <Accordion.Trigger>
-                What is Swift?
-                <ExpandMore
-                  size={18}
-                  className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                />
-              </Accordion.Trigger>
-            </Accordion.Header>
-            <Accordion.Content>
-              <Text variant="body-sm" color="secondary">
-                Swift is a small design system: icons, components, and tokens — all in one place.
-                The Accordion is one of its compound components.
-              </Text>
-            </Accordion.Content>
-          </Accordion.Item>
-          <Accordion.Item value="install">
-            <Accordion.Header>
-              <Accordion.Trigger>
-                How do I install it?
-                <ExpandMore
-                  size={18}
-                  className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                />
-              </Accordion.Trigger>
-            </Accordion.Header>
-            <Accordion.Content>
-              <Text variant="body-sm" color="secondary">
-                Install <code>@swift/components</code> and import the styles once at the root of your
-                app. Then import individual components by name.
-              </Text>
-            </Accordion.Content>
-          </Accordion.Item>
-          <Accordion.Item value="theme">
-            <Accordion.Header>
-              <Accordion.Trigger>
-                Does it support dark mode?
-                <ExpandMore
-                  size={18}
-                  className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                />
-              </Accordion.Trigger>
-            </Accordion.Header>
-            <Accordion.Content>
-              <Text variant="body-sm" color="secondary">
-                Yes — toggle <code>data-theme=&quot;dark&quot;</code> on any ancestor element and every
-                token re-resolves automatically.
-              </Text>
-            </Accordion.Content>
-          </Accordion.Item>
-        </Accordion>
+        <PreviewRow
+          code={`<Accordion type="single" collapsible defaultValue="overview">
+  <Accordion.Item value="overview">
+    <Accordion.Header>
+      <Accordion.Trigger>
+        What is Swift?
+        <ExpandMore
+          size={18}
+          className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+        />
+      </Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content>
+      <Text variant="body-sm" color="secondary">
+        Swift is a small design system: icons, components, and tokens.
+      </Text>
+    </Accordion.Content>
+  </Accordion.Item>
+  {/* …more items… */}
+</Accordion>`}
+        >
+          <div className="w-full">
+            <Accordion type="single" collapsible defaultValue="overview">
+              <Accordion.Item value="overview">
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    What is Swift?
+                    <ExpandMore
+                      size={18}
+                      className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+                    />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  <Text variant="body-sm" color="secondary">
+                    Swift is a small design system: icons, components, and tokens — all in one place.
+                    The Accordion is one of its compound components.
+                  </Text>
+                </Accordion.Content>
+              </Accordion.Item>
+              <Accordion.Item value="install">
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    How do I install it?
+                    <ExpandMore
+                      size={18}
+                      className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+                    />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  <Text variant="body-sm" color="secondary">
+                    Install <code>@swift/components</code> and import the styles once at the root of your
+                    app. Then import individual components by name.
+                  </Text>
+                </Accordion.Content>
+              </Accordion.Item>
+              <Accordion.Item value="theme">
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    Does it support dark mode?
+                    <ExpandMore
+                      size={18}
+                      className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+                    />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  <Text variant="body-sm" color="secondary">
+                    Yes — toggle <code>data-theme=&quot;dark&quot;</code> on any ancestor element and every
+                    token re-resolves automatically.
+                  </Text>
+                </Accordion.Content>
+              </Accordion.Item>
+            </Accordion>
+          </div>
+        </PreviewRow>
         <Text variant="body-xs" color="muted" className="mt-2 block">
           Only one panel open at a time. <code>collapsible</code> lets the active panel close again
           when you click its trigger.
@@ -147,46 +171,71 @@ export function AccordionPanel() {
 
       <section>
         <SectionHeader>Multiple · controlled</SectionHeader>
-        <Accordion
-          type="multiple"
-          value={multiple}
-          onValueChange={setMultiple}
+        <PreviewRow
+          code={`const [open, setOpen] = useState<string[]>([])
+
+<Accordion type="multiple" value={open} onValueChange={setOpen}>
+  {faqs.map(({ v, q, a }) => (
+    <Accordion.Item key={v} value={v}>
+      <Accordion.Header>
+        <Accordion.Trigger>
+          {q}
+          <ExpandMore
+            size={18}
+            className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+          />
+        </Accordion.Trigger>
+      </Accordion.Header>
+      <Accordion.Content>
+        <Text variant="body-sm" color="secondary">{a}</Text>
+      </Accordion.Content>
+    </Accordion.Item>
+  ))}
+</Accordion>`}
         >
-          {[
-            {
-              v: 'shipping',
-              q: 'Shipping & delivery',
-              a: 'Orders ship within two business days. Tracking is emailed when the label is created.',
-            },
-            {
-              v: 'returns',
-              q: 'Returns & exchanges',
-              a: 'Send anything back within 30 days for a full refund — no questions asked.',
-            },
-            {
-              v: 'support',
-              q: 'Customer support',
-              a: 'Reach us at help@example.com, or via chat in the bottom-right of every page.',
-            },
-          ].map(({ v, q, a }) => (
-            <Accordion.Item key={v} value={v}>
-              <Accordion.Header>
-                <Accordion.Trigger>
-                  {q}
-                  <ExpandMore
-                    size={18}
-                    className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                  />
-                </Accordion.Trigger>
-              </Accordion.Header>
-              <Accordion.Content>
-                <Text variant="body-sm" color="secondary">
-                  {a}
-                </Text>
-              </Accordion.Content>
-            </Accordion.Item>
-          ))}
-        </Accordion>
+          <div className="w-full">
+            <Accordion
+              type="multiple"
+              value={multiple}
+              onValueChange={setMultiple}
+            >
+              {[
+                {
+                  v: 'shipping',
+                  q: 'Shipping & delivery',
+                  a: 'Orders ship within two business days. Tracking is emailed when the label is created.',
+                },
+                {
+                  v: 'returns',
+                  q: 'Returns & exchanges',
+                  a: 'Send anything back within 30 days for a full refund — no questions asked.',
+                },
+                {
+                  v: 'support',
+                  q: 'Customer support',
+                  a: 'Reach us at help@example.com, or via chat in the bottom-right of every page.',
+                },
+              ].map(({ v, q, a }) => (
+                <Accordion.Item key={v} value={v}>
+                  <Accordion.Header>
+                    <Accordion.Trigger>
+                      {q}
+                      <ExpandMore
+                        size={18}
+                        className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+                      />
+                    </Accordion.Trigger>
+                  </Accordion.Header>
+                  <Accordion.Content>
+                    <Text variant="body-sm" color="secondary">
+                      {a}
+                    </Text>
+                  </Accordion.Content>
+                </Accordion.Item>
+              ))}
+            </Accordion>
+          </div>
+        </PreviewRow>
         <Text variant="body-xs" color="muted" className="mt-2 block">
           Open: <code>{multiple.length ? multiple.join(', ') : '∅'}</code>. State is fully owned by
           the parent — the accordion is a thin view.
@@ -195,89 +244,136 @@ export function AccordionPanel() {
 
       <section>
         <SectionHeader>Disabled item</SectionHeader>
-        <Accordion type="single" collapsible>
-          <Accordion.Item value="enabled">
-            <Accordion.Header>
-              <Accordion.Trigger>
-                Enabled section
-                <ExpandMore
-                  size={18}
-                  className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                />
-              </Accordion.Trigger>
-            </Accordion.Header>
-            <Accordion.Content>
-              <Text variant="body-sm" color="secondary">
-                Clickable. The next item is disabled — keyboard navigation skips it.
-              </Text>
-            </Accordion.Content>
-          </Accordion.Item>
-          <Accordion.Item value="disabled" disabled>
-            <Accordion.Header>
-              <Accordion.Trigger>
-                Disabled section
-                <ExpandMore
-                  size={18}
-                  className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                />
-              </Accordion.Trigger>
-            </Accordion.Header>
-            <Accordion.Content>
-              <Text variant="body-sm" color="secondary">
-                You should not be able to reach this content.
-              </Text>
-            </Accordion.Content>
-          </Accordion.Item>
-          <Accordion.Item value="last">
-            <Accordion.Header>
-              <Accordion.Trigger>
-                Another enabled section
-                <ExpandMore
-                  size={18}
-                  className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                />
-              </Accordion.Trigger>
-            </Accordion.Header>
-            <Accordion.Content>
-              <Text variant="body-sm" color="secondary">
-                Try ArrowDown / ArrowUp from a trigger — focus jumps over the disabled item.
-              </Text>
-            </Accordion.Content>
-          </Accordion.Item>
-        </Accordion>
+        <PreviewRow
+          code={`<Accordion type="single" collapsible>
+  <Accordion.Item value="enabled">
+    <Accordion.Header><Accordion.Trigger>Enabled section</Accordion.Trigger></Accordion.Header>
+    <Accordion.Content>…</Accordion.Content>
+  </Accordion.Item>
+
+  {/* Keyboard navigation (ArrowUp / ArrowDown) skips disabled items. */}
+  <Accordion.Item value="disabled" disabled>
+    <Accordion.Header><Accordion.Trigger>Disabled section</Accordion.Trigger></Accordion.Header>
+    <Accordion.Content>…</Accordion.Content>
+  </Accordion.Item>
+
+  <Accordion.Item value="last">
+    <Accordion.Header><Accordion.Trigger>Another enabled section</Accordion.Trigger></Accordion.Header>
+    <Accordion.Content>…</Accordion.Content>
+  </Accordion.Item>
+</Accordion>`}
+        >
+          <div className="w-full">
+            <Accordion type="single" collapsible>
+              <Accordion.Item value="enabled">
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    Enabled section
+                    <ExpandMore
+                      size={18}
+                      className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+                    />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  <Text variant="body-sm" color="secondary">
+                    Clickable. The next item is disabled — keyboard navigation skips it.
+                  </Text>
+                </Accordion.Content>
+              </Accordion.Item>
+              <Accordion.Item value="disabled" disabled>
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    Disabled section
+                    <ExpandMore
+                      size={18}
+                      className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+                    />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  <Text variant="body-sm" color="secondary">
+                    You should not be able to reach this content.
+                  </Text>
+                </Accordion.Content>
+              </Accordion.Item>
+              <Accordion.Item value="last">
+                <Accordion.Header>
+                  <Accordion.Trigger>
+                    Another enabled section
+                    <ExpandMore
+                      size={18}
+                      className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+                    />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  <Text variant="body-sm" color="secondary">
+                    Try ArrowDown / ArrowUp from a trigger — focus jumps over the disabled item.
+                  </Text>
+                </Accordion.Content>
+              </Accordion.Item>
+            </Accordion>
+          </div>
+        </PreviewRow>
       </section>
 
       <section>
         <SectionHeader>Render-as-child via render prop</SectionHeader>
-        <Accordion type="single" collapsible>
-          <Accordion.Item value="custom">
-            <Accordion.Header as="h4">
-              <Accordion.Trigger
-                render={(props) => {
-                  const { ref: _ref, ...rest } = props
-                  return (
-                    <button
-                      {...rest}
-                      className={`${props.className ?? ''} bg-surface-brand-muted text-content-brand hover:bg-surface-brand-muted/80`}
+        <PreviewRow
+          code={`<Accordion type="single" collapsible>
+  <Accordion.Item value="custom">
+    <Accordion.Header as="h4">
+      {/* render gets all data attributes, ARIA wiring, and event
+          handlers — you control the element. */}
+      <Accordion.Trigger
+        render={(props) => (
+          <button
+            {...props}
+            className={\`\${props.className ?? ''} bg-surface-brand-muted text-content-brand\`}
+          />
+        )}
+      >
+        Custom trigger element
+        <ExpandMore size={18} />
+      </Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content>…</Accordion.Content>
+  </Accordion.Item>
+</Accordion>`}
+        >
+          <div className="w-full">
+            <Accordion type="single" collapsible>
+              <Accordion.Item value="custom">
+                <Accordion.Header as="h4">
+                  <Accordion.Trigger
+                    render={(props) => {
+                      const { ref: _ref, ...rest } = props
+                      return (
+                        <button
+                          {...rest}
+                          className={`${props.className ?? ''} bg-surface-brand-muted text-content-brand hover:bg-surface-brand-muted/80`}
+                        />
+                      )
+                    }}
+                  >
+                    Custom trigger element
+                    <ExpandMore
+                      size={18}
+                      className="transition-transform group-data-[state=open]/accordion-item:rotate-180"
                     />
-                  )
-                }}
-              >
-                Custom trigger element
-                <ExpandMore
-                  size={18}
-                  className="transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                />
-              </Accordion.Trigger>
-            </Accordion.Header>
-            <Accordion.Content>
-              <Text variant="body-sm" color="secondary">
-                The <code>render</code> prop lets you clone the trigger into any element while
-                keeping all data attributes, ARIA wiring, and event handlers.
-              </Text>
-            </Accordion.Content>
-          </Accordion.Item>
-        </Accordion>
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                  <Text variant="body-sm" color="secondary">
+                    The <code>render</code> prop lets you clone the trigger into any element while
+                    keeping all data attributes, ARIA wiring, and event handlers.
+                  </Text>
+                </Accordion.Content>
+              </Accordion.Item>
+            </Accordion>
+          </div>
+        </PreviewRow>
       </section>
 
       <section>

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Text } from '@swift/components/Text'
 import { CopyableImport } from '../lib/CopyableImport'
-import { CodeBlock, SectionHeader } from './shared'
+import { CodeBlock, PreviewRow, SectionHeader } from './shared'
 
 const DESCRIPTION =
   'Typography primitive with semantic variants, font weight/family, alignment, color tokens, gutter, ellipsis, per-variant tag mapping, and a polymorphic render prop.'
@@ -185,39 +185,82 @@ export function TextPanel() {
 
       <section>
         <SectionHeader>In context · Editorial</SectionHeader>
-        <article className="rounded-xl border border-stroke bg-surface-elevated p-8">
-          <Text
-            variant="body-xs"
-            fontWeight="bold"
-            color="primary"
-            gutterBottom
-            className="tracking-widest uppercase"
-          >
-            Design systems
-          </Text>
-          <Text variant="heading-xl" fontWeight="bold" gutterBottom>
-            Typography as a system, not a setting
-          </Text>
-          <Text variant="para-lg" color="secondary" gutterBottom>
-            A consistent type scale removes hundreds of micro-decisions from
-            your design process. Define it once, and every screen inherits the
-            same rhythm.
-          </Text>
-          <Text variant="para-md" gutterBottom>
-            Most apps end up with a long tail of one-off font sizes — 13px
-            here, 17px there — because designers reach for whatever feels right
-            in the moment. The fix is to ramp size and weight together, in
-            steps that read clearly at every level: hero, section, body, hint.
-          </Text>
-          <Text variant="body-sm" color="muted">
-            Published May 14, 2026 · 4 min read
-          </Text>
-        </article>
+        <PreviewRow
+          code={`<article>
+  <Text variant="body-xs" fontWeight="bold" color="primary" gutterBottom
+        className="tracking-widest uppercase">
+    Design systems
+  </Text>
+  <Text variant="heading-xl" fontWeight="bold" gutterBottom>
+    Typography as a system, not a setting
+  </Text>
+  <Text variant="para-lg" color="secondary" gutterBottom>
+    A consistent type scale removes hundreds of micro-decisions
+    from your design process.
+  </Text>
+  <Text variant="para-md" gutterBottom>
+    Most apps end up with a long tail of one-off font sizes…
+  </Text>
+  <Text variant="body-sm" color="muted">
+    Published May 14, 2026 · 4 min read
+  </Text>
+</article>`}
+        >
+          <article className="w-full rounded-xl border border-stroke bg-surface-elevated p-8">
+            <Text
+              variant="body-xs"
+              fontWeight="bold"
+              color="primary"
+              gutterBottom
+              className="tracking-widest uppercase"
+            >
+              Design systems
+            </Text>
+            <Text variant="heading-xl" fontWeight="bold" gutterBottom>
+              Typography as a system, not a setting
+            </Text>
+            <Text variant="para-lg" color="secondary" gutterBottom>
+              A consistent type scale removes hundreds of micro-decisions from
+              your design process. Define it once, and every screen inherits the
+              same rhythm.
+            </Text>
+            <Text variant="para-md" gutterBottom>
+              Most apps end up with a long tail of one-off font sizes — 13px
+              here, 17px there — because designers reach for whatever feels right
+              in the moment. The fix is to ramp size and weight together, in
+              steps that read clearly at every level: hero, section, body, hint.
+            </Text>
+            <Text variant="body-sm" color="muted">
+              Published May 14, 2026 · 4 min read
+            </Text>
+          </article>
+        </PreviewRow>
       </section>
 
       <section>
         <SectionHeader>In context · UI surface</SectionHeader>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <PreviewRow
+          code={`<Text variant="heading-sm" fontWeight="semibold" gutterBottom>
+  Payment details
+</Text>
+<Text variant="body-sm" color="secondary" className="mb-4 block">
+  Add a card for your subscription. You can change or remove it anytime.
+</Text>
+
+<Text variant="body-xs" fontWeight="semibold" color="secondary"
+      className="tracking-wide uppercase">
+  Card number
+</Text>
+<Text variant="body-md" fontFamily="mono">4242 4242 4242 4242</Text>
+
+{/* Status header for a flight card */}
+<Text variant="body-xs" fontWeight="bold" color="success" gutterBottom
+      className="tracking-widest uppercase">
+  On time
+</Text>
+<Text variant="heading-md" fontWeight="bold">Delhi → Bengaluru</Text>`}
+        >
+        <div className="grid w-full gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-stroke bg-surface-elevated p-6">
             <Text variant="heading-sm" fontWeight="semibold" gutterBottom>
               Payment details
@@ -292,6 +335,7 @@ export function TextPanel() {
             </div>
           </div>
         </div>
+        </PreviewRow>
       </section>
 
       <section>
@@ -440,7 +484,42 @@ export function TextPanel() {
 
       <section>
         <SectionHeader>Polymorphism · variantMapping & render</SectionHeader>
-        <div className="rounded-xl border border-stroke bg-surface-elevated p-6">
+        <PreviewRow
+          code={`{/* Map a variant to a different element — keep typography, change semantics. */}
+<Text
+  variant="body-md"
+  variantMapping={{ 'body-md': 'strong' }}
+  fontWeight="bold"
+>
+  Important inline text
+</Text>
+
+{/* render — clone props onto a specific element. */}
+<Text
+  variant="body-md"
+  fontWeight="semibold"
+  color="primary"
+  render={<a href="/docs" className="underline" />}
+>
+  Read the docs
+</Text>
+
+{/* render as a render-prop — handler version for custom elements. */}
+<Text
+  variant="body-md"
+  fontWeight="semibold"
+  render={(props) => (
+    <button
+      type="button"
+      {...props}
+      className={\`\${props.className ?? ''} rounded-md bg-surface-brand px-3 py-1.5 text-content-on-brand\`}
+    />
+  )}
+>
+  Continue
+</Text>`}
+        >
+        <div className="w-full rounded-xl border border-stroke bg-surface-elevated p-6">
           <div className="grid gap-4">
             <div className="flex items-center justify-between gap-4">
               <Text variant="body-xs" color="muted" fontFamily="mono">
@@ -490,6 +569,7 @@ export function TextPanel() {
             </div>
           </div>
         </div>
+        </PreviewRow>
       </section>
 
       <section>

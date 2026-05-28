@@ -29,44 +29,46 @@ import { SidebarLayout } from '../lib/SidebarLayout'
 type IconComponent = ComponentType<{ size?: number; className?: string }>
 
 type ComponentName =
-  | 'Button'
+  | 'Accordion'
   | 'Badge'
-  | 'Chip'
+  | 'Button'
   | 'Card'
   | 'Checkbox'
-  | 'Radio'
+  | 'Chip'
   | 'Input'
   | 'ListItem'
-  | 'Text'
-  | 'Accordion'
+  | 'Radio'
   | 'Sheet'
+  | 'Text'
 
+// Sidebar list — kept alphabetically ascending. New components should be
+// inserted in the right slot, not appended.
 const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = [
   { name: 'Accordion', icon: GridSmall },
-  { name: 'Button', icon: Check },
   { name: 'Badge', icon: Tag },
-  { name: 'Chip', icon: Filter },
+  { name: 'Button', icon: Check },
   { name: 'Card', icon: CreditCard },
   { name: 'Checkbox', icon: CheckCircle },
-  { name: 'Radio', icon: CheckCircleFilled },
+  { name: 'Chip', icon: Filter },
   { name: 'Input', icon: Edit },
   { name: 'ListItem', icon: Document },
+  { name: 'Radio', icon: CheckCircleFilled },
   { name: 'Sheet', icon: ArrowRightLong },
   { name: 'Text', icon: Document },
 ]
 
 const panelMap: Record<ComponentName, ComponentType> = {
-  Button: ButtonPanel,
+  Accordion: AccordionPanel,
   Badge: BadgePanel,
-  Chip: ChipPanel,
+  Button: ButtonPanel,
   Card: CardPanel,
   Checkbox: CheckboxPanel,
-  Radio: RadioPanel,
+  Chip: ChipPanel,
   Input: InputPanel,
   ListItem: ListItemPanel,
-  Text: TextPanel,
-  Accordion: AccordionPanel,
+  Radio: RadioPanel,
   Sheet: SheetPanel,
+  Text: TextPanel,
 }
 
 const DEFAULT_SELECTED: ComponentName = 'Accordion'
