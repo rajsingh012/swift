@@ -11,6 +11,7 @@ import { Star } from '@swift/icons/Star'
 import { IconSearchContext } from '../lib/icon-search'
 import { ToastProvider } from '../lib/toast'
 import { ThemeProvider, useTheme } from '../lib/theme'
+import { Button } from '@swift/components'
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>
 
@@ -157,15 +158,14 @@ function RootLayout() {
 function ThemeToggleButton() {
   const { theme, toggle } = useTheme()
   return (
-    <button
-      type="button"
+    <Button
+      variant="primary"
       onClick={toggle}
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
       aria-label="Toggle theme"
-      className="shrink-0 cursor-pointer rounded-md border border-stroke bg-surface p-1.5 text-content transition-colors hover:bg-surface-muted hover:text-content-strong"
     >
       {theme === 'light' ? <Night size={18} /> : <Afternoon size={18} />}
-    </button>
+    </Button>
   )
 }
 

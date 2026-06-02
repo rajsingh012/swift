@@ -1,0 +1,107 @@
+/**
+ * DatePicker — token-driven popover surface and calendar grid. Tailwind
+ * utilities own most styling; this file holds the variables consumers
+ * retheme (`style={{ '--datepicker-bg': '...' }}`) plus the open/close
+ * animations that pair with the `data-state` exit-anim pattern used
+ * across the library.
+ */
+
+.swift-datepicker-content {
+  --datepicker-bg: var(--color-surface-elevated);
+  --datepicker-radius: var(--radius-md);
+  --datepicker-shadow: var(--shadow-level4);
+  --datepicker-animation-duration: 160ms;
+  --datepicker-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Range backgrounds — soft tints of the brand colour so the bar reads
+     as part of the selection without competing with the start/end pills. */
+  --datepicker-range-bg: color-mix(in srgb, var(--color-surface-brand) 16%, transparent);
+  --datepicker-preview-bg: color-mix(in srgb, var(--color-surface-brand) 9%, transparent);
+
+  background: var(--datepicker-bg);
+}
+
+/* ── Range visuals ─────────────────────────────────────────────── */
+/* The ::before on each cell wrapper paints the connecting bar so the
+ * range reads as a continuous shape across cells. The Day button sits
+ * on top (z:1) and owns the rounded start/end "pill" look. */
+
+.swift-datepicker-cell::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.swift-datepicker-cell[data-in-range="true"]::before {
+  background: var(--datepicker-range-bg);
+}
+
+.swift-datepicker-cell[data-in-preview="true"]::before {
+  background: var(--datepicker-preview-bg);
+}
+
+/* Start cell: paint only the right half so the bar extends towards the
+ * next in-range cell, but the left side stays clean. */
+.swift-datepicker-cell[data-range-start="true"]:not([data-range-end="true"])::before {
+  inset-inline-start: 50%;
+  background: var(--datepicker-range-bg);
+}
+
+/* End cell: paint only the left half. */
+.swift-datepicker-cell[data-range-end="true"]:not([data-range-start="true"])::before {
+  inset-inline-end: 50%;
+  background: var(--datepicker-range-bg);
+}
+
+/* Same-day range (start === end): no extension bar — just the pill. */
+.swift-datepicker-cell[data-range-start="true"][data-range-end="true"]::before {
+  display: none;
+}
+
+/* When a cell is both the actual range-start (committed) AND being
+ * previewed (the user is dragging hover back further), keep the right-
+ * half extension so the preview still reads outward. */
+.swift-datepicker-cell[data-range-start="true"][data-in-preview="true"]::before {
+  background: var(--datepicker-range-bg);
+}
+
+.swift-datepicker-content[data-state="open"] {
+  animation: swift-datepicker-in var(--datepicker-animation-duration)
+    var(--datepicker-ease) both;
+}
+
+.swift-datepicker-content[data-state="closed"] {
+  animation: swift-datepicker-out var(--datepicker-animation-duration)
+    var(--datepicker-ease) both;
+}
+
+@keyframes swift-datepicker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes swift-datepicker-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-datepicker-content {
+    animation-duration: 1ms !important;
+  }
+}

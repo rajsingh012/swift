@@ -1,7 +1,10 @@
 import { type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@swift/components/Button'
+import { Calendar } from '@swift/icons/Calendar'
 import { Check } from '@swift/icons/Check'
+import { SandTimeFilled } from '@swift/icons/SandTimeFilled'
+import { CalendarModify } from '@swift/icons/CalendarModify'
 import { CheckCircle } from '@swift/icons/CheckCircle'
 import { CheckCircleFilled } from '@swift/icons/CheckCircleFilled'
 import { CreditCard } from '@swift/icons/CreditCard'
@@ -18,12 +21,15 @@ import {
   CardPanel,
   CheckboxPanel,
   ChipPanel,
+  DatePickerPanel,
   InputPanel,
   ListItemPanel,
   RadioPanel,
   SheetPanel,
   SliderPanel,
   TextPanel,
+  TimePickerPanel,
+  YearPickerPanel,
 } from '../Components'
 import { SidebarLayout } from '../lib/SidebarLayout'
 
@@ -36,12 +42,15 @@ type ComponentName =
   | 'Card'
   | 'Checkbox'
   | 'Chip'
+  | 'DatePicker'
   | 'Input'
   | 'ListItem'
   | 'Radio'
   | 'Sheet'
   | 'Slider'
   | 'Text'
+  | 'TimePicker'
+  | 'YearPicker'
 
 // Sidebar list — kept alphabetically ascending. New components should be
 // inserted in the right slot, not appended.
@@ -52,12 +61,15 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Card', icon: CreditCard },
   { name: 'Checkbox', icon: CheckCircle },
   { name: 'Chip', icon: Filter },
+  { name: 'DatePicker', icon: Calendar },
   { name: 'Input', icon: Edit },
   { name: 'ListItem', icon: Document },
   { name: 'Radio', icon: CheckCircleFilled },
   { name: 'Sheet', icon: ArrowRightLong },
   { name: 'Slider', icon: Filter },
   { name: 'Text', icon: Document },
+  { name: 'TimePicker', icon: SandTimeFilled },
+  { name: 'YearPicker', icon: CalendarModify },
 ]
 
 const panelMap: Record<ComponentName, ComponentType> = {
@@ -67,12 +79,15 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Card: CardPanel,
   Checkbox: CheckboxPanel,
   Chip: ChipPanel,
+  DatePicker: DatePickerPanel,
   Input: InputPanel,
   ListItem: ListItemPanel,
   Radio: RadioPanel,
   Sheet: SheetPanel,
   Slider: SliderPanel,
   Text: TextPanel,
+  TimePicker: TimePickerPanel,
+  YearPicker: YearPickerPanel,
 }
 
 const DEFAULT_SELECTED: ComponentName = 'Accordion'
