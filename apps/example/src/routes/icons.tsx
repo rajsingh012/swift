@@ -5,9 +5,9 @@ import { Text } from '@swift/components/Text'
 import * as Icons from '@swift/icons'
 import { downloadIcon, type IconFormat } from '@swift/icons/download'
 import { Download } from '@swift/icons/Download'
-import { useIconSearch } from '../lib/icon-search'
+import { useIconSearch } from '../lib/iconSearch'
 import { SidebarLayout } from '../lib/SidebarLayout'
-import { useToast } from '../lib/toast'
+import { useToast } from '../lib/Toast'
 
 export const Route = createFileRoute('/icons')({
   component: RouteComponent,

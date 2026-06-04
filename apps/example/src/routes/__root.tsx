@@ -8,9 +8,9 @@ import { Night } from '@swift/icons/Night'
 import { Search } from '@swift/icons/Search'
 import { Settings } from '@swift/icons/Settings'
 import { Star } from '@swift/icons/Star'
-import { IconSearchContext } from '../lib/icon-search'
-import { ToastProvider } from '../lib/toast'
-import { ThemeProvider, useTheme } from '../lib/theme'
+import { IconSearchContext } from '../lib/iconSearch'
+import { ToastProvider } from '../lib/Toast'
+import { ThemeProvider, useTheme } from '../lib/Theme'
 import { Button } from '@swift/components'
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>

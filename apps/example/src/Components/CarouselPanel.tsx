@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Carousel } from '@swift/components/Carousel'
 import { Text } from '@swift/components/Text'
 import { CopyableImport } from '../lib/CopyableImport'
-import { CodeBlock, PreviewRow, SectionHeader } from './shared'
+import { BrowserCompat, CodeBlock, PreviewRow, SectionHeader } from './shared'
 
 const DESCRIPTION =
   'Compound horizontal carousel built on native CSS scroll-snap with pointer drag, keyboard navigation (Arrow/Home/End), controlled & uncontrolled index, multi-slide layouts with snap alignment, loop wrap-around, RTL placement, full theme tokens, and SSR-safe rendering. No external library.'
@@ -1023,6 +1023,62 @@ export function CarouselPanel() {
             happen in effects, hydration matches.
           </Text>
         </div>
+      </section>
+
+      {/* ── Browser compatibility ────────────────────────────── */}
+      <section>
+        <SectionHeader>Browser compatibility</SectionHeader>
+        <BrowserCompat
+          features={[
+            {
+              name: 'PointerEvents + setPointerCapture',
+              notes: 'Unified mouse/touch/pen drag with capture so fast drags don\'t drop tracking when the cursor leaves the slide.',
+              support: 'Chrome 55+ · Firefox 59+ · Safari 13+ · Edge 79+',
+            },
+            {
+              name: 'transform: translate3d',
+              notes: 'GPU-accelerated track translation. Animation runs on the compositor — no main-thread reflow per frame.',
+              support: 'Universal (all modern browsers)',
+            },
+            {
+              name: 'MutationObserver',
+              notes: 'Watches the track\'s children to keep `itemCount` live when slides are added or removed at runtime.',
+              support: 'Universal (all modern browsers)',
+            },
+            {
+              name: 'ResizeObserver',
+              notes: 'Re-pins the track to the alignment for the current selectedIndex when the viewport or content resizes.',
+              support: 'Chrome 64+ · Firefox 69+ · Safari 13.1+ · Edge 79+',
+            },
+            {
+              name: 'CSS perspective + transform-style: preserve-3d',
+              notes: 'Required only for `effect="coverflow"`. Side slides rotate around Y against the viewport\'s perspective.',
+              support: 'Universal (all modern browsers)',
+            },
+            {
+              name: 'overscroll-behavior: contain',
+              notes: 'Applied where this panel renders code blocks — prevents scroll-chain from the carousel viewport to the parent page.',
+              support: 'Chrome 63+ · Firefox 59+ · Safari 16+ · Edge 18+',
+            },
+          ]}
+          caveats={[
+            <>
+              <code>variant="fade"</code> uses CSS Grid stacking; widely supported but
+              falls back to layout overlap on browsers that don\'t implement
+              <code> grid-template-rows: 1fr</code> identically. v1 doesn\'t ship a polyfill.
+            </>,
+            <>
+              RTL drag math is LTR-tuned in v1 — passing <code>dir="rtl"</code> flips
+              visual ordering + Prev/Next placement, but a pointer drag still scrolls in
+              the LTR-natural direction. True RTL-flipped drag is v2.
+            </>,
+            <>
+              Coverflow per-slide transforms are written imperatively each rAF tick; on
+              Safari &lt; 14 the compositor may briefly flatten a slide that crosses 90°.
+              The <code>backface-visibility: hidden</code> rule covers the common case.
+            </>,
+          ]}
+        />
       </section>
 
       {/* ── Import ───────────────────────────────────────────── */}

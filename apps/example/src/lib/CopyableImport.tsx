@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useToast } from './toast'
+import { useToast } from './Toast'
 
 export function CopyableImport({ label, code }: { label: string; code: string }) {
   const [copied, setCopied] = useState(false)

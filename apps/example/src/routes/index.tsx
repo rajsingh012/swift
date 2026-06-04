@@ -47,7 +47,7 @@ import { Train } from '@swift/icons/Train'
 import { TrendUp } from '@swift/icons/TrendUp'
 import { Wallet } from '@swift/icons/Wallet'
 import { Wifi } from '@swift/icons/Wifi'
-import { useTheme, type Theme } from '../lib/theme'
+import { useTheme, type Theme } from '../lib/Theme'
 
 export const Route = createFileRoute('/')({
   component: HomeRoute,

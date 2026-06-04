@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Check } from '@swift/icons/Check'
 import { Text } from '@swift/components/Text'
-import { useToast } from '../lib/toast'
+import { useToast } from '../lib/Toast'
 
 export function SectionHeader({ children }: { children: ReactNode }) {
   return (
@@ -14,6 +14,109 @@ export function SectionHeader({ children }: { children: ReactNode }) {
     >
       {children}
     </Text>
+  )
+}
+
+/**
+ * Browser-compatibility block shared by every component panel.
+ *
+ * - `baseline` is the same default everywhere ("supported in modern
+ *   evergreen browsers") so consumers don't have to repeat the line.
+ *   Override only when the component is more conservative (universal)
+ *   or more demanding.
+ * - `features` lists the specific DOM / CSS APIs the component
+ *   depends on, with a one-line note and a "supported since" range.
+ * - `caveats` is for known edge cases — fallback behaviour in older
+ *   browsers, platform-specific quirks.
+ *
+ * Layout is responsive: stacks vertically on narrow viewports, two
+ * columns at md+. Matches the wider props-table styling so consumers
+ * skim it the same way as the rest of the panel.
+ */
+export type BrowserFeature = {
+  name: string
+  notes?: string
+  support?: string
+}
+
+export function BrowserCompat({
+  baseline = 'Supported in modern evergreen browsers (Chrome, Firefox, Safari, Edge — latest 2 versions). Tested with mouse, touch, pen, and keyboard. SSR-safe — no client-only APIs are read during render.',
+  features,
+  caveats,
+}: {
+  baseline?: ReactNode
+  features?: ReadonlyArray<BrowserFeature>
+  caveats?: ReadonlyArray<ReactNode>
+}) {
+  return (
+    <div className="grid gap-4 rounded-xl border border-stroke bg-surface-elevated p-5">
+      <Text variant="body-sm" color="secondary">
+        {baseline}
+      </Text>
+      {features && features.length > 0 ? (
+        <div className="grid gap-2">
+          <Text
+            variant="body-xs"
+            fontWeight="semibold"
+            color="muted"
+            className="uppercase tracking-wide"
+          >
+            Required platform APIs
+          </Text>
+          <div className="grid gap-2 rounded-lg border border-stroke-muted">
+            {features.map(({ name, notes, support }) => (
+              <div
+                key={name}
+                className="grid gap-1 border-b border-stroke-muted px-4 py-3 last:border-0 md:grid-cols-[220px_1fr] md:items-start md:gap-4"
+              >
+                <Text
+                  variant="body-sm"
+                  fontFamily="mono"
+                  fontWeight="semibold"
+                  color="primary"
+                >
+                  {name}
+                </Text>
+                <div className="flex flex-col gap-0.5">
+                  {notes ? (
+                    <Text variant="body-sm" color="secondary">
+                      {notes}
+                    </Text>
+                  ) : null}
+                  {support ? (
+                    <Text variant="body-xs" fontFamily="mono" color="muted">
+                      {support}
+                    </Text>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {caveats && caveats.length > 0 ? (
+        <div className="grid gap-2">
+          <Text
+            variant="body-xs"
+            fontWeight="semibold"
+            color="muted"
+            className="uppercase tracking-wide"
+          >
+            Caveats
+          </Text>
+          <ul className="grid gap-1.5">
+            {caveats.map((c, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="select-none text-content-muted">•</span>
+                <Text variant="body-sm" color="secondary">
+                  {c}
+                </Text>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
   )
 }
 
