@@ -20,6 +20,7 @@ export default defineConfig({
         Badge: resolve(__dirname, 'src/Badge/index.ts'),
         Button: resolve(__dirname, 'src/Button/index.ts'),
         Card: resolve(__dirname, 'src/Card/index.ts'),
+        Carousel: resolve(__dirname, 'src/Carousel/index.ts'),
         Checkbox: resolve(__dirname, 'src/Checkbox/index.ts'),
         Chip: resolve(__dirname, 'src/Chip/index.ts'),
         DatePicker: resolve(__dirname, 'src/DatePicker/index.ts'),

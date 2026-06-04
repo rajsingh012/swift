@@ -87,7 +87,13 @@ export function SidebarLayout({
           </Button>
         </div>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">{children}</main>
+        {/* `overflow-x-hidden` is a hard wall — the page can NEVER scroll
+            sideways. Any wide content (long-line <pre>, deep table, etc.)
+            must own its own scroll surface; nothing leaks to the parent.
+            Combined with `[&>*]:min-w-0` on each panel's grid, the
+            sections obey the panel width and the <pre>'s own
+            `overflow-x:auto` does the scrolling internally. */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
 
       {/* Mobile drawer */}

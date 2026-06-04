@@ -28,7 +28,7 @@ export function CopyableImport({ label, code }: { label: string; code: string })
           {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>
-      <pre className="overflow-x-auto rounded bg-gray-900 p-3 text-xs leading-relaxed text-gray-100 dark:border dark:border-gray-700">
+      <pre className="overflow-x-auto overscroll-contain touch-pan-x rounded bg-gray-900 p-3 text-xs leading-relaxed text-gray-100 dark:border dark:border-gray-700">
         {code}
       </pre>
     </div>

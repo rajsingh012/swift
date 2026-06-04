@@ -165,7 +165,7 @@ export function CardPanel() {
   }
 
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           Card
@@ -237,7 +237,7 @@ export function CardPanel() {
       {/* ── Variants ───────────────────────────────────────── */}
       <section>
         <SectionHeader>Variants</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {VARIANTS.map(({ name, use }) => (
             <div
               key={name}
@@ -267,11 +267,11 @@ export function CardPanel() {
       {/* ── Sizes ──────────────────────────────────────────── */}
       <section>
         <SectionHeader>Sizes · padding scale cascade</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {SIZES.map(({ size, padX, padY }) => (
             <div
               key={size}
-              className="grid grid-cols-[80px_180px_1fr] items-start gap-6 border-b border-stroke-muted px-6 py-5 last:border-0"
+              className="grid gap-3 border-b border-stroke-muted p-4 last:border-0 md:grid-cols-[80px_180px_1fr] md:items-start md:gap-6 md:p-6"
             >
               <Text variant="body-xs" fontFamily="mono" fontWeight="semibold" color="primary">
                 {size}
@@ -279,7 +279,7 @@ export function CardPanel() {
               <Text variant="body-xs" color="muted">
                 pad x {padX}<br />pad y {padY}
               </Text>
-              <Card size={size} className="max-w-sm">
+              <Card size={size} className="md:max-w-sm">
                 <Card.Header divider>
                   <Card.Title>Title at {size}</Card.Title>
                   <Card.Description>Description scales with the title.</Card.Description>
@@ -746,7 +746,7 @@ export function CardPanel() {
       {/* ── Props ──────────────────────────────────────────── */}
       <section>
         <SectionHeader>Props · Card root</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
               Prop
@@ -785,7 +785,7 @@ export function CardPanel() {
       {/* ── Compound parts table ───────────────────────────── */}
       <section>
         <SectionHeader>Compound parts</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {COMPOUND_PARTS.map(({ name, desc }) => (
             <div
               key={name}

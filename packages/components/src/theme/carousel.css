@@ -1,0 +1,149 @@
+/**
+ * Carousel — token-driven chrome. Every visible dimension and colour
+ * resolves through a `--carousel-*` custom property so consumers can
+ * retheme one carousel inline (`style={{ '--carousel-control-size': '32px' }}`)
+ * or globally via a higher-level selector.
+ *
+ * Defaults are calibrated for a 40 px circular Prev/Next button +
+ * 8 px pill-style indicators. The active-indicator widens to 24 px
+ * (the pill effect) on `data-active=true`.
+ */
+
+.swift-carousel {
+  /* Gap is set inline by the root (so it can default to undefined and
+     have the consumer's `gap` prop drive it). The fallback `0px` here
+     keeps the slide-basis math sound when no gap is requested. */
+  --carousel-gap: 0px;
+  --carousel-slides-per-view: 1;
+  --carousel-slide-basis: 100%;
+
+  /* Programmatic-scroll duration hint. Native scroll-snap-after-drag
+     ignores this — it's only used by our rAF easeOutCubic for Prev /
+     Next / scrollTo / indicator clicks. */
+  --carousel-duration: 500ms;
+
+  /* Prev / Next control chrome */
+  --carousel-control-size: 40px;
+  --carousel-control-bg: var(--color-surface);
+  --carousel-control-color: var(--color-content-strong);
+  --carousel-control-border: var(--color-stroke);
+
+  /* Indicator chrome */
+  --carousel-indicator-size: 8px;
+  --carousel-indicator-bg: var(--color-stroke-strong);
+  --carousel-indicator-active-bg: var(--color-surface-brand);
+
+  /* Progress bar chrome */
+  --carousel-progress-track-bg: var(--color-stroke);
+  --carousel-progress-fill-bg: var(--color-surface-brand);
+
+  /* Effect / fade transition speed — separate token from the
+     `--carousel-duration` (programmatic scroll) so consumers can
+     tune the "feel" of peek-fade independently of how fast Prev/Next
+     scrolls between snaps. */
+  --carousel-effect-duration: 400ms;
+
+  /* Peek effect — how much an inactive slide should shrink + fade.
+     0.92 / 0.55 reads as "deferred but still legible", which works
+     well for the center-aligned hero pattern. */
+  --carousel-peek-scale: 0.92;
+  --carousel-peek-opacity: 0.55;
+
+  /* Focus ring — 30 % brand, kept in sync via color-mix if a consumer
+     overrides --color-stroke-brand to a different hue. */
+  --carousel-focus-ring: color-mix(in srgb, var(--color-stroke-brand) 30%, transparent);
+}
+
+/* ── Effect · peek ─────────────────────────────────────────────────
+   Inactive slides scale + fade so the active slide pops. Keyed on the
+   `data-active` attribute the root writes onto each track child.
+   Uses `transform` + `opacity` (both GPU-compositable) for a smooth
+   60 fps transition regardless of slide content weight. */
+.swift-carousel[data-effect="peek"] .swift-carousel-item:not([data-active="true"]) {
+  transform: scale(var(--carousel-peek-scale));
+  opacity: var(--carousel-peek-opacity);
+}
+
+/* ── Effect · coverflow ────────────────────────────────────────────
+   3D iTunes-style. The engine writes per-item `translateX rotateY
+   translateZ scale` each frame based on every item's fractional
+   distance from the alignment point. The CSS sets up the 3D context
+   for those transforms to render correctly.
+
+   - `perspective` on the VIEWPORT (not the track) so the rotation
+     looks the same regardless of how far the track has translated.
+     1500px reads as cinematic without feeling fish-eyed.
+   - `transform-style: preserve-3d` on the track so the items'
+     rotateY composites against the viewport's perspective, not
+     against the track's own flattened plane.
+   - `transition: none` on items because the engine writes a smooth
+     value every frame — a CSS transition would lag behind the drag
+     and produce a noticeable "rubber" feel.
+   - `backface-visibility: hidden` so a slide rotated past 90° doesn't
+     flash its mirrored back face during the wrap-around.
+   - Viewport gets vertical padding so the perspective-scaled side
+     slides have room to extend above/below the active. */
+.swift-carousel[data-effect="coverflow"] .swift-carousel-viewport {
+  perspective: 1500px;
+  padding-block: 2rem;
+}
+.swift-carousel[data-effect="coverflow"] .swift-carousel-track {
+  transform-style: preserve-3d;
+}
+.swift-carousel[data-effect="coverflow"] .swift-carousel-item {
+  transition: none;
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+
+/* ── Variant · fade ────────────────────────────────────────────────
+   Stack all slides in a single CSS Grid cell — every item gets row 1 /
+   column 1, the track sizes to the tallest one, and only the active
+   slide is visible. Scroll is irrelevant in this variant; Prev / Next
+   / Indicators / Autoplay drive the index, CSS does the rest.
+
+   `pointer-events: none` on inactive slides means clicks pass through
+   the stack to the visually-on-top (active) slide only — without this,
+   the most-recently-mounted slide would catch clicks even while
+   invisible. */
+.swift-carousel[data-variant="fade"] .swift-carousel-viewport {
+  overflow: hidden;
+  scroll-snap-type: none;
+  cursor: default;
+}
+.swift-carousel[data-variant="fade"] .swift-carousel-track {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  gap: 0;
+  width: 100%;
+}
+.swift-carousel[data-variant="fade"] .swift-carousel-item {
+  grid-row: 1;
+  grid-column: 1;
+  flex: initial;
+  width: 100%;
+  opacity: 0;
+  transform: none;
+  pointer-events: none;
+  transition: opacity var(--carousel-effect-duration, 400ms) ease-out;
+}
+.swift-carousel[data-variant="fade"] .swift-carousel-item[data-active="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+/* ── Autoplay paused indicator ────────────────────────────────────
+   Subtle cursor cue so users hovering can tell autoplay is paused
+   while they're holding focus. Optional / non-essential — the
+   interaction model doesn't depend on it. */
+.swift-carousel[data-autoplay="true"][data-paused="true"] {
+  cursor: default;
+}
+
+/* The engine drives a CSS `transform: translate3d(Xpx, 0, 0)` on the
+   track each frame. There's no native scroll to hide — the viewport
+   is overflow:hidden. Animation runs purely on the compositor thread
+   (no layout reflow per frame), which is why drag and tween feel
+   smooth even with heavy image content inside slides. */

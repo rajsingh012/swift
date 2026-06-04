@@ -308,7 +308,7 @@ export function ListItemPanel() {
   const [density, setDensity] = useState<ListItemDensity>('comfortable')
 
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           ListItem

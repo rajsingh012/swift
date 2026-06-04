@@ -40,6 +40,11 @@
       "import": "./dist/Card.js",
       "require": "./dist/Card.cjs"
     },
+    "./Carousel": {
+      "types": "./dist/src/Carousel/index.d.ts",
+      "import": "./dist/Carousel.js",
+      "require": "./dist/Carousel.cjs"
+    },
     "./Checkbox": {
       "types": "./dist/src/Checkbox/index.d.ts",
       "import": "./dist/Checkbox.js",

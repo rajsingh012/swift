@@ -121,7 +121,7 @@ const COMPOUND_PARTS: ReadonlyArray<{ name: string; desc: string }> = [
 
 function PropsTable({ rows }: { rows: ReadonlyArray<PropRow> }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+    <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
       <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
         <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">Prop</Text>
         <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">Type</Text>
@@ -278,7 +278,7 @@ export function TimePickerPanel() {
   })
 
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>TimePicker</Text>
         <Text variant="para-lg" color="secondary">{DESCRIPTION}</Text>
@@ -448,7 +448,7 @@ export function TimePickerPanel() {
       {/* Compound parts ────────────────────────────────────── */}
       <section>
         <SectionHeader>Compound parts</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {COMPOUND_PARTS.map(({ name, desc }) => (
             <div
               key={name}

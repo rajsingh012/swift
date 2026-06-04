@@ -19,6 +19,7 @@ import {
   BadgePanel,
   ButtonPanel,
   CardPanel,
+  CarouselPanel,
   CheckboxPanel,
   ChipPanel,
   DatePickerPanel,
@@ -40,6 +41,7 @@ type ComponentName =
   | 'Badge'
   | 'Button'
   | 'Card'
+  | 'Carousel'
   | 'Checkbox'
   | 'Chip'
   | 'DatePicker'
@@ -59,6 +61,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Badge', icon: Tag },
   { name: 'Button', icon: Check },
   { name: 'Card', icon: CreditCard },
+  { name: 'Carousel', icon: ArrowRightLong },
   { name: 'Checkbox', icon: CheckCircle },
   { name: 'Chip', icon: Filter },
   { name: 'DatePicker', icon: Calendar },
@@ -77,6 +80,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Badge: BadgePanel,
   Button: ButtonPanel,
   Card: CardPanel,
+  Carousel: CarouselPanel,
   Checkbox: CheckboxPanel,
   Chip: ChipPanel,
   DatePicker: DatePickerPanel,

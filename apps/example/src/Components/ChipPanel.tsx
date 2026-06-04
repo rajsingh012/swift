@@ -241,7 +241,7 @@ export function ChipPanel() {
   }
 
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           Chip
@@ -254,7 +254,7 @@ export function ChipPanel() {
       {/* ── Variants ───────────────────────────────────────────── */}
       <section>
         <SectionHeader>Variants</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {VARIANTS.map(({ name, use, label }) => (
             <div
               key={name}
@@ -277,7 +277,7 @@ export function ChipPanel() {
       {/* ── Appearances ───────────────────────────────────────── */}
       <section>
         <SectionHeader>Appearances · variant × treatment</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {APPEARANCES.map(({ name, use }) => (
             <div
               key={name}
@@ -306,7 +306,7 @@ export function ChipPanel() {
       {/* ── Sizes ─────────────────────────────────────────────── */}
       <section>
         <SectionHeader>Sizes</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {SIZES.map(({ size, height }) => (
             <div
               key={size}
@@ -671,7 +671,7 @@ export function ChipPanel() {
       {/* ── Props ────────────────────────────────────────── */}
       <section>
         <SectionHeader>Props · Chip</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
               Prop
@@ -718,7 +718,7 @@ export function ChipPanel() {
 
       <section>
         <SectionHeader>Props · ChipGroup</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
               Prop
