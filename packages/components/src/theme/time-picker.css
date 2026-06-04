@@ -1,0 +1,21 @@
+/**
+ * TimePicker — token-driven segmented input. Most styling is in the
+ * Tailwind class strings; this file hosts the consumer-overridable
+ * variables and any selectors too awkward to express in utilities.
+ */
+
+.swift-timepicker-input {
+  --timepicker-bg: var(--color-surface);
+  --timepicker-radius: var(--radius-md);
+  --timepicker-segment-active-bg: var(--color-surface-brand);
+  --timepicker-segment-active-fg: var(--color-content-on-brand);
+
+  background: var(--timepicker-bg);
+}
+
+/* Reduced-motion users get no transitions on the segment background. */
+@media (prefers-reduced-motion: reduce) {
+  .swift-timepicker-segment {
+    transition: none !important;
+  }
+}

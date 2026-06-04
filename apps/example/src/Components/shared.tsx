@@ -18,8 +18,13 @@ export function SectionHeader({ children }: { children: ReactNode }) {
 }
 
 export function CodeBlock({ code }: { code: string }) {
+  // The <pre> itself is the only scroll container. `overscroll-contain`
+  // (both axes) prevents the scroll from ever chaining to the parent —
+  // even at the edges, even on diagonal trackpad swipes. `touch-pan-x`
+  // limits touch gestures to horizontal pan inside the pre; nothing
+  // bleeds out to the page.
   return (
-    <pre className="overflow-x-auto rounded bg-surface-inverse p-3 text-xs leading-relaxed text-content-inverse">
+    <pre className="overflow-x-auto overscroll-contain touch-pan-x rounded bg-surface-inverse p-3 text-xs leading-relaxed text-content-inverse">
       {code}
     </pre>
   )
@@ -194,7 +199,7 @@ function CodePanel({ code }: { code: string }) {
       >
         {copied ? <Check size={14} /> : <CopyIcon />}
       </button>
-      <pre className="overflow-x-auto px-4 py-3 pr-12 text-xs leading-relaxed text-content-inverse">
+      <pre className="overflow-x-auto overscroll-contain touch-pan-x px-4 py-3 pr-12 text-xs leading-relaxed text-content-inverse">
         <code>{code}</code>
       </pre>
     </div>

@@ -40,6 +40,11 @@
       "import": "./dist/Card.js",
       "require": "./dist/Card.cjs"
     },
+    "./Carousel": {
+      "types": "./dist/src/Carousel/index.d.ts",
+      "import": "./dist/Carousel.js",
+      "require": "./dist/Carousel.cjs"
+    },
     "./Checkbox": {
       "types": "./dist/src/Checkbox/index.d.ts",
       "import": "./dist/Checkbox.js",
@@ -49,6 +54,11 @@
       "types": "./dist/src/Chip/index.d.ts",
       "import": "./dist/Chip.js",
       "require": "./dist/Chip.cjs"
+    },
+    "./DatePicker": {
+      "types": "./dist/src/DatePicker/index.d.ts",
+      "import": "./dist/DatePicker.js",
+      "require": "./dist/DatePicker.cjs"
     },
     "./Input": {
       "types": "./dist/src/Input/index.d.ts",
@@ -79,6 +89,16 @@
       "types": "./dist/src/Text/index.d.ts",
       "import": "./dist/Text.js",
       "require": "./dist/Text.cjs"
+    },
+    "./TimePicker": {
+      "types": "./dist/src/TimePicker/index.d.ts",
+      "import": "./dist/TimePicker.js",
+      "require": "./dist/TimePicker.cjs"
+    },
+    "./YearPicker": {
+      "types": "./dist/src/YearPicker/index.d.ts",
+      "import": "./dist/YearPicker.js",
+      "require": "./dist/YearPicker.cjs"
     },
     "./styles.css": "./dist/styles.css",
     "./theme.css": "./src/theme/index.css",
@@ -115,5 +135,8 @@
     "ui",
     "swift",
     "library"
-  ]
+  ],
+  "dependencies": {
+    "dayjs": "^1.11.21"
+  }
 }

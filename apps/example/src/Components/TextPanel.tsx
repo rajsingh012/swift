@@ -141,7 +141,7 @@ function SpecimenCard({ label, children }: { label: string; children: ReactNode 
 
 export function TextPanel() {
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           Text
@@ -153,7 +153,7 @@ export function TextPanel() {
 
       <section>
         <SectionHeader>Type ramp</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {TYPE_RAMP.map(({ variant, size, use }) => (
             <div
               key={variant}
@@ -454,7 +454,7 @@ export function TextPanel() {
 
       <section>
         <SectionHeader>Semantic tag mapping</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {[
             { variant: 'heading-xl..xs', tag: 'h1 → h5' },
             { variant: 'para-*', tag: 'p' },
@@ -574,7 +574,7 @@ export function TextPanel() {
 
       <section>
         <SectionHeader>Props</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text
               variant="body-xs"

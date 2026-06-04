@@ -176,7 +176,7 @@ const KEYBOARD_KEYS: ReadonlyArray<{ keys: string; action: string }> = [
 
 function PropsTable({ rows }: { rows: ReadonlyArray<PropRow> }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+    <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
       <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
         <Text
           variant="body-xs"
@@ -249,6 +249,18 @@ export function SliderPanel() {
   const [volume, setVolume] = useState<number[]>([60])
   const [committed, setCommitted] = useState<number[]>([40])
   const [tagRange, setTagRange] = useState<number[]>([1, 4])
+  const [comfort, setComfort] = useState<number[]>([50])
+  const [comfortBand, setComfortBand] = useState<number[]>([25, 75])
+
+  // Vertical range demo — five named stops along a comfort axis.
+  // Using a real array so the mark loop stays declarative.
+  const COMFORT_STOPS = [
+    { value: 0, label: 'Cold' },
+    { value: 25, label: 'Cool' },
+    { value: 50, label: 'Comfort' },
+    { value: 75, label: 'Warm' },
+    { value: 100, label: 'Hot' },
+  ] as const
 
   // Six category labels — the dual-thumb demo treats the slider as a
   // range across this set, like a year / size / tier filter.
@@ -257,7 +269,7 @@ export function SliderPanel() {
   const currency = (v: number) => `₹${v.toLocaleString('en-IN')}`
 
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           Slider
@@ -545,6 +557,123 @@ const TAGS = ['Meta', 'Meta', 'Meta', 'Meta', 'Meta', 'Meta']
         </PreviewRow>
       </section>
 
+      {/* ── Vertical + marks ──────────────────────────────────── */}
+      <section>
+        <SectionHeader>
+          Vertical + marks · labels flow to the right of the dot
+        </SectionHeader>
+        <PreviewRow
+          code={`const [comfort, setComfort] = useState([50])
+
+<Slider
+  orientation="vertical"
+  value={comfort}
+  onValueChange={setComfort}
+  min={0}
+  max={100}
+  step={25}
+  aria-label="Comfort level"
+>
+  <Slider.Track><Slider.Range /></Slider.Track>
+  <Slider.Thumb aria-label="Comfort level" />
+  <Slider.Mark value={0}>Cold</Slider.Mark>
+  <Slider.Mark value={25}>Cool</Slider.Mark>
+  <Slider.Mark value={50}>Comfort</Slider.Mark>
+  <Slider.Mark value={75}>Warm</Slider.Mark>
+  <Slider.Mark value={100}>Hot</Slider.Mark>
+</Slider>`}
+        >
+          <div className="flex h-64 w-full items-center justify-center gap-12">
+            <div className="h-full">
+              <Slider
+                orientation="vertical"
+                value={comfort}
+                onValueChange={setComfort}
+                min={0}
+                max={100}
+                step={25}
+                aria-label="Comfort level"
+              >
+                <Slider.Track>
+                  <Slider.Range />
+                </Slider.Track>
+                <Slider.Thumb aria-label="Comfort level" />
+                <Slider.Mark value={0}>Cold</Slider.Mark>
+                <Slider.Mark value={25}>Cool</Slider.Mark>
+                <Slider.Mark value={50}>Comfort</Slider.Mark>
+                <Slider.Mark value={75}>Warm</Slider.Mark>
+                <Slider.Mark value={100}>Hot</Slider.Mark>
+              </Slider>
+            </div>
+            <Text variant="body-sm" color="secondary" className="font-mono">
+              value: {comfort[0]}
+            </Text>
+          </div>
+        </PreviewRow>
+      </section>
+
+      {/* ── Vertical range + marks ────────────────────────────── */}
+      <section>
+        <SectionHeader>
+          Vertical range + marks · pick a comfort band
+        </SectionHeader>
+        <PreviewRow
+          code={`const [band, setBand] = useState([25, 75])
+const STOPS = [
+  { value: 0,   label: 'Cold' },
+  { value: 25,  label: 'Cool' },
+  { value: 50,  label: 'Comfort' },
+  { value: 75,  label: 'Warm' },
+  { value: 100, label: 'Hot' },
+]
+
+<Slider
+  orientation="vertical"
+  value={band}
+  onValueChange={setBand}
+  min={0}
+  max={100}
+  step={25}
+  minStepsBetweenThumbs={1}
+>
+  <Slider.Track><Slider.Range /></Slider.Track>
+  <Slider.Thumb index={0} aria-label="Minimum comfort" />
+  <Slider.Thumb index={1} aria-label="Maximum comfort" />
+  {STOPS.map(({ value, label }) => (
+    <Slider.Mark key={value} value={value}>{label}</Slider.Mark>
+  ))}
+</Slider>`}
+        >
+          <div className="flex h-64 w-full items-center justify-center gap-12">
+            <div className="h-full">
+              <Slider
+                orientation="vertical"
+                value={comfortBand}
+                onValueChange={setComfortBand}
+                min={0}
+                max={100}
+                step={25}
+                minStepsBetweenThumbs={1}
+              >
+                <Slider.Track>
+                  <Slider.Range />
+                </Slider.Track>
+                <Slider.Thumb index={0} aria-label="Minimum comfort" />
+                <Slider.Thumb index={1} aria-label="Maximum comfort" />
+                {COMFORT_STOPS.map(({ value, label }) => (
+                  <Slider.Mark key={value} value={value}>
+                    {label}
+                  </Slider.Mark>
+                ))}
+              </Slider>
+            </div>
+            <Text variant="body-sm" color="secondary" className="font-mono">
+              band: {comfortBand[0]} – {comfortBand[1]}
+            </Text>
+          </div>
+        </PreviewRow>
+      </section>
+
       {/* ── States ─────────────────────────────────────────── */}
       <section>
         <SectionHeader>States · disabled · readOnly · inverted</SectionHeader>
@@ -610,7 +739,7 @@ const TAGS = ['Meta', 'Meta', 'Meta', 'Meta', 'Meta', 'Meta']
       {/* ── Keyboard reference ─────────────────────────────── */}
       <section>
         <SectionHeader>Keyboard reference</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {KEYBOARD_KEYS.map(({ keys, action }) => (
             <div
               key={keys}
@@ -653,7 +782,7 @@ const TAGS = ['Meta', 'Meta', 'Meta', 'Meta', 'Meta', 'Meta']
       {/* ── Compound parts ─────────────────────────────────── */}
       <section>
         <SectionHeader>Compound parts</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {COMPOUND_PARTS.map(({ name, desc }) => (
             <div
               key={name}

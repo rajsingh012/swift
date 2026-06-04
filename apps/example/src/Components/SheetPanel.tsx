@@ -27,7 +27,7 @@ type PropRow = {
  */
 function PropsTable({ rows }: { rows: ReadonlyArray<PropRow> }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+    <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
       <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
         <Text
           variant="body-xs"
@@ -316,7 +316,7 @@ export function SheetPanel() {
   const nameRef = useRef<HTMLInputElement>(null)
 
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           Sheet
@@ -725,7 +725,7 @@ const nameRef = useRef<HTMLInputElement>(null)
       {/* Compound parts ────────────────────────────────────── */}
       <section>
         <SectionHeader>Compound parts</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {SHEET_COMPOUND_PARTS.map(({ name, desc }) => (
             <div
               key={name}

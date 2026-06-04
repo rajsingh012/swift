@@ -1,15 +1,7 @@
-import { useCallback, useState, type Ref, type RefObject } from 'react'
 import { cx } from './Accordion.styles'
 
-export function mergeRefs<T>(...refs: Array<Ref<T> | undefined>): Ref<T> {
-  return (node: T | null) => {
-    for (const r of refs) {
-      if (!r) continue
-      if (typeof r === 'function') r(node)
-      else (r as RefObject<T | null>).current = node
-    }
-  }
-}
+export { mergeRefs } from '../internal/refs'
+export { useControllableState } from '../internal/state'
 
 export function mergeProps(
   internal: Record<string, unknown>,
@@ -47,24 +39,4 @@ export function mergeProps(
   }
 
   return merged
-}
-
-export function useControllableState<T>(
-  controlled: T | undefined,
-  defaultValue: T,
-  onChange?: (value: T) => void,
-): [T, (next: T) => void] {
-  const isControlled = controlled !== undefined
-  const [internal, setInternal] = useState<T>(defaultValue)
-  const value = isControlled ? (controlled as T) : internal
-
-  const setValue = useCallback(
-    (next: T) => {
-      if (!isControlled) setInternal(next)
-      onChange?.(next)
-    },
-    [isControlled, onChange],
-  )
-
-  return [value, setValue]
 }

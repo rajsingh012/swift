@@ -494,7 +494,7 @@ export function CheckboxPanel() {
         : 'indeterminate'
 
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           Checkbox
@@ -517,11 +517,11 @@ export function CheckboxPanel() {
 
       <section>
         <SectionHeader>Sizes</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {SIZES.map(({ size, box }) => (
             <div
               key={size}
-              className="grid grid-cols-[80px_120px_1fr] items-center gap-6 border-b border-stroke-muted px-6 py-4 last:border-0"
+              className="grid gap-3 border-b border-stroke-muted p-4 last:border-0 md:grid-cols-[80px_120px_1fr] md:items-center md:gap-6 md:p-6"
             >
               <Text variant="body-xs" fontFamily="mono" fontWeight="semibold" color="primary">
                 {size}
@@ -529,7 +529,7 @@ export function CheckboxPanel() {
               <Text variant="body-xs" color="muted">
                 {box} box
               </Text>
-              <div className="flex items-center gap-6">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                 <Checkbox size={size}>Unchecked</Checkbox>
                 <Checkbox size={size} defaultChecked>
                   Checked
@@ -753,7 +753,7 @@ const [checked, setChecked] = useState<boolean | 'indeterminate'>(false)
 
       <section>
         <SectionHeader>Props · Checkbox</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[220px_1fr_140px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
               Prop
@@ -800,7 +800,7 @@ const [checked, setChecked] = useState<boolean | 'indeterminate'>(false)
 
       <section>
         <SectionHeader>Props · CheckboxGroup</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[220px_1fr_140px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
               Prop
@@ -851,7 +851,7 @@ const [checked, setChecked] = useState<boolean | 'indeterminate'>(false)
           {CHECKBOX_COMPOUND_PARTS.map(({ name, summary, props }) => (
             <div
               key={name}
-              className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated"
+              className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated"
             >
               <div className="border-b border-stroke px-6 py-4">
                 <Text variant="body-sm" fontFamily="mono" fontWeight="bold" color="primary">

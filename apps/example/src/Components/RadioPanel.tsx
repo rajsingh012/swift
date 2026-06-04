@@ -405,7 +405,7 @@ export function RadioPanel() {
   const [payment, setPayment] = useState<string | null>(null)
 
   return (
-    <div className="grid gap-10">
+    <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
       <header className="border-b border-stroke pb-6">
         <Text variant="heading-xl" fontWeight="bold" gutterBottom>
           Radio
@@ -434,7 +434,7 @@ export function RadioPanel() {
 
       <section>
         <SectionHeader>Sizes</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           {SIZES.map(({ size, box }) => (
             <div
               key={size}
@@ -623,7 +623,7 @@ export function RadioPanel() {
 
       <section>
         <SectionHeader>Props · Radio</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[220px_1fr_140px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
               Prop
@@ -670,7 +670,7 @@ export function RadioPanel() {
 
       <section>
         <SectionHeader>Props · RadioGroup</SectionHeader>
-        <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+        <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
           <div className="hidden grid-cols-[220px_1fr_140px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
             <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
               Prop
@@ -721,7 +721,7 @@ export function RadioPanel() {
           {RADIO_COMPOUND_PARTS.map(({ name, summary, props }) => (
             <div
               key={name}
-              className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated"
+              className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated"
             >
               <div className="border-b border-stroke px-6 py-4">
                 <Text variant="body-sm" fontFamily="mono" fontWeight="bold" color="primary">

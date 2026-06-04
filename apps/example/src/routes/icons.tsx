@@ -6,7 +6,6 @@ import * as Icons from '@swift/icons'
 import { downloadIcon, type IconFormat } from '@swift/icons/download'
 import { Download } from '@swift/icons/Download'
 import { useIconSearch } from '../lib/icon-search'
-import { CopyableImport } from '../lib/CopyableImport'
 import { SidebarLayout } from '../lib/SidebarLayout'
 import { useToast } from '../lib/toast'
 
@@ -75,50 +74,50 @@ const ICON_PROPS: ReadonlyArray<{
   defaultValue?: string
   description: string
 }> = [
-  {
-    name: 'size',
-    type: 'number | string',
-    defaultValue: `'1em'`,
-    description:
-      'Sets both width and height of the underlying <svg>. Numbers become pixels; strings can be any CSS length (em, rem, %). Defaults to 1em so the icon scales with the surrounding font size.',
-  },
-  {
-    name: 'title',
-    type: 'string',
-    description:
-      'Accessible label. When provided, the icon renders a <title> element and switches to role="img"; when omitted, it is treated as decorative (aria-hidden). Use it only when the icon conveys meaning on its own.',
-  },
-  {
-    name: 'className',
-    type: 'string',
-    description:
-      'Forwarded to the <svg>. Color is driven by currentColor — set a text-* utility (e.g. text-content-brand) or any Tailwind text color to recolor the glyph.',
-  },
-  {
-    name: 'style',
-    type: 'CSSProperties',
-    description:
-      'Merged with the defaults { userSelect: "none", display: "inline-block" }. Use for one-off color/transform overrides; prefer className for shared styling.',
-  },
-  {
-    name: 'onClick',
-    type: '(event: MouseEvent<SVGSVGElement>) => void',
-    description:
-      'Standard SVG click handler. If you make an icon interactive, also pair it with a button/link wrapper and a meaningful title or aria-label.',
-  },
-  {
-    name: 'ref',
-    type: 'Ref<SVGSVGElement>',
-    description:
-      'Forwarded to the underlying <svg> element — useful for measurement, focus, or animation hooks.',
-  },
-  {
-    name: '...rest',
-    type: 'SVGAttributes<SVGSVGElement>',
-    description:
-      'All other standard SVG attributes (id, role, aria-*, data-*, event handlers, fill, stroke, etc.) are forwarded to the rendered <svg>.',
-  },
-]
+    {
+      name: 'size',
+      type: 'number | string',
+      defaultValue: `'1em'`,
+      description:
+        'Sets both width and height of the underlying <svg>. Numbers become pixels; strings can be any CSS length (em, rem, %). Defaults to 1em so the icon scales with the surrounding font size.',
+    },
+    {
+      name: 'title',
+      type: 'string',
+      description:
+        'Accessible label. When provided, the icon renders a <title> element and switches to role="img"; when omitted, it is treated as decorative (aria-hidden). Use it only when the icon conveys meaning on its own.',
+    },
+    {
+      name: 'className',
+      type: 'string',
+      description:
+        'Forwarded to the <svg>. Color is driven by currentColor — set a text-* utility (e.g. text-content-brand) or any Tailwind text color to recolor the glyph.',
+    },
+    {
+      name: 'style',
+      type: 'CSSProperties',
+      description:
+        'Merged with the defaults { userSelect: "none", display: "inline-block" }. Use for one-off color/transform overrides; prefer className for shared styling.',
+    },
+    {
+      name: 'onClick',
+      type: '(event: MouseEvent<SVGSVGElement>) => void',
+      description:
+        'Standard SVG click handler. If you make an icon interactive, also pair it with a button/link wrapper and a meaningful title or aria-label.',
+    },
+    {
+      name: 'ref',
+      type: 'Ref<SVGSVGElement>',
+      description:
+        'Forwarded to the underlying <svg> element — useful for measurement, focus, or animation hooks.',
+    },
+    {
+      name: '...rest',
+      type: 'SVGAttributes<SVGSVGElement>',
+      description:
+        'All other standard SVG attributes (id, role, aria-*, data-*, event handlers, fill, stroke, etc.) are forwarded to the rendered <svg>.',
+    },
+  ]
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
@@ -194,263 +193,263 @@ function RouteComponent() {
           </Text>
         ) : (
           <ul className="space-y-0.5">
-              {filtered.map(([name, C]) => {
-                const isActive = name === selected
-                return (
-                  <li key={name}>
-                    <button
-                      type="button"
-                      onClick={() => setSelected(name)}
-                      className={`group flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${isActive
-                          ? 'bg-surface-brand-muted font-semibold text-content-brand'
-                          : 'font-medium text-content hover:bg-surface-muted'
-                        }`}
-                    >
-                      <C
-                        size={18}
-                        className={isActive ? 'text-content-brand' : colorFor(name)}
-                      />
-                      <span className="truncate">{name}</span>
-                    </button>
-                  </li>
-                )
-              })}
+            {filtered.map(([name, C]) => {
+              const isActive = name === selected
+              return (
+                <li key={name}>
+                  <button
+                    type="button"
+                    onClick={() => setSelected(name)}
+                    className={`group flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${isActive
+                      ? 'bg-surface-brand-muted font-semibold text-content-brand'
+                      : 'font-medium text-content hover:bg-surface-muted'
+                      }`}
+                  >
+                    <C
+                      size={18}
+                      className={isActive ? 'text-content-brand' : colorFor(name)}
+                    />
+                    <span className="truncate">{name}</span>
+                  </button>
+                </li>
+              )
+            })}
           </ul>
         )
       }
     >
       {!Selected ? (
-          <Text variant="body-md" color="muted">
-            Select an icon from the sidebar.
-          </Text>
-        ) : (
-          <div className="grid gap-8">
-            <header className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="flex size-20 items-center justify-center rounded-lg border border-stroke bg-surface-muted text-content-strong">
-                  <Selected size={48} ref={previewRef} />
+        <Text variant="body-md" color="muted">
+          Select an icon from the sidebar.
+        </Text>
+      ) : (
+        <div className="grid gap-8">
+          <header className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="flex size-20 items-center justify-center rounded-lg border border-stroke bg-surface-muted text-content-strong">
+                <Selected size={48} ref={previewRef} />
+              </div>
+              <div>
+                <Text variant="heading-lg" fontWeight="semibold" color="primary">
+                  {selected}
+                </Text>
+                <Text variant="body-sm" color="secondary" className="block">
+                  {readableName(selected)}
+                </Text>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-end gap-3 rounded-xl border border-stroke bg-surface-elevated p-3">
+              <label className="flex flex-col gap-1">
+                <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
+                  Format
+                </Text>
+                <select
+                  value={format}
+                  onChange={(e) => setFormat(e.target.value as IconFormat)}
+                  className="cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content"
+                >
+                  <option value="svg">SVG</option>
+                  <option value="webp">WebP</option>
+                  <option value="png">PNG</option>
+                  <option value="jpeg">JPEG</option>
+                </select>
+              </label>
+              <label className="flex flex-col gap-1">
+                <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
+                  Size
+                </Text>
+                <select
+                  value={size}
+                  onChange={(e) => setSize(Number(e.target.value) as (typeof DOWNLOAD_SIZES)[number])}
+                  disabled={format === 'svg'}
+                  className="cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {DOWNLOAD_SIZES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}px
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col gap-1">
+                <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
+                  Color
+                </Text>
+                <div className="flex items-center gap-2 rounded-md border border-stroke bg-surface px-2 py-1">
+                  <input
+                    type="color"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    aria-label="Pick icon color"
+                    className="size-6 cursor-pointer rounded border-0 bg-transparent p-0"
+                  />
+                  <input
+                    type="text"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    spellCheck={false}
+                    className="w-20 bg-transparent font-mono text-sm text-content outline-none"
+                  />
                 </div>
-                <div>
-                  <Text variant="heading-lg" fontWeight="semibold" color="primary">
-                    {selected}
-                  </Text>
-                  <Text variant="body-sm" color="secondary" className="block">
-                    {readableName(selected)}
-                  </Text>
-                </div>
-              </div>
+              </label>
+              <Button onClick={handleDownload} loading={downloading}>
+                <Button.LeftIcon>
+                  <Download size={16} />
+                </Button.LeftIcon>
+                Download
+              </Button>
+            </div>
+          </header>
 
-              <div className="flex flex-wrap items-end gap-3 rounded-xl border border-stroke bg-surface-elevated p-3">
-                <label className="flex flex-col gap-1">
-                  <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
-                    Format
-                  </Text>
-                  <select
-                    value={format}
-                    onChange={(e) => setFormat(e.target.value as IconFormat)}
-                    className="cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content"
-                  >
-                    <option value="svg">SVG</option>
-                    <option value="webp">WebP</option>
-                    <option value="png">PNG</option>
-                    <option value="jpeg">JPEG</option>
-                  </select>
-                </label>
-                <label className="flex flex-col gap-1">
-                  <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
-                    Size
-                  </Text>
-                  <select
-                    value={size}
-                    onChange={(e) => setSize(Number(e.target.value) as (typeof DOWNLOAD_SIZES)[number])}
-                    disabled={format === 'svg'}
-                    className="cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {DOWNLOAD_SIZES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}px
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex flex-col gap-1">
-                  <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
-                    Color
-                  </Text>
-                  <div className="flex items-center gap-2 rounded-md border border-stroke bg-surface px-2 py-1">
-                    <input
-                      type="color"
-                      value={color}
-                      onChange={(e) => setColor(e.target.value)}
-                      aria-label="Pick icon color"
-                      className="size-6 cursor-pointer rounded border-0 bg-transparent p-0"
-                    />
-                    <input
-                      type="text"
-                      value={color}
-                      onChange={(e) => setColor(e.target.value)}
-                      spellCheck={false}
-                      className="w-20 bg-transparent font-mono text-sm text-content outline-none"
-                    />
-                  </div>
-                </label>
-                <Button onClick={handleDownload} loading={downloading}>
-                  <Button.LeftIcon>
-                    <Download size={16} />
-                  </Button.LeftIcon>
-                  Download
-                </Button>
-              </div>
-            </header>
+          <section>
+            <SectionHeader>Description</SectionHeader>
+            <Text variant="para-md" color="secondary">
+              {describe(selected)}
+            </Text>
+          </section>
 
-            <section>
-              <SectionHeader>Description</SectionHeader>
-              <Text variant="para-md" color="secondary">
-                {describe(selected)}
-              </Text>
-            </section>
-
-            <section>
-              <SectionHeader>Sizes</SectionHeader>
-              <div className="flex flex-wrap items-end gap-6">
-                {[
-                  { size: 16, color: 'text-blue-600' },
-                  { size: 20, color: 'text-emerald-600' },
-                  { size: 24, color: 'text-violet-600' },
-                  { size: 32, color: 'text-orange-500' },
-                  { size: 48, color: 'text-red-500' },
-                ].map(({ size, color }) => (
-                  <div key={size} className="flex flex-col items-center gap-1">
-                    <Selected size={size} className={color} />
-                    <Text variant="body-xs" color="muted">
-                      {size}px
-                    </Text>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section>
-              <SectionHeader>Colors</SectionHeader>
-              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-                {[
-                  { label: 'default', text: 'text-content-strong', bg: 'bg-surface-muted', labelTone: 'muted' as const },
-                  { label: 'brand', text: 'text-content-brand', bg: 'bg-surface-brand-muted', labelTone: 'muted' as const },
-                  { label: 'success', text: 'text-content-success', bg: 'bg-surface-success-muted', labelTone: 'muted' as const },
-                  { label: 'warning', text: 'text-content-warning', bg: 'bg-surface-warning-muted', labelTone: 'muted' as const },
-                  { label: 'critical', text: 'text-content-critical', bg: 'bg-surface-critical-muted', labelTone: 'muted' as const },
-                  { label: 'highlight', text: 'text-content-highlight', bg: 'bg-surface-highlight-muted', labelTone: 'muted' as const }
-                ].map(({ label, text, bg }) => (
-                  <div
-                    key={label}
-                    className={`flex flex-col items-center gap-1 rounded-lg border border-stroke p-3 ${bg}`}
-                  >
-                    <Selected size={32} className={text} />
-                    <Text
-                      variant="body-xs"
-                      className="text-content-strong"
-                    >
-                      {label}
-                    </Text>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section>
-              <SectionHeader>Props</SectionHeader>
-              <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
-                <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
-                  <Text
-                    variant="body-xs"
-                    fontWeight="bold"
-                    color="secondary"
-                    className="tracking-wider uppercase"
-                  >
-                    Prop
-                  </Text>
-                  <Text
-                    variant="body-xs"
-                    fontWeight="bold"
-                    color="secondary"
-                    className="tracking-wider uppercase"
-                  >
-                    Type
-                  </Text>
-                  <Text
-                    variant="body-xs"
-                    fontWeight="bold"
-                    color="secondary"
-                    className="tracking-wider uppercase"
-                  >
-                    Default
+          <section>
+            <SectionHeader>Sizes</SectionHeader>
+            <div className="flex flex-wrap items-end gap-6">
+              {[
+                { size: 16, color: 'text-blue-600' },
+                { size: 20, color: 'text-emerald-600' },
+                { size: 24, color: 'text-violet-600' },
+                { size: 32, color: 'text-orange-500' },
+                { size: 48, color: 'text-red-500' },
+              ].map(({ size, color }) => (
+                <div key={size} className="flex flex-col items-center gap-1">
+                  <Selected size={size} className={color} />
+                  <Text variant="body-xs" color="muted">
+                    {size}px
                   </Text>
                 </div>
-                {ICON_PROPS.map(({ name, type, defaultValue, description }) => (
-                  <div
-                    key={name}
-                    className="grid gap-2 border-b border-stroke-muted px-6 py-5 last:border-0 md:grid-cols-[200px_1fr_120px] md:items-start md:gap-6"
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <SectionHeader>Colors</SectionHeader>
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+              {[
+                { label: 'default', text: 'text-content-strong', bg: 'bg-surface-muted', labelTone: 'muted' as const },
+                { label: 'brand', text: 'text-content-brand', bg: 'bg-surface-brand-muted', labelTone: 'muted' as const },
+                { label: 'success', text: 'text-content-success', bg: 'bg-surface-success-muted', labelTone: 'muted' as const },
+                { label: 'warning', text: 'text-content-warning', bg: 'bg-surface-warning-muted', labelTone: 'muted' as const },
+                { label: 'critical', text: 'text-content-critical', bg: 'bg-surface-critical-muted', labelTone: 'muted' as const },
+                { label: 'highlight', text: 'text-content-highlight', bg: 'bg-surface-highlight-muted', labelTone: 'muted' as const }
+              ].map(({ label, text, bg }) => (
+                <div
+                  key={label}
+                  className={`flex flex-col items-center gap-1 rounded-lg border border-stroke p-3 ${bg}`}
+                >
+                  <Selected size={32} className={text} />
+                  <Text
+                    variant="body-xs"
+                    className="text-content-strong"
                   >
-                    <Text
-                      variant="body-sm"
-                      fontFamily="mono"
-                      fontWeight="semibold"
-                      color="primary"
-                    >
-                      {name}
-                    </Text>
-                    <div className="flex flex-col gap-1.5">
-                      <Text
-                        variant="body-xs"
-                        fontFamily="mono"
-                        color="secondary"
-                        className="wrap-break-word"
-                      >
-                        {type}
-                      </Text>
-                      <Text variant="body-sm" color="secondary">
-                        {description}
-                      </Text>
-                    </div>
+                    {label}
+                  </Text>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <SectionHeader>Props</SectionHeader>
+            <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
+              <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
+                <Text
+                  variant="body-xs"
+                  fontWeight="bold"
+                  color="secondary"
+                  className="tracking-wider uppercase"
+                >
+                  Prop
+                </Text>
+                <Text
+                  variant="body-xs"
+                  fontWeight="bold"
+                  color="secondary"
+                  className="tracking-wider uppercase"
+                >
+                  Type
+                </Text>
+                <Text
+                  variant="body-xs"
+                  fontWeight="bold"
+                  color="secondary"
+                  className="tracking-wider uppercase"
+                >
+                  Default
+                </Text>
+              </div>
+              {ICON_PROPS.map(({ name, type, defaultValue, description }) => (
+                <div
+                  key={name}
+                  className="grid gap-2 border-b border-stroke-muted px-6 py-5 last:border-0 md:grid-cols-[200px_1fr_120px] md:items-start md:gap-6"
+                >
+                  <Text
+                    variant="body-sm"
+                    fontFamily="mono"
+                    fontWeight="semibold"
+                    color="primary"
+                  >
+                    {name}
+                  </Text>
+                  <div className="flex flex-col gap-1.5">
                     <Text
                       variant="body-xs"
                       fontFamily="mono"
-                      color={defaultValue ? 'inherit' : 'muted'}
+                      color="secondary"
+                      className="wrap-break-word"
                     >
-                      {defaultValue ?? '—'}
+                      {type}
+                    </Text>
+                    <Text variant="body-sm" color="secondary">
+                      {description}
                     </Text>
                   </div>
-                ))}
-              </div>
-            </section>
+                  <Text
+                    variant="body-xs"
+                    fontFamily="mono"
+                    color={defaultValue ? 'inherit' : 'muted'}
+                  >
+                    {defaultValue ?? '—'}
+                  </Text>
+                </div>
+              ))}
+            </div>
+          </section>
 
-            <section>
-              <SectionHeader>Import</SectionHeader>
-              <div className="grid gap-3">
-                <CopyableImport
-                  label="Named import"
-                  code={`import { ${selected} } from '@swift/icons'`}
-                />
-                <CopyableImport
-                  label="Named deep import"
-                  code={`import { ${selected} } from '@swift/icons/${selected}'`}
-                />
-                <CopyableImport
-                  label="Default deep import"
-                  code={`import ${selected} from '@swift/icons/${selected}'`}
-                />
-              </div>
-            </section>
+          {/* <section>
+            <SectionHeader>Import</SectionHeader>
+            <div className="grid gap-3">
+              <CopyableImport
+                label="Named import"
+                code={`import { ${selected} } from '@swift/icons'`}
+              />
+              <CopyableImport
+                label="Named deep import"
+                code={`import { ${selected} } from '@swift/icons/${selected}'`}
+              />
+              <CopyableImport
+                label="Default deep import"
+                code={`import ${selected} from '@swift/icons/${selected}'`}
+              />
+            </div>
+          </section> */}
 
-            <section>
-              <SectionHeader>Usage</SectionHeader>
-              <pre className="overflow-x-auto rounded bg-surface-inverse p-3 text-xs leading-relaxed text-content-inverse">
-                {`<${selected} size={24} />
+          {/* <section>
+            <SectionHeader>Usage</SectionHeader>
+            <pre className="overflow-x-auto overscroll-contain touch-pan-x rounded bg-surface-inverse p-3 text-xs leading-relaxed text-content-inverse">
+              {`<${selected} size={24} />
 <${selected} size={32} className="text-content-brand" />`}
-              </pre>
-            </section>
-          </div>
-        )}
+            </pre>
+          </section> */}
+        </div>
+      )}
     </SidebarLayout>
   )
 }
