@@ -15,6 +15,7 @@ import { Filter } from '@swift/icons/Filter'
 import { GridSmall } from '@swift/icons/GridSmall'
 import { Notifications } from '@swift/icons/Notifications'
 import { Tag } from '@swift/icons/Tag'
+import { View } from '@swift/icons/View'
 import {
   AccordionPanel,
   BadgePanel,
@@ -30,6 +31,7 @@ import {
   SheetPanel,
   SliderPanel,
   SwitchPanel,
+  TabsPanel,
   TextPanel,
   TimePickerPanel,
   YearPickerPanel,
@@ -53,6 +55,7 @@ type ComponentName =
   | 'Sheet'
   | 'Slider'
   | 'Switch'
+  | 'Tabs'
   | 'Text'
   | 'TimePicker'
   | 'YearPicker'
@@ -74,6 +77,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Sheet', icon: ArrowRightLong },
   { name: 'Slider', icon: Filter },
   { name: 'Switch', icon: Notifications },
+  { name: 'Tabs', icon: View },
   { name: 'Text', icon: Document },
   { name: 'TimePicker', icon: SandTimeFilled },
   { name: 'YearPicker', icon: CalendarModify },
@@ -94,6 +98,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Sheet: SheetPanel,
   Slider: SliderPanel,
   Switch: SwitchPanel,
+  Tabs: TabsPanel,
   Text: TextPanel,
   TimePicker: TimePickerPanel,
   YearPicker: YearPickerPanel,
