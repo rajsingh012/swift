@@ -3,6 +3,7 @@ import {
   cloneElement,
   forwardRef,
   isValidElement,
+  useMemo,
   type HTMLAttributes,
   type ReactElement,
   type Ref,
@@ -68,17 +69,31 @@ export const Slot = forwardRef<HTMLElement, SlotProps>(function Slot(
   ref,
 ) {
   const onlyChild = Children.only(children)
-  if (!isValidElement(onlyChild)) return null
+  const child = isValidElement(onlyChild)
+    ? (onlyChild as ReactElement<AnyProps> & { ref?: Ref<unknown> })
+    : null
+  const childRef = child?.ref
 
-  const child = onlyChild as ReactElement<AnyProps> & { ref?: Ref<unknown> }
+  // CRITICAL: memoize the composed ref. Without this, `composeRefs(...)`
+  // (and the `else` branch's bare `childRef`) reach `cloneElement` with
+  // a fresh function reference every render. React then re-fires the
+  // ref on every render — old-ref(null) followed by new-ref(node) —
+  // which cascades through any state-touching ref in the chain (e.g.
+  // Tabs.Trigger's `registerTrigger`) and produces a "Maximum update
+  // depth exceeded" infinite loop. Stable inputs (`ref`, `childRef`)
+  // give a stable composed ref, so React fires it exactly on mount/
+  // unmount as intended.
+  const composedRef = useMemo<Ref<unknown> | undefined>(() => {
+    if (ref && childRef) return composeRefs(ref, childRef)
+    if (ref) return ref as Ref<unknown>
+    if (childRef) return childRef
+    return undefined
+  }, [ref, childRef])
+
+  if (!child) return null
+
   const merged = mergeProps(slotProps as AnyProps, child.props as AnyProps)
-
-  // Forward the Slot's ref alongside whatever ref the child had.
-  if (ref) {
-    merged.ref = composeRefs(ref, child.ref)
-  } else if (child.ref) {
-    merged.ref = child.ref
-  }
+  if (composedRef !== undefined) merged.ref = composedRef
 
   return cloneElement(child, merged)
 })

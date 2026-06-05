@@ -30,6 +30,7 @@ export default defineConfig({
         Sheet: resolve(__dirname, 'src/Sheet/index.ts'),
         Slider: resolve(__dirname, 'src/Slider/index.ts'),
         Switch: resolve(__dirname, 'src/Switch/index.ts'),
+        Tabs: resolve(__dirname, 'src/Tabs/index.ts'),
         Text: resolve(__dirname, 'src/Text/index.ts'),
         TimePicker: resolve(__dirname, 'src/TimePicker/index.ts'),
         YearPicker: resolve(__dirname, 'src/YearPicker/index.ts'),

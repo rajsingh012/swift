@@ -1,0 +1,189 @@
+/**
+ * Tabs — token-driven chrome. Every visual dimension and colour resolves
+ * through a `--tabs-*` custom property so a consumer can retheme one
+ * instance inline (`style={{ '--tabs-indicator-color': '#a855f7' }}`)
+ * or globally via a higher-level selector.
+ *
+ * The indicator and scroll behavior are driven by JS imperatively (so
+ * the React render doesn't fire 60 times during a tab change or scroll).
+ * Everything else lives here in plain CSS.
+ */
+
+.swift-tabs {
+  --tabs-gap: 0.25rem;
+  --tabs-trigger-padding-x: 0.75rem;
+  --tabs-trigger-padding-y: 0.5rem;
+  --tabs-trigger-radius: var(--radius-sm);
+
+  --tabs-trigger-fg: var(--color-content-muted);
+  --tabs-trigger-fg-active: var(--color-content-strong);
+  --tabs-trigger-fg-disabled: var(--color-content-subtle);
+  --tabs-trigger-bg-hover: var(--color-surface-muted);
+
+  --tabs-indicator-color: var(--color-stroke-brand);
+  --tabs-indicator-size: 2px;             /* underline thickness (horizontal) / bar width (vertical) */
+
+  --tabs-list-border: var(--color-stroke);
+
+  --tabs-transition-duration: 180ms;
+  --tabs-transition-ease: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ── List ─────────────────────────────────────────────────────────── */
+/* The list is a flex container with relative positioning so the
+   absolutely-positioned indicator can anchor to it. A 1px hairline along
+   the cross-axis (bottom for horizontal, end for vertical) gives the
+   inactive triggers a baseline to sit against. */
+
+.swift-tabs-list {
+  position: relative;
+  display: inline-flex;
+  gap: var(--tabs-gap);
+}
+
+.swift-tabs-list[data-orientation="horizontal"] {
+  flex-direction: row;
+  border-bottom: 1px solid var(--tabs-list-border);
+}
+
+.swift-tabs-list[data-orientation="vertical"] {
+  flex-direction: column;
+  border-inline-end: 1px solid var(--tabs-list-border);
+}
+
+/* Scrollable variant — works for both orientations. Hidden scrollbar
+   visually, still scrollable by drag/wheel/touch. Consumer is
+   responsible for giving the list a constrained dimension on the
+   overflow axis (max-width for horizontal, max-height for vertical).
+   Without that, there's nothing to overflow against. */
+.swift-tabs-list[data-scrollable="true"] {
+  display: flex;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+.swift-tabs-list[data-scrollable="true"]::-webkit-scrollbar {
+  display: none;
+}
+.swift-tabs-list[data-scrollable="true"] .swift-tabs-trigger {
+  flex-shrink: 0;
+}
+
+.swift-tabs-list[data-scrollable="true"][data-orientation="horizontal"] {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* Padding-bottom carves out space for the indicator so it isn't
+     clipped against the bottom border. */
+  padding-bottom: var(--tabs-indicator-size);
+}
+
+.swift-tabs-list[data-scrollable="true"][data-orientation="vertical"] {
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Equivalent indicator clearance for the vertical bar that sits on
+     the inline-end edge. */
+  padding-inline-end: var(--tabs-indicator-size);
+  /* Defeats the `min-height: auto` default that flex children get,
+     which would otherwise let the list grow past max-height when
+     nested inside a flex container (the common vertical-tabs layout).
+     With min-height: 0, a consumer-supplied `style={{ maxHeight: 240 }}`
+     actually constrains the list and the internal scroll kicks in. */
+  min-height: 0;
+}
+
+/* ── Trigger ──────────────────────────────────────────────────────── */
+
+.swift-tabs-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--tabs-trigger-padding-y) var(--tabs-trigger-padding-x);
+  border-radius: var(--tabs-trigger-radius);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-weight: 500;
+  color: var(--tabs-trigger-fg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--tabs-transition-duration) var(--tabs-transition-ease),
+    background-color var(--tabs-transition-duration) var(--tabs-transition-ease);
+  /* The list's cross-axis border adds visual weight; the trigger sits a
+     hair past it so the indicator (positioned at the same edge) doesn't
+     visually collide with the hairline. */
+}
+
+.swift-tabs-trigger:hover:not([data-state="active"]):not(:disabled) {
+  background: var(--tabs-trigger-bg-hover);
+  color: var(--tabs-trigger-fg-active);
+}
+
+.swift-tabs-trigger[data-state="active"] {
+  color: var(--tabs-trigger-fg-active);
+  font-weight: 600;
+}
+
+.swift-tabs-trigger:disabled {
+  color: var(--tabs-trigger-fg-disabled);
+  cursor: not-allowed;
+}
+
+.swift-tabs-trigger:focus-visible {
+  outline: 2px solid var(--color-stroke-brand);
+  outline-offset: 2px;
+}
+
+/* ── Indicator ────────────────────────────────────────────────────── */
+/* Absolutely positioned against the list. Position + size are written
+   inline by TabsIndicator's effect (using transform + width/height for
+   sub-pixel accuracy and to let the browser composite the move). */
+
+.swift-tabs-indicator {
+  position: absolute;
+  background: var(--tabs-indicator-color);
+  border-radius: 9999px;
+  pointer-events: none;
+  /* Initial state: zero-size, sitting at the list origin. The effect
+     populates real values once the active trigger has been measured. */
+  width: 0;
+  height: 0;
+  transition:
+    transform var(--tabs-transition-duration) var(--tabs-transition-ease),
+    width var(--tabs-transition-duration) var(--tabs-transition-ease),
+    height var(--tabs-transition-duration) var(--tabs-transition-ease);
+}
+
+.swift-tabs-list[data-orientation="horizontal"] .swift-tabs-indicator {
+  bottom: 0;
+  left: 0;
+  height: var(--tabs-indicator-size);
+}
+.swift-tabs-list[data-orientation="vertical"] .swift-tabs-indicator {
+  top: 0;
+  inset-inline-end: 0;
+  width: var(--tabs-indicator-size);
+}
+
+/* ── Content ──────────────────────────────────────────────────────── */
+
+.swift-tabs-content {
+  outline: none;
+}
+.swift-tabs-content:focus-visible {
+  outline: 2px solid var(--color-stroke-brand);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-tabs-trigger,
+  .swift-tabs-indicator {
+    transition-duration: 1ms !important;
+  }
+  .swift-tabs-list[data-scrollable="true"] {
+    scroll-behavior: auto !important;
+  }
+}

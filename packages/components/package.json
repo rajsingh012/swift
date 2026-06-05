@@ -90,6 +90,11 @@
       "import": "./dist/Switch.js",
       "require": "./dist/Switch.cjs"
     },
+    "./Tabs": {
+      "types": "./dist/src/Tabs/index.d.ts",
+      "import": "./dist/Tabs.js",
+      "require": "./dist/Tabs.cjs"
+    },
     "./Text": {
       "types": "./dist/src/Text/index.d.ts",
       "import": "./dist/Text.js",
