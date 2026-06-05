@@ -85,6 +85,11 @@
       "import": "./dist/Slider.js",
       "require": "./dist/Slider.cjs"
     },
+    "./Switch": {
+      "types": "./dist/src/Switch/index.d.ts",
+      "import": "./dist/Switch.js",
+      "require": "./dist/Switch.cjs"
+    },
     "./Text": {
       "types": "./dist/src/Text/index.d.ts",
       "import": "./dist/Text.js",

@@ -1,0 +1,220 @@
+/**
+ * Switch — token-driven chrome for the toggle pill. Sizes, colours, and the
+ * thumb travel are all derived from `--switch-*` custom properties, so a
+ * consumer can retheme a single switch inline (e.g.
+ * `style={{ '--switch-track-bg-checked': 'oklch(...)' }}`) without
+ * touching the JSX or shipping a fork of the styles.
+ *
+ * The thumb position uses logical inset (`inset-inline-start`) so RTL is
+ * handled by the browser — no manual transform flip needed.
+ */
+
+.swift-switch {
+  --switch-track-width: 36px;
+  --switch-track-height: 20px;
+  --switch-thumb-size: 16px;
+  /* Gap between thumb and the track's interior edge — when checked, the
+     thumb's logical-start position becomes `track-width - thumb-size`. */
+  --switch-thumb-inset: 2px;
+  /* Icon fill inside the thumb. 0.6 → 60 % of thumb diameter (default).
+     Bump to 0.8–1.0 for an "icon-as-state" UX where the glyph dominates. */
+  --switch-thumb-icon-scale: 0.6;
+  /* How far the thumb nudges toward the toggle direction on hover. Set
+     to 0 to disable the preview animation. */
+  --switch-hover-preview: 2px;
+
+  --switch-track-bg: var(--color-stroke);
+  --switch-track-bg-checked: var(--color-surface-brand);
+  --switch-thumb-bg: var(--color-surface);
+  --switch-thumb-shadow: 0 1px 2px rgb(0 0 0 / 0.18), 0 0 0 1px rgb(0 0 0 / 0.04);
+
+  /* 30 % brand wash — kept in sync via color-mix() so a consumer overriding
+     --color-stroke-brand gets a matching ring. */
+  --switch-focus-ring: color-mix(in srgb, var(--color-stroke-brand) 30%, transparent);
+
+  --switch-transition-duration: 160ms;
+  --switch-transition-ease: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ── Size variants ────────────────────────────────────────────────── */
+
+.swift-switch[data-size="sm"] {
+  --switch-track-width: 28px;
+  --switch-track-height: 16px;
+  --switch-thumb-size: 12px;
+}
+.swift-switch[data-size="lg"] {
+  --switch-track-width: 44px;
+  --switch-track-height: 24px;
+  --switch-thumb-size: 20px;
+}
+
+/* ── Colour variants (checked state only — unchecked stays neutral) ── */
+/* Each variant only touches the checked-state colour. Off stays neutral
+   so a row of mixed-variant switches all read as "off" identically. */
+
+.swift-switch[data-variant="success"][data-state="checked"] {
+  --switch-track-bg-checked: var(--color-surface-success);
+}
+.swift-switch[data-variant="warning"][data-state="checked"] {
+  --switch-track-bg-checked: var(--color-surface-warning);
+}
+.swift-switch[data-variant="info"][data-state="checked"] {
+  --switch-track-bg-checked: var(--color-surface-highlight);
+}
+/* `neutral` keeps the checked-state pill grey — useful for low-emphasis
+   acknowledgement toggles ("I've read this") where the ON state shouldn't
+   draw attention against more meaningful nearby UI. */
+.swift-switch[data-variant="neutral"][data-state="checked"] {
+  --switch-track-bg-checked: var(--color-stroke-strong);
+}
+
+/* ── Invalid — overrides both rail and ring regardless of state ───── */
+
+.swift-switch[data-invalid="true"] {
+  --switch-track-bg: var(--color-stroke-critical);
+  --switch-track-bg-checked: var(--color-surface-critical);
+  --switch-focus-ring: color-mix(in srgb, var(--color-stroke-critical) 30%, transparent);
+}
+
+/* ── Track ────────────────────────────────────────────────────────── */
+/* Track is rendered by the SwitchTrack component as a positioned <span>.
+   We attach the visible chrome here so the JSX stays free of pixel maths. */
+
+.swift-switch-track {
+  position: relative;
+  display: inline-block;
+  width: var(--switch-track-width);
+  height: var(--switch-track-height);
+  border-radius: 9999px;
+  background: var(--switch-track-bg);
+  transition:
+    background-color var(--switch-transition-duration) var(--switch-transition-ease);
+  flex-shrink: 0;
+  /* Critical: the track sits *after* the absolute-positioned input in
+     DOM order, so without this it stacks ON TOP of the input and steals
+     clicks/pointer events. With PE:none, pointer events fall through to
+     the input (which still handles native click + change), and the
+     wrapper's onPointerDown handler still fires via bubble. The drag
+     gesture is unaffected because it lives on the wrapper, not the
+     track. */
+  pointer-events: none;
+}
+
+.swift-switch[data-state="checked"] .swift-switch-track {
+  background: var(--switch-track-bg-checked);
+}
+
+/* Focus ring lives on the track and is driven by :focus-visible on the
+   overlaid native input (peer-focus-visible in Tailwind terms). We do it
+   in plain CSS here because the input is a sibling of the track inside
+   the Input wrapper, not an ancestor — Tailwind's `peer-*` selector
+   would still work, but the explicit selector reads cleaner alongside
+   the token block. */
+.swift-switch-input:focus-visible ~ .swift-switch-track {
+  box-shadow: 0 0 0 3px var(--switch-focus-ring);
+}
+
+/* ── Thumb ────────────────────────────────────────────────────────── */
+
+.swift-switch-thumb {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: var(--switch-thumb-inset);
+  /* Logical-end reset so the browser doesn't fight us under RTL. */
+  inset-inline-end: auto;
+  width: var(--switch-thumb-size);
+  height: var(--switch-thumb-size);
+  border-radius: 9999px;
+  background: var(--switch-thumb-bg);
+  box-shadow: var(--switch-thumb-shadow);
+  transform: translateY(-50%);
+  transition:
+    inset-inline-start var(--switch-transition-duration) var(--switch-transition-ease),
+    background-color var(--switch-transition-duration) var(--switch-transition-ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Icon glyph size is a fraction of the thumb diameter (default 60 %).
+     Consumers can override --switch-thumb-icon-scale to push it up to
+     0.8 or 1.0 for an icon-dominant thumb. */
+  font-size: calc(var(--switch-thumb-size) * var(--switch-thumb-icon-scale));
+  color: var(--color-content-strong);
+  pointer-events: none;
+}
+
+.swift-switch[data-state="checked"] .swift-switch-thumb {
+  inset-inline-start: calc(
+    var(--switch-track-width) - var(--switch-thumb-size) - var(--switch-thumb-inset)
+  );
+}
+
+/* ── Hover preview ────────────────────────────────────────────────── */
+/* On hover, nudge the thumb a couple of pixels toward the would-be-on
+   position — a quiet hint that the control is interactive. Suppressed
+   when disabled / readOnly / loading so it can't lie about the state.
+   The nudge respects logical writing direction via inset-inline-start. */
+
+.swift-switch:not([data-disabled="true"]):not([data-readonly="true"]):not([data-loading="true"]):hover[data-state="unchecked"] .swift-switch-thumb {
+  inset-inline-start: calc(var(--switch-thumb-inset) + var(--switch-hover-preview));
+}
+.swift-switch:not([data-disabled="true"]):not([data-readonly="true"]):not([data-loading="true"]):hover[data-state="checked"] .swift-switch-thumb {
+  inset-inline-start: calc(
+    var(--switch-track-width)
+    - var(--switch-thumb-size)
+    - var(--switch-thumb-inset)
+    - var(--switch-hover-preview)
+  );
+}
+
+/* ── Disabled / loading chrome ────────────────────────────────────── */
+
+.swift-switch[data-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.swift-switch[data-readonly="true"] .swift-switch-track {
+  cursor: default;
+}
+.swift-switch[data-loading="true"] {
+  cursor: progress;
+}
+
+/* Spinner glyph used while loading — a thin arc that rotates. The thumb
+   itself doesn't rotate; only its inner glyph wrapper does. */
+.swift-switch-spinner {
+  width: 60%;
+  height: 60%;
+  border-radius: 9999px;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  animation: swift-switch-spin 720ms linear infinite;
+}
+
+@keyframes swift-switch-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Hit area for touch ───────────────────────────────────────────── */
+/* On coarse pointers, expand the input's hit area to the 44 px guideline
+   without touching the visible track size. The input is absolutely
+   positioned and transparent, so we just inflate its bounding box. */
+
+@media (pointer: coarse) {
+  .swift-switch-input {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-switch-track,
+  .swift-switch-thumb {
+    transition-duration: 1ms !important;
+  }
+  .swift-switch-spinner {
+    animation-duration: 1ms !important;
+  }
+}

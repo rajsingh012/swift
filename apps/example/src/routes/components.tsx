@@ -13,6 +13,7 @@ import { Document } from '@swift/icons/Document'
 import { Edit } from '@swift/icons/Edit'
 import { Filter } from '@swift/icons/Filter'
 import { GridSmall } from '@swift/icons/GridSmall'
+import { Notifications } from '@swift/icons/Notifications'
 import { Tag } from '@swift/icons/Tag'
 import {
   AccordionPanel,
@@ -28,6 +29,7 @@ import {
   RadioPanel,
   SheetPanel,
   SliderPanel,
+  SwitchPanel,
   TextPanel,
   TimePickerPanel,
   YearPickerPanel,
@@ -50,6 +52,7 @@ type ComponentName =
   | 'Radio'
   | 'Sheet'
   | 'Slider'
+  | 'Switch'
   | 'Text'
   | 'TimePicker'
   | 'YearPicker'
@@ -70,6 +73,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Radio', icon: CheckCircleFilled },
   { name: 'Sheet', icon: ArrowRightLong },
   { name: 'Slider', icon: Filter },
+  { name: 'Switch', icon: Notifications },
   { name: 'Text', icon: Document },
   { name: 'TimePicker', icon: SandTimeFilled },
   { name: 'YearPicker', icon: CalendarModify },
@@ -89,6 +93,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Radio: RadioPanel,
   Sheet: SheetPanel,
   Slider: SliderPanel,
+  Switch: SwitchPanel,
   Text: TextPanel,
   TimePicker: TimePickerPanel,
   YearPicker: YearPickerPanel,
