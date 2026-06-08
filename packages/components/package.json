@@ -100,6 +100,11 @@
       "import": "./dist/Text.js",
       "require": "./dist/Text.cjs"
     },
+    "./Toast": {
+      "types": "./dist/src/Toast/index.d.ts",
+      "import": "./dist/Toast.js",
+      "require": "./dist/Toast.cjs"
+    },
     "./TimePicker": {
       "types": "./dist/src/TimePicker/index.d.ts",
       "import": "./dist/TimePicker.js",

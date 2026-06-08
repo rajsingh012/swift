@@ -32,6 +32,7 @@ export default defineConfig({
         Switch: resolve(__dirname, 'src/Switch/index.ts'),
         Tabs: resolve(__dirname, 'src/Tabs/index.ts'),
         Text: resolve(__dirname, 'src/Text/index.ts'),
+        Toast: resolve(__dirname, 'src/Toast/index.ts'),
         TimePicker: resolve(__dirname, 'src/TimePicker/index.ts'),
         YearPicker: resolve(__dirname, 'src/YearPicker/index.ts'),
       },

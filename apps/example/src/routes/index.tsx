@@ -7,7 +7,10 @@ import { Card } from '@swift/components/Card'
 import { Checkbox } from '@swift/components/Checkbox'
 import { Chip } from '@swift/components/Chip'
 import { Input } from '@swift/components/Input'
+import { Switch } from '@swift/components/Switch'
+import { Tabs } from '@swift/components/Tabs'
 import { Text } from '@swift/components/Text'
+import { toast } from '@swift/components/Toast'
 import { Afternoon } from '@swift/icons/Afternoon'
 import { ArrowRight } from '@swift/icons/ArrowRight'
 import { Bag } from '@swift/icons/Bag'
@@ -63,9 +66,9 @@ const STATS: ReadonlyArray<{
   blurb: string
 }> = [
   { label: 'Icons', value: '310', icon: Star, accent: 'text-content-highlight', blurb: 'tree-shakeable SVGs' },
-  { label: 'Components', value: '8', icon: Settings, accent: 'text-content-brand', blurb: 'typed & themable' },
+  { label: 'Components', value: '19', icon: Settings, accent: 'text-content-brand', blurb: 'typed & themable' },
   { label: 'Themes', value: '2', icon: Afternoon, accent: 'text-content-new', blurb: 'light & dark, same tokens' },
-  { label: 'Variants', value: '40+', icon: Tag, accent: 'text-content-success', blurb: 'across the system' },
+  { label: 'Variants', value: '60+', icon: Tag, accent: 'text-content-success', blurb: 'across the system' },
 ]
 
 const SHOWCASE_ICONS: ReadonlyArray<{ Icon: IconComponent; color: string }> = [
@@ -180,6 +183,16 @@ function Showcase() {
           More
           <Button.RightIcon><ArrowRight size={14} /></Button.RightIcon>
         </Button>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Switch size="sm" defaultChecked />
+        <Switch size="sm" variant="success" defaultChecked />
+        <Switch size="sm" variant="warning" defaultChecked />
+        <Switch size="sm" />
+        <Text variant="body-xs" color="muted" className="ml-auto">
+          Switch · 3 sizes · 5 variants
+        </Text>
       </div>
 
       <div className="flex h-7 overflow-hidden rounded-md border border-stroke">
@@ -388,6 +401,205 @@ function ChipsCard() {
   )
 }
 
+function SwitchCard() {
+  const [wifi, setWifi] = useState(true)
+  const [push, setPush] = useState(false)
+  const [eco, setEco] = useState(true)
+  return (
+    <Card variant="outlined" className="h-full">
+      <Card.Header divider>
+        <Card.Title>Switch</Card.Title>
+        <Card.Description>Three sizes · five variants · loading state.</Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <div className="flex flex-col gap-3">
+          <Switch size="sm" checked={wifi} onCheckedChange={setWifi}>
+            In-flight Wi-Fi
+          </Switch>
+          <Switch size="sm" variant="success" checked={eco} onCheckedChange={setEco}>
+            Eco fares only
+          </Switch>
+          <Switch size="sm" variant="info" checked={push} onCheckedChange={setPush}>
+            Push notifications
+          </Switch>
+          <Switch size="sm" variant="warning" disabled>
+            Premium add-ons
+          </Switch>
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+
+function TabsCard() {
+  return (
+    <Card variant="outlined" className="h-full">
+      <Card.Header divider>
+        <Card.Title>Tabs</Card.Title>
+        <Card.Description>Animated indicator · roving focus · swipeable.</Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <Tabs defaultValue="onward">
+          <Tabs.List>
+            <Tabs.Trigger value="onward">Onward</Tabs.Trigger>
+            <Tabs.Trigger value="return">Return</Tabs.Trigger>
+            <Tabs.Trigger value="multi">Multi-city</Tabs.Trigger>
+            <Tabs.Indicator />
+          </Tabs.List>
+          <Tabs.Content value="onward" className="pt-3">
+            <Text variant="body-sm" color="secondary">
+              DEL → GOX · Sat, 14 Jun · from <strong className="text-content-strong">₹4,820</strong>
+            </Text>
+          </Tabs.Content>
+          <Tabs.Content value="return" className="pt-3">
+            <Text variant="body-sm" color="secondary">
+              Add a return to see round-trip fares.
+            </Text>
+          </Tabs.Content>
+          <Tabs.Content value="multi" className="pt-3">
+            <Text variant="body-sm" color="secondary">
+              Stitch up to six legs into a single itinerary.
+            </Text>
+          </Tabs.Content>
+        </Tabs>
+      </Card.Content>
+    </Card>
+  )
+}
+
+const TOAST_POSITIONS = [
+  'top-left',
+  'top-center',
+  'top-right',
+  'bottom-left',
+  'bottom-center',
+  'bottom-right',
+] as const
+
+function ToastPlayground() {
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col">
+          <SectionLabel>Toast playground</SectionLabel>
+          <Text variant="body-sm" color="secondary">
+            Drives the imperative <code>toast()</code> API — variants, positions, queue, action, persistent.
+          </Text>
+        </div>
+        <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
+          new
+        </Badge>
+      </div>
+
+      <Card variant="outlined">
+        <Card.Content>
+          <div className="flex flex-col gap-5">
+            {/* Variants */}
+            <div className="flex flex-col gap-2">
+              <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
+                Variants
+              </Text>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="ghost" onClick={() => toast('Saved')}>
+                  Default
+                </Button>
+                <Button size="sm" onClick={() => toast.success('Profile updated')}>
+                  Success
+                </Button>
+                <Button size="sm" variant="danger" onClick={() => toast.error('Payment failed')}>
+                  Error
+                </Button>
+                <Button size="sm" variant="secondary" onClick={() => toast.warning('Storage almost full')}>
+                  Warning
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => toast.info('New version available')}>
+                  Info
+                </Button>
+              </div>
+            </div>
+
+            {/* Positions */}
+            <div className="flex flex-col gap-2">
+              <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
+                Positions
+              </Text>
+              <div className="flex flex-wrap gap-2">
+                {TOAST_POSITIONS.map((pos) => (
+                  <Button
+                    key={pos}
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      toast.info(`Position: ${pos}`, {
+                        description: 'Fired from the position button row.',
+                        position: pos,
+                      })
+                    }
+                  >
+                    {pos}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Edge cases */}
+            <div className="flex flex-col gap-2">
+              <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
+                Edge cases
+              </Text>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() =>
+                    toast.success('File uploaded', {
+                      description: 'shared-photos.zip · 24.6 MB',
+                      action: { label: 'Undo', onClick: () => toast('Undone') },
+                    })
+                  }
+                >
+                  With description + action
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() =>
+                    toast.warning('Persistent — dismiss manually', {
+                      description: 'duration: Infinity',
+                      duration: Infinity,
+                    })
+                  }
+                >
+                  Persistent
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    toast.info('Queued #1')
+                    toast.success('Queued #2')
+                    toast.warning('Queued #3')
+                    toast.error('Queued #4 — waits in queue')
+                    toast('Queued #5 — waits in queue')
+                  }}
+                >
+                  Stack 5 (3 visible, 2 queued)
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => toast.dismiss()}>
+                  Dismiss all
+                </Button>
+              </div>
+              <Text variant="body-xs" color="muted">
+                Tip: hover any toast to pause its auto-dismiss timer.
+              </Text>
+            </div>
+          </div>
+        </Card.Content>
+      </Card>
+    </section>
+  )
+}
+
 function FormCard() {
   const [email, setEmail] = useState('')
   const [agree, setAgree] = useState(true)
@@ -533,6 +745,133 @@ function TypographyCard() {
   )
 }
 
+function WhatsNew() {
+  const [alerts, setAlerts] = useState(true)
+  const [savings, setSavings] = useState(false)
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col">
+          <SectionLabel>Just shipped</SectionLabel>
+          <Text variant="body-sm" color="secondary">
+            The two newest primitives — wired live, click between them.
+          </Text>
+        </div>
+        <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
+          new
+        </Badge>
+      </div>
+
+      <Card variant="outlined">
+        <Card.Content>
+          <Tabs defaultValue="tabs">
+            <Tabs.List>
+              <Tabs.Trigger value="tabs">Tabs</Tabs.Trigger>
+              <Tabs.Trigger value="switch">Switch</Tabs.Trigger>
+              <Tabs.Indicator />
+            </Tabs.List>
+            <Tabs.Content value="tabs" className="pt-5">
+              <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+                <div className="flex flex-col gap-2">
+                  <Text variant="heading-sm" fontWeight="semibold" color="primary">
+                    Compound Tabs · automatic & manual activation.
+                  </Text>
+                  <Text variant="body-sm" color="secondary">
+                    Animated indicator, horizontal-swipe gestures, optional lazy mounts. Roving
+                    focus, arrow keys, Home/End — all wired. Yes, this section is using it.
+                  </Text>
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                      indicator
+                    </Chip>
+                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                      lazyMount
+                    </Chip>
+                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                      RTL
+                    </Chip>
+                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                      swipeable
+                    </Chip>
+                  </div>
+                </div>
+                <Tabs defaultValue="overview" className="min-w-60 rounded-lg border border-stroke bg-surface-elevated p-3">
+                  <Tabs.List>
+                    <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+                    <Tabs.Trigger value="pricing">Pricing</Tabs.Trigger>
+                    <Tabs.Trigger value="reviews">Reviews</Tabs.Trigger>
+                    <Tabs.Indicator />
+                  </Tabs.List>
+                  <Tabs.Content value="overview" className="pt-3">
+                    <Text variant="body-xs" color="secondary">
+                      Nested Tabs render inside their parent. State is independent.
+                    </Text>
+                  </Tabs.Content>
+                  <Tabs.Content value="pricing" className="pt-3">
+                    <Text variant="body-xs" color="secondary">
+                      ₹4,820 onwards · taxes & fees included.
+                    </Text>
+                  </Tabs.Content>
+                  <Tabs.Content value="reviews" className="pt-3">
+                    <Text variant="body-xs" color="secondary">
+                      4.6 ★ from 2,418 travellers.
+                    </Text>
+                  </Tabs.Content>
+                </Tabs>
+              </div>
+            </Tabs.Content>
+            <Tabs.Content value="switch" className="pt-5">
+              <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
+                <div className="flex flex-col gap-2">
+                  <Text variant="heading-sm" fontWeight="semibold" color="primary">
+                    Switch · accessible toggle, three sizes, five variants.
+                  </Text>
+                  <Text variant="body-sm" color="secondary">
+                    Native <code>input[type=checkbox][role=switch]</code> under the hood — labels
+                    click-toggle, Space activates, form submission works. Loading state included.
+                  </Text>
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                      sm · md · lg
+                    </Chip>
+                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                      success / warning / info
+                    </Chip>
+                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                      loading
+                    </Chip>
+                  </div>
+                </div>
+                <div className="flex min-w-60 flex-col gap-3 rounded-lg border border-stroke bg-surface-elevated p-3">
+                  <Switch
+                    size="sm"
+                    checked={alerts}
+                    onCheckedChange={setAlerts}
+                    description="Pings you when fares drop."
+                  >
+                    Price alerts
+                  </Switch>
+                  <Switch
+                    size="sm"
+                    variant="success"
+                    checked={savings}
+                    onCheckedChange={setSavings}
+                  >
+                    Auto-apply savings
+                  </Switch>
+                  <Switch size="sm" variant="warning" disabled defaultChecked>
+                    Sync (disabled)
+                  </Switch>
+                </div>
+              </div>
+            </Tabs.Content>
+          </Tabs>
+        </Card.Content>
+      </Card>
+    </section>
+  )
+}
+
 function ComponentPlayground() {
   return (
     <section className="flex flex-col gap-4">
@@ -555,6 +894,8 @@ function ComponentPlayground() {
         <ButtonsCard />
         <BadgesCard />
         <ChipsCard />
+        <TabsCard />
+        <SwitchCard />
         <FormCard />
         <FaqCard />
         <TripCard />
@@ -702,6 +1043,10 @@ function HomeRoute() {
         </header>
 
         <StatsStrip />
+
+        <WhatsNew />
+
+        <ToastPlayground />
 
         <section className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
