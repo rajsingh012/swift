@@ -12,7 +12,7 @@ import { CopyableImport } from '../lib/CopyableImport'
 import { BrowserCompat, CodeBlock, PreviewRow, SectionHeader } from './shared'
 
 const DESCRIPTION =
-  'Notification system with a singleton store + portal viewport + imperative `toast()` API. Fire from anywhere — render-time, effects, router loaders, fetch error handlers — without wiring state into the component tree. FIFO stacking with hover-to-expand (oldest at the front, newer cards recede behind with scale-down + opacity dim, expand to clearly separated cards on pointer hover), pause-on-hover/focus, six positions with RTL-aware insets, prefers-reduced-motion fallback, type-driven a11y roles (status / alert), and SSR-safe portal mount.'
+  'Notification system with a singleton store + portal viewport + imperative `toast()` API. Fire from anywhere — render-time, effects, router loaders, fetch error handlers — without wiring state into the component tree. FIFO stacking with hover-to-expand (oldest at the front, newer cards recede behind with scale-down + opacity dim, expand to clearly separated cards on pointer hover), pause-on-hover/focus, six positions with RTL-aware insets, prefers-reduced-motion fallback, type-driven a11y roles (status / alert), and SSR-safe portal mount. The visual layer (icon + title + description + action + close + per-variant accent + per-appearance surface) is a nested `<Alert>`, so the appearance vocabulary is identical to the Alert component.'
 
 const POSITIONS: ReadonlyArray<ToastPosition> = [
   'top-left',
@@ -179,38 +179,11 @@ const VIEWPORT_PROPS: ReadonlyArray<PropRow> = [
   },
 ]
 
-type PartBlock = {
-  name: string
-  summary: string
-}
-
-const TOAST_COMPOUND_PARTS: ReadonlyArray<PartBlock> = [
-  {
-    name: 'Toast.Title',
-    summary:
-      'Primary line inside the toast body. Used internally to render `options.title`; expose it via compound usage when you need a custom layout. Forwards every HTML attribute on a styled `<div>`.',
-  },
-  {
-    name: 'Toast.Description',
-    summary:
-      'Secondary line rendered below the title. Used internally to render `options.description`. Same prop surface as `Toast.Title`.',
-  },
-  {
-    name: 'Toast.Action',
-    summary:
-      'Action button. Reads the per-toast context for the dismiss callback — clicking fires your `onClick` and then dismisses (call `event.preventDefault()` to keep the toast open). Used internally to render `options.action`.',
-  },
-  {
-    name: 'Toast.Close',
-    summary:
-      'Manual-dismiss button. Defaults to a ✕ glyph and `aria-label="Dismiss notification"`; pass `children` to replace the glyph and `aria-label` to retitle it. Reads the per-toast context for the dismiss callback.',
-  },
-  {
-    name: 'Toast.Icon',
-    summary:
-      'Leading icon slot. With no children, renders the type-driven default glyph (or nothing for the `default` type). Pass children to override; pass `icon: null` on the imperative options to skip the slot entirely.',
-  },
-]
+/* Toast no longer ships its own compound parts — the visual layer is a
+ * nested `<Alert>`, so consumers wanting custom toast rendering should
+ * reach for `Alert.Title` / `Alert.Description` / `Alert.Actions` /
+ * `Alert.Close` / `Alert.Icon` from `@swift/components/Alert` directly
+ * (or via `ToastRoot` with a custom `children` override). */
 
 export function ToastPanel() {
   // Used by the "update by id" demo so the loading → success transition
@@ -802,30 +775,25 @@ toast.dismiss()`}
         <PropsTable rows={VIEWPORT_PROPS} />
       </section>
 
-      {/* ── Compound parts ────────────────────────────────────────── */}
+      {/* ── Visual layer · powered by Alert ───────────────────────── */}
       <section>
-        <SectionHeader>Compound parts</SectionHeader>
+        <SectionHeader>Visual layer · powered by Alert</SectionHeader>
         <Text variant="body-sm" color="secondary" className="mb-3 block">
-          The default renderer composes these parts based on{' '}
-          <code>options.title</code> / <code>description</code> /{' '}
-          <code>action</code> / <code>icon</code>. Each is also exported so
-          consumers can read what&apos;s in the box.
+          Each toast renders a nested <code>{'<Alert>'}</code> as its visual
+          layer — the icon, title, description, action, and close chrome all
+          come from there. Toast owns positioning, the stacking transform,
+          the auto-dismiss timer, the queue, and the portal; Alert owns the
+          look. That&apos;s why <code>appearance</code> on a toast accepts
+          exactly the same vocabulary (<code>subtle</code> /{' '}
+          <code>soft</code> / <code>solid</code> / <code>outline</code> /{' '}
+          <code>left-accent</code> / <code>unstyled</code>) as on an inline
+          Alert. Consumers wanting fully custom toast rendering can import
+          <code>{' Alert.Title'}</code> /{' '}
+          <code>Alert.Description</code> / <code>Alert.Actions</code> /{' '}
+          <code>Alert.Close</code> from{' '}
+          <code>@swift/components/Alert</code> and drop them into a{' '}
+          <code>{'<ToastRoot>'}</code> via the <code>children</code> prop.
         </Text>
-        <div className="grid gap-3">
-          {TOAST_COMPOUND_PARTS.map(({ name, summary }) => (
-            <div
-              key={name}
-              className="rounded-xl border border-stroke bg-surface-elevated px-6 py-4"
-            >
-              <Text variant="body-sm" fontFamily="mono" fontWeight="bold" color="primary">
-                {name}
-              </Text>
-              <Text variant="body-sm" color="secondary" className="mt-1 block">
-                {summary}
-              </Text>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* ── Theme tokens · custom palette per instance ────────────── */}

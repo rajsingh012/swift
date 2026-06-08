@@ -1,4 +1,5 @@
 export { AccordionPanel } from './AccordionPanel'
+export { AlertPanel } from './AlertPanel'
 export { BadgePanel } from './BadgePanel'
 export { ButtonPanel } from './ButtonPanel'
 export { CardPanel } from './CardPanel'

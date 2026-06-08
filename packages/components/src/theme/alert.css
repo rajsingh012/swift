@@ -1,0 +1,191 @@
+/**
+ * Alert — appearance backgrounds, the left-accent stripe, and the
+ * enter / exit animations driven by `usePresence`.
+ *
+ * Every spacing / colour / motion value is exposed as a CSS custom
+ * property so consumers can retheme per-instance without touching JSX:
+ *
+ *     <Alert style={{ '--alert-radius': '0.25rem' }}>...</Alert>
+ *
+ * The `subtle` appearance uses the defaults baked into `rootClasses`
+ * (bg-surface + border-stroke + content-strong text) and doesn't need
+ * its own rule. `soft` / `solid` / `outline` / `left-accent` layer on
+ * top via `[data-appearance="..."]` selectors.
+ *
+ * ── Animations ────────────────────────────────────────────────────
+ * Enter: scale + opacity ease-in via keyframes; runs once on first
+ * paint (no @starting-style — Alert's mount path is straightforward).
+ * Exit: keyframes with `forwards` fill so the closed state stays at
+ * its final values while `usePresence` waits for `animationend`. The
+ * JS side keeps the element mounted across the exit, then unmounts.
+ *
+ * ── Reduced motion ────────────────────────────────────────────────
+ * Animation duration collapses to 1 ms (kept non-zero so `usePresence`
+ * still observes an `animationend` and finalises the unmount cleanly).
+ */
+
+.swift-alert {
+  --alert-radius: 0.625rem;
+  --alert-duration: 220ms;
+  --alert-exit-duration: 180ms;
+  --alert-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Soft ─────────────────────────────────────────────────────────── */
+/* Tinted surface per variant using `--color-surface-{variant}-muted`
+   tokens (which already ship light + dark variants). Border picks up a
+   faint accent tint via `color-mix` so the card edge stays visible
+   against the page bg. */
+
+.swift-alert[data-appearance="soft"][data-variant="default"] {
+  background-color: var(--color-surface-muted);
+}
+.swift-alert[data-appearance="soft"][data-variant="success"] {
+  background-color: var(--color-surface-success-muted);
+}
+.swift-alert[data-appearance="soft"][data-variant="error"] {
+  background-color: var(--color-surface-critical-muted);
+}
+.swift-alert[data-appearance="soft"][data-variant="warning"] {
+  background-color: var(--color-surface-warning-muted);
+}
+.swift-alert[data-appearance="soft"][data-variant="info"] {
+  background-color: var(--color-surface-brand-muted);
+}
+
+.swift-alert[data-appearance="soft"][data-variant="success"],
+.swift-alert[data-appearance="soft"][data-variant="error"],
+.swift-alert[data-appearance="soft"][data-variant="warning"],
+.swift-alert[data-appearance="soft"][data-variant="info"] {
+  border-color: color-mix(
+    in srgb,
+    var(--alert-accent, var(--color-stroke)) 25%,
+    transparent
+  );
+}
+
+/* ── Solid ────────────────────────────────────────────────────────── */
+/* Saturated bg using raw `*-600` shades; text + icon flip to white.
+   `--alert-accent` is reset to #fff so action button text and icons
+   inherit through `var(--alert-accent)` without further plumbing. */
+
+.swift-alert[data-appearance="solid"] {
+  --alert-accent: #fff;
+  border-color: transparent;
+  color: #fff;
+}
+.swift-alert[data-appearance="solid"][data-variant="default"] {
+  background-color: var(--color-neutral-800);
+}
+.swift-alert[data-appearance="solid"][data-variant="success"] {
+  background-color: var(--color-success-600);
+}
+.swift-alert[data-appearance="solid"][data-variant="error"] {
+  background-color: var(--color-critical-600);
+}
+.swift-alert[data-appearance="solid"][data-variant="warning"] {
+  background-color: var(--color-warning-600);
+}
+.swift-alert[data-appearance="solid"][data-variant="info"] {
+  background-color: var(--color-brand-600);
+}
+.swift-alert[data-appearance="solid"] .swift-alert-title {
+  color: #fff;
+}
+.swift-alert[data-appearance="solid"] .swift-alert-description {
+  color: rgb(255 255 255 / 0.85);
+}
+.swift-alert[data-appearance="solid"] .swift-alert-close {
+  color: rgb(255 255 255 / 0.85);
+}
+.swift-alert[data-appearance="solid"] .swift-alert-close:hover {
+  background-color: rgb(255 255 255 / 0.15);
+  color: #fff;
+}
+
+/* ── Outline ──────────────────────────────────────────────────────── */
+/* Transparent bg, coloured border per variant. `default` keeps the
+   neutral stroke (matches subtle visually except for being transparent). */
+
+.swift-alert[data-appearance="outline"] {
+  background-color: transparent;
+}
+.swift-alert[data-appearance="outline"][data-variant="success"] {
+  border-color: var(--color-stroke-success);
+}
+.swift-alert[data-appearance="outline"][data-variant="error"] {
+  border-color: var(--color-stroke-critical);
+}
+.swift-alert[data-appearance="outline"][data-variant="warning"] {
+  border-color: var(--color-stroke-warning);
+}
+.swift-alert[data-appearance="outline"][data-variant="info"] {
+  border-color: var(--color-stroke-brand);
+}
+
+/* ── Left-accent ──────────────────────────────────────────────────── */
+/* Coloured stripe on the start edge (auto-flips under RTL via the
+   logical inset-inline-start). For the `default` variant the stripe
+   falls back to `--color-stroke-strong` so it's a subtle gray. */
+
+.swift-alert[data-appearance="left-accent"] {
+  border-inline-start-width: 4px;
+  border-inline-start-color: var(
+    --alert-accent,
+    var(--color-stroke-strong)
+  );
+}
+
+/* ── Unstyled ─────────────────────────────────────────────────────── */
+/* Strips every cosmetic default so consumers can drop in their own
+   surface via `className`. Keeps positioning, animations, ARIA wiring,
+   and the default flex layout intact — you're swapping the skin, not
+   re-implementing the lifecycle. Mirrors Toast's unstyled appearance. */
+
+.swift-alert[data-appearance="unstyled"] {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  color: inherit;
+}
+.swift-alert[data-appearance="unstyled"] .swift-alert-title,
+.swift-alert[data-appearance="unstyled"] .swift-alert-description,
+.swift-alert[data-appearance="unstyled"] .swift-alert-icon,
+.swift-alert[data-appearance="unstyled"] .swift-alert-close {
+  color: inherit;
+}
+
+/* ── Enter / exit animations ──────────────────────────────────────── */
+
+@keyframes swift-alert-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@keyframes swift-alert-exit {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.swift-alert[data-state="open"] {
+  animation: swift-alert-enter var(--alert-duration) var(--alert-ease);
+}
+
+.swift-alert[data-state="closed"] {
+  animation: swift-alert-exit var(--alert-exit-duration)
+    cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-alert[data-state="open"],
+  .swift-alert[data-state="closed"] {
+    animation-duration: 1ms;
+  }
+}

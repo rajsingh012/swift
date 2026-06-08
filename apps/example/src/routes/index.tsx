@@ -146,7 +146,7 @@ const FAQ: ReadonlyArray<{ value: string; q: string; a: string }> = [
   {
     value: 'what',
     q: 'What is Swift?',
-    a: 'A small design system — icons, components, and tokens — built for ixigo product surfaces. Tree-shakeable, themed, and typed end-to-end.',
+    a: 'A small design system — icons, components, and tokens — built for swift product surfaces. Tree-shakeable, themed, and typed end-to-end.',
   },
   {
     value: 'tokens',
@@ -615,7 +615,7 @@ function FormCard() {
           <Input
             size="sm"
             label="Email"
-            placeholder="you@ixigo.com"
+            placeholder="you@swift.com"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

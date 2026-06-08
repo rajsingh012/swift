@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@swift/components/Button'
 import { Alert } from '@swift/icons/Alert'
 import { Calendar } from '@swift/icons/Calendar'
+import { Flag } from '@swift/icons/Flag'
 import { Check } from '@swift/icons/Check'
 import { SandTimeFilled } from '@swift/icons/SandTimeFilled'
 import { CalendarModify } from '@swift/icons/CalendarModify'
@@ -19,6 +20,7 @@ import { Tag } from '@swift/icons/Tag'
 import { View } from '@swift/icons/View'
 import {
   AccordionPanel,
+  AlertPanel,
   BadgePanel,
   ButtonPanel,
   CardPanel,
@@ -44,6 +46,7 @@ type IconComponent = ComponentType<{ size?: number; className?: string }>
 
 type ComponentName =
   | 'Accordion'
+  | 'Alert'
   | 'Badge'
   | 'Button'
   | 'Card'
@@ -67,6 +70,7 @@ type ComponentName =
 // inserted in the right slot, not appended.
 const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = [
   { name: 'Accordion', icon: GridSmall },
+  { name: 'Alert', icon: Flag },
   { name: 'Badge', icon: Tag },
   { name: 'Button', icon: Check },
   { name: 'Card', icon: CreditCard },
@@ -89,6 +93,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
 
 const panelMap: Record<ComponentName, ComponentType> = {
   Accordion: AccordionPanel,
+  Alert: AlertPanel,
   Badge: BadgePanel,
   Button: ButtonPanel,
   Card: CardPanel,

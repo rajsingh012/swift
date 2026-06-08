@@ -16,7 +16,7 @@ Each token feeds the composite variables consumed by Tailwind:
 ### Step 1: Import Font CSS
 
 ```typescript
-import '@ixigo/iui/fonts/style.css';
+import '@swift/iui/fonts/style.css';
 ```
 
 That's it – font faces are registered and CSS variables are defined:
@@ -42,7 +42,7 @@ The `iuiThemePlugin()` automatically configures font families:
 
 ```typescript
 import type { Config } from 'tailwindcss';
-import { iuiThemePlugin } from '@ixigo/iui/tailwind';
+import { iuiThemePlugin } from '@swift/iui/tailwind';
 
 export default {
   plugins: [iuiThemePlugin()],
@@ -71,7 +71,7 @@ Import the font file directly - your bundler will resolve the correct URL:
 
 ```typescript
 import { defineConfig } from 'vite';
-import figtreeRegular from '@ixigo/iui/fonts/assets/figtree_regular.ttf';
+import figtreeRegular from '@swift/iui/fonts/assets/figtree_regular.ttf';
 
 export default defineConfig({
   head: [
@@ -93,7 +93,7 @@ export default defineConfig({
 
 ```tsx
 // app/layout.tsx
-import figtreeRegular from '@ixigo/iui/fonts/assets/figtree_regular.ttf';
+import figtreeRegular from '@swift/iui/fonts/assets/figtree_regular.ttf';
 
 export default function RootLayout({ children }) {
   return (
@@ -116,14 +116,14 @@ export default function RootLayout({ children }) {
 ### Available Fonts for Import
 
 ```typescript
-import sansRegular from '@ixigo/iui/fonts/assets/sans.regular.ttf';
-import sansMedium from '@ixigo/iui/fonts/assets/sans.medium.ttf';
-import sansSemibold from '@ixigo/iui/fonts/assets/sans.semibold.ttf';
-import sansBold from '@ixigo/iui/fonts/assets/sans.bold.ttf';
-import monoRegular from '@ixigo/iui/fonts/assets/mono.regular.ttf';
-import monoMedium from '@ixigo/iui/fonts/assets/mono.medium.ttf';
-import serifRegular from '@ixigo/iui/fonts/assets/serif.regular.ttf';
-import serifBold from '@ixigo/iui/fonts/assets/serif.bold.ttf';
+import sansRegular from '@swift/iui/fonts/assets/sans.regular.ttf';
+import sansMedium from '@swift/iui/fonts/assets/sans.medium.ttf';
+import sansSemibold from '@swift/iui/fonts/assets/sans.semibold.ttf';
+import sansBold from '@swift/iui/fonts/assets/sans.bold.ttf';
+import monoRegular from '@swift/iui/fonts/assets/mono.regular.ttf';
+import monoMedium from '@swift/iui/fonts/assets/mono.medium.ttf';
+import serifRegular from '@swift/iui/fonts/assets/serif.regular.ttf';
+import serifBold from '@swift/iui/fonts/assets/serif.bold.ttf';
 ```
 
 ## Direct CSS Usage

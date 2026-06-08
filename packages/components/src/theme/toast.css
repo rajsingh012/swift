@@ -1,40 +1,18 @@
 /**
- * Toast — tokens, transform-based stacking, and the hover-to-expand
- * interaction. Every value is overridable via CSS custom properties so
- * consumers can retheme without touching JSX:
+ * Toast — positioning, stacking transforms, and the hover-to-expand
+ * interaction. **All chrome (bg, border, padding, per-variant accent,
+ * per-appearance surface) now comes from the nested `<Alert>`** — see
+ * `theme/alert.css`. This file only owns:
  *
- *   <ToastViewport style={{ '--toast-max-width': '320px' }} />
+ * - Stacking model (collapsed peek + expanded offsets)
+ * - Hover-to-expand via `:has(.swift-toast:hover)`
+ * - Enter / exit animations + reduced-motion fallback
+ * - Front-vs-behind shadow swap (the only thing Toast still styles on
+ *   the outer <li> itself)
  *
- * ── Stacking model ────────────────────────────────────────────────
- * Each toast is `position: absolute` inside its position bucket <ol>.
- * The bucket is anchored to a viewport corner; its height equals the
- * full expanded stack so the hover zone (`:has(.swift-toast:hover)`)
- * spans everywhere the stack will land.
- *
- * - **Collapsed** (default): the front toast (index 0, oldest) sits at
- *   the corner edge at scale 1. Behind toasts translate `--toast-peek`
- *   *away from the corner* per index, scaled down by --toast-scale-step.
- * - **Expanded** (any toast hovered): every toast translates to its
- *   row position (cumulative height of in-front toasts + gap), scale 1.
- *
- * `--toast-direction` is +1 for top positions (translate downward away
- * from the top corner) and -1 for bottom positions (translate upward).
- *
- * ── Gap bridge ────────────────────────────────────────────────────
- * Each toast has a hidden `::after` strip in the gap above (bottom
- * positions) or below (top positions). It only becomes hoverable while
- * the stack is expanded — that way the `:has()` match stays continuous
- * when the cursor moves across the gap between two separated toasts.
- * Without this, the stack flickers collapsed-open as the cursor
- * crosses each gap.
- *
- * ── Animation ─────────────────────────────────────────────────────
- * All four states (enter, exit, collapsed↔expanded, stack reposition
- * when a toast dismisses) share one CSS transition on `transform` +
- * `opacity`. `@starting-style` provides the initial off-screen transform
- * for enter; `data-state="closed"` provides the off-screen target for
- * exit. The JS side listens for `transitionend` on `transform` to
- * finalize the store dismissal.
+ * The Alert inside each Toast has its own enter / exit keyframes —
+ * suppressed below so they don't run in parallel with Toast's own
+ * animation. The nested Alert just renders at rest; Toast owns motion.
  *
  * ── Reduced motion ────────────────────────────────────────────────
  * Transition collapses to ~1ms (kept non-zero so `transitionend` still
@@ -50,10 +28,7 @@
      without the elastic feel of out-expo at the tail end. */
   --toast-duration: 320ms;
   --toast-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  /* Per-step peek distance (collapsed). Multiplied by --toast-index.
-     Slightly larger than --toast-gap so the visual peek above each
-     behind-toast remains roughly --toast-gap once scale shrinkage
-     (origin-bottom / origin-top) is accounted for. */
+  /* Per-step peek distance (collapsed). Multiplied by --toast-index. */
   --toast-peek: 18px;
   /* Per-step scale shrink (collapsed). 1 - index * step, floored. */
   --toast-scale-step: 0.04;
@@ -67,121 +42,6 @@
      offset computation needs the same value as the CSS-side visual gap
      for expanded-state positions to line up exactly. */
   --toast-gap: 12px;
-}
-
-/* ── Appearance · soft ────────────────────────────────────────────── */
-/* Tinted surface per type using the design system's `*-muted` tokens
-   (which already have light/dark variants). Text stays strong, icon
-   stays accent — no inverse text needed, so the toast reads cleanly
-   in both themes without inversion gymnastics.
-
-   `subtle` (default) inherits the bg from rootClasses (`bg-surface`)
-   and doesn't need its own rule. */
-
-.swift-toast[data-appearance="soft"][data-type="default"] {
-  background-color: var(--color-surface-muted);
-}
-.swift-toast[data-appearance="soft"][data-type="success"] {
-  background-color: var(--color-surface-success-muted);
-}
-.swift-toast[data-appearance="soft"][data-type="error"] {
-  background-color: var(--color-surface-critical-muted);
-}
-.swift-toast[data-appearance="soft"][data-type="warning"] {
-  background-color: var(--color-surface-warning-muted);
-}
-.swift-toast[data-appearance="soft"][data-type="info"] {
-  background-color: var(--color-surface-brand-muted);
-}
-
-/* Border on soft cards picks up a faint tint of the type accent so the
-   card edge stays visible against the page bg without competing with
-   the tinted surface. `color-mix` is widely supported (Chrome 111+,
-   Safari 16.2+, Firefox 113+). */
-.swift-toast[data-appearance="soft"][data-type="success"],
-.swift-toast[data-appearance="soft"][data-type="error"],
-.swift-toast[data-appearance="soft"][data-type="warning"],
-.swift-toast[data-appearance="soft"][data-type="info"] {
-  border-color: color-mix(
-    in srgb,
-    var(--toast-accent, var(--color-stroke)) 25%,
-    transparent
-  );
-}
-
-/* ── Appearance · solid ───────────────────────────────────────────── */
-/* Saturated bg using the raw `*-600` palette shades (theme-independent,
-   stay vivid in both light and dark mode). Text + icon flip to white;
-   close-button hover uses a white-alpha overlay so it lifts off the
-   coloured surface instead of grabbing the page's neutral surface. */
-
-.swift-toast[data-appearance="solid"] {
-  --toast-accent: #fff;
-  border-color: transparent;
-  color: #fff;
-}
-.swift-toast[data-appearance="solid"][data-type="default"] {
-  background-color: var(--color-neutral-800);
-}
-.swift-toast[data-appearance="solid"][data-type="success"] {
-  background-color: var(--color-success-600);
-}
-.swift-toast[data-appearance="solid"][data-type="error"] {
-  background-color: var(--color-critical-600);
-}
-.swift-toast[data-appearance="solid"][data-type="warning"] {
-  background-color: var(--color-warning-600);
-}
-.swift-toast[data-appearance="solid"][data-type="info"] {
-  background-color: var(--color-brand-600);
-}
-
-.swift-toast[data-appearance="solid"] .swift-toast-title {
-  color: #fff;
-}
-.swift-toast[data-appearance="solid"] .swift-toast-description {
-  color: rgb(255 255 255 / 0.85);
-}
-.swift-toast[data-appearance="solid"] .swift-toast-close {
-  color: rgb(255 255 255 / 0.85);
-}
-.swift-toast[data-appearance="solid"] .swift-toast-close:hover {
-  background-color: rgb(255 255 255 / 0.15);
-  color: #fff;
-}
-.swift-toast[data-appearance="solid"] .swift-toast-action {
-  /* Action button text inherits --toast-accent which is now #fff;
-     the hover bg flips to a white-alpha overlay to match the close. */
-  background-color: transparent;
-}
-.swift-toast[data-appearance="solid"] .swift-toast-action:hover {
-  background-color: rgb(255 255 255 / 0.15);
-}
-
-/* ── Appearance · unstyled ────────────────────────────────────────── */
-/* Strips every cosmetic default so consumers can drop in their own
-   surface via `className`. Keeps positioning, animations, the flex
-   layout, and a11y semantics intact — you're swapping the skin, not
-   re-implementing the stack or the timer. */
-
-.swift-toast[data-appearance="unstyled"] {
-  background: none;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  box-shadow: none;
-  color: inherit;
-}
-.swift-toast[data-appearance="unstyled"] .swift-toast-title,
-.swift-toast[data-appearance="unstyled"] .swift-toast-description,
-.swift-toast[data-appearance="unstyled"] .swift-toast-icon,
-.swift-toast[data-appearance="unstyled"] .swift-toast-close {
-  color: inherit;
-}
-/* Behind-toast shadow override from earlier in the file would still
-   reapply otherwise; reset it for unstyled. */
-.swift-toast[data-appearance="unstyled"][data-front="false"] {
-  box-shadow: none;
 }
 
 /* ── Direction + anchor per position half ─────────────────────────── */
@@ -198,8 +58,6 @@
 }
 
 /* ── Resting (collapsed) transform ────────────────────────────────── */
-/* Front toast: --toast-index 0 → translateY 0, scale 1.
-   Behind toasts: index 1, 2 → progressively offset + scaled down. */
 
 .swift-toast {
   --toast-y: calc(
@@ -213,37 +71,29 @@
   transform: translateY(var(--toast-y)) scale(var(--toast-scale));
   transform-origin: var(--toast-origin, center bottom);
 
-  /* Transform + opacity transition for stack reposition + hover expand.
-     box-shadow is excluded — transitioning it forces a per-frame repaint
-     of the shadow blur and was the biggest contributor to the new-toast
-     jerk. Shadow changes (front ↔ behind) still snap correctly via the
-     [data-front] rules; the snap is visually imperceptible at the same
-     frame as the slide-in. */
   transition:
     transform var(--toast-duration) var(--toast-ease),
     opacity var(--toast-duration) var(--toast-ease);
 }
 
-/* Behind toasts get a subtle opacity dim and a softer shadow so the
-   stack reads with depth. Front stays full. */
+/* Behind toasts get a subtle opacity dim + softer shadow so the stack
+   reads with depth. Front stays full. */
 .swift-toast[data-front="false"] {
   opacity: 0.92;
   box-shadow: var(--toast-shadow-behind, 0 4px 14px rgb(0 0 0 / 0.08));
 }
 
-/* When expanded, every toast is its own card — restore full shadow. */
-.swift-toast-viewport:has(.swift-toast:hover) .swift-toast[data-front="false"] {
-  box-shadow: var(--toast-shadow, 0 8px 24px rgb(0 0 0 / 0.12));
-}
-
 /* ── Expanded — any toast in the bucket is hovered ────────────────── */
-/* `:has()` lets us detect "any toast hovered" without putting the
-   listener on the (pointer-events: none) <ol>. */
 
 .swift-toast-viewport:has(.swift-toast:hover) .swift-toast {
   --toast-y: calc(var(--toast-direction, -1) * var(--toast-offset, 0px));
   --toast-scale: 1;
   opacity: 1;
+}
+
+/* When expanded, every toast is its own card — restore full shadow. */
+.swift-toast-viewport:has(.swift-toast:hover) .swift-toast[data-front="false"] {
+  box-shadow: var(--toast-shadow, 0 8px 24px rgb(0 0 0 / 0.12));
 }
 
 /* ── Gap bridge ───────────────────────────────────────────────────── */
@@ -257,18 +107,29 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: var(--toast-gap, 14px);
+  height: var(--toast-gap, 12px);
   pointer-events: none;
 }
 .swift-toast[data-position^="bottom"]::after {
-  top: calc(-1 * var(--toast-gap, 14px));
+  top: calc(-1 * var(--toast-gap, 12px));
 }
 .swift-toast[data-position^="top"]::after {
-  bottom: calc(-1 * var(--toast-gap, 14px));
+  bottom: calc(-1 * var(--toast-gap, 12px));
 }
 
 .swift-toast-viewport:has(.swift-toast:hover) .swift-toast::after {
   pointer-events: auto;
+}
+
+/* ── Suppress Alert's own animations inside a Toast ───────────────── */
+/* The nested Alert ships its own enter / exit keyframes (see
+   theme/alert.css). Inside a Toast, we want Toast's stacking transform
+   to be the only motion — Alert just renders at rest. Setting
+   `animation: none` keeps the Alert's data-state cycling functional
+   (the parts still respect open/closed) without any visible movement. */
+.swift-toast .swift-alert[data-state="open"],
+.swift-toast .swift-alert[data-state="closed"] {
+  animation: none;
 }
 
 /* ── Enter — slide in from the position edge ──────────────────────── */

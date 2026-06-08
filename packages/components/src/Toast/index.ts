@@ -1,44 +1,28 @@
-import { ToastAction } from './ToastAction'
-import { ToastClose } from './ToastClose'
-import { ToastDescription } from './ToastDescription'
-import { ToastIcon } from './ToastIcon'
-import { ToastRoot } from './ToastRoot'
-import { ToastTitle } from './ToastTitle'
-
-export const Toast = Object.assign(ToastRoot, {
-  Title: ToastTitle,
-  Description: ToastDescription,
-  Action: ToastAction,
-  Close: ToastClose,
-  Icon: ToastIcon,
-}) as typeof ToastRoot & {
-  Title: typeof ToastTitle
-  Description: typeof ToastDescription
-  Action: typeof ToastAction
-  Close: typeof ToastClose
-  Icon: typeof ToastIcon
-}
-
-export default Toast
-
+/**
+ * Toast — the imperative `toast()` API + the `<ToastProvider>` and
+ * `<ToastViewport>` mounting points.
+ *
+ * The visual layer is a nested `<Alert>` (see `ToastRoot.tsx`), so the
+ * variants / appearances vocabulary is shared. Consumers wanting
+ * compound parts (`Alert.Title`, `Alert.Action`, …) for custom toast
+ * rendering should import them from `@swift/components/Alert` directly
+ * — Toast no longer ships its own compound parts since they would
+ * duplicate Alert's.
+ */
 export { ToastProvider } from './ToastProvider'
 export { ToastViewport } from './ToastViewport'
 export { toast } from './toast'
+export { ToastRoot } from './ToastRoot'
 
 export type {
   ToastApi,
   ToastActionConfig,
-  ToastActionProps,
   ToastAppearance,
-  ToastCloseProps,
-  ToastDescriptionProps,
-  ToastIconProps,
   ToastItem,
   ToastOptions,
   ToastPosition,
   ToastProviderProps,
   ToastRootProps,
-  ToastTitleProps,
   ToastType,
   ToastViewportProps,
 } from './Toast.types'

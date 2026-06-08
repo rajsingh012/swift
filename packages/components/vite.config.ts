@@ -17,6 +17,7 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
         Accordion: resolve(__dirname, 'src/Accordion/index.ts'),
+        Alert: resolve(__dirname, 'src/Alert/index.ts'),
         Badge: resolve(__dirname, 'src/Badge/index.ts'),
         Button: resolve(__dirname, 'src/Button/index.ts'),
         Card: resolve(__dirname, 'src/Card/index.ts'),

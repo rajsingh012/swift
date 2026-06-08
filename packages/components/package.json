@@ -25,6 +25,11 @@
       "import": "./dist/Accordion.js",
       "require": "./dist/Accordion.cjs"
     },
+    "./Alert": {
+      "types": "./dist/src/Alert/index.d.ts",
+      "import": "./dist/Alert.js",
+      "require": "./dist/Alert.cjs"
+    },
     "./Badge": {
       "types": "./dist/src/Badge/index.d.ts",
       "import": "./dist/Badge.js",
