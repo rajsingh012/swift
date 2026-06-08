@@ -1,6 +1,7 @@
 import { type ComponentType } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@swift/components/Button'
+import { Alert } from '@swift/icons/Alert'
 import { Calendar } from '@swift/icons/Calendar'
 import { Check } from '@swift/icons/Check'
 import { SandTimeFilled } from '@swift/icons/SandTimeFilled'
@@ -33,6 +34,7 @@ import {
   SwitchPanel,
   TabsPanel,
   TextPanel,
+  ToastPanel,
   TimePickerPanel,
   YearPickerPanel,
 } from '../Components'
@@ -57,6 +59,7 @@ type ComponentName =
   | 'Switch'
   | 'Tabs'
   | 'Text'
+  | 'Toast'
   | 'TimePicker'
   | 'YearPicker'
 
@@ -79,6 +82,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Switch', icon: Notifications },
   { name: 'Tabs', icon: View },
   { name: 'Text', icon: Document },
+  { name: 'Toast', icon: Alert },
   { name: 'TimePicker', icon: SandTimeFilled },
   { name: 'YearPicker', icon: CalendarModify },
 ]
@@ -100,6 +104,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Switch: SwitchPanel,
   Tabs: TabsPanel,
   Text: TextPanel,
+  Toast: ToastPanel,
   TimePicker: TimePickerPanel,
   YearPicker: YearPickerPanel,
 }
