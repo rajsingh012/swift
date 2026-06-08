@@ -1,28 +1,12 @@
 import type {
-  ButtonHTMLAttributes,
   HTMLAttributes,
   MouseEvent,
   OlHTMLAttributes,
   ReactNode,
 } from 'react'
+import type { AlertAppearance } from '../Alert/Alert.types'
 
 export type ToastType = 'default' | 'success' | 'error' | 'warning' | 'info'
-
-/** Visual treatment of the card surface.
- *  - `'subtle'` (default): neutral surface bg, accent only on the icon.
- *  - `'soft'`: tinted surface per type using the design system's
- *    `--color-surface-{type}-muted` tokens. Text stays strong, icon
- *    stays accent — readable in both light and dark mode without
- *    needing inverse text.
- *  - `'solid'`: saturated bg per type using the design system's
- *    `--color-{type}-600` shades. Text + icon flip to white. Heavier
- *    visual weight — best for "must-acknowledge" notifications.
- *  - `'unstyled'`: strips every presentation default (bg, border,
- *    border-radius, padding, shadow, text colour). Keeps positioning,
- *    animations, and the default flex layout so consumers can drop in
- *    their own surface via `className` without re-implementing the
- *    stacking or a11y plumbing. */
-export type ToastAppearance = 'subtle' | 'soft' | 'solid' | 'unstyled'
 
 export type ToastPosition =
   | 'top-left'
@@ -32,9 +16,12 @@ export type ToastPosition =
   | 'bottom-center'
   | 'bottom-right'
 
-/** Inline action button config for the imperative API
- *  (`toast.success('Saved', { action: { label: 'Undo', onClick: ... } })`).
- *  Renamed from the component name `Toast.Action` to avoid collision. */
+/** Alias for `AlertAppearance` — Toast's visual layer is a nested
+ *  `<Alert>`, so the appearance vocabulary stays in sync. Existing
+ *  `'subtle' | 'soft' | 'solid' | 'unstyled'` callers keep working;
+ *  `'outline'` and `'left-accent'` come along for the ride. */
+export type ToastAppearance = AlertAppearance
+
 export interface ToastActionConfig {
   label: ReactNode
   onClick: (event: MouseEvent<HTMLButtonElement>) => void
@@ -133,29 +120,11 @@ export interface ToastRootProps
    *  in-front toasts + gaps), used in the expanded state. Set by the
    *  viewport via inline style — only consumed by CSS. */
   offset?: number
-  /** Override the type-driven default content. When provided, the icon /
-   *  title / description / action / close defaults are skipped and the
-   *  consumer's tree renders inside the <li> instead. */
+  /** Override the default visual layer (the nested `<Alert>`). Pass
+   *  custom JSX here for fully custom toast rendering while keeping the
+   *  Toast's stacking + lifecycle. */
   children?: ReactNode
 }
-
-export type ToastTitleProps = HTMLAttributes<HTMLDivElement>
-export type ToastDescriptionProps = HTMLAttributes<HTMLDivElement>
-
-export interface ToastActionProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
-  /** Action click handler. Receives the click event; called before the
-   *  toast dismisses. */
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void
-}
-
-export interface ToastCloseProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Replace the default ✕ glyph. */
-  children?: ReactNode
-}
-
-export type ToastIconProps = HTMLAttributes<HTMLSpanElement>
 
 /** Imperative API surfaced from `import { toast } from '@swift/components/Toast'`. */
 export interface ToastApi {

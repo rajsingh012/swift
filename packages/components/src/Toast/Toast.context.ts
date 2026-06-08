@@ -4,7 +4,7 @@ import {
   DEFAULT_MAX_VISIBLE,
   DEFAULT_POSITION,
 } from './Toast.constants'
-import type { ToastItem, ToastPosition } from './Toast.types'
+import type { ToastPosition } from './Toast.types'
 
 /* ── Provider context — viewport reads defaults from here ─────────── */
 
@@ -39,30 +39,4 @@ export const ToastViewportContext =
 
 export function useToastViewportContext(): ToastViewportContextValue | null {
   return useContext(ToastViewportContext)
-}
-
-/* ── Per-toast context — child parts (Title/Action/Close) read this ─ */
-
-export interface ToastItemContextValue {
-  toast: ToastItem
-  /** Dismiss the current toast. Triggered by Toast.Close + Toast.Action. */
-  dismiss: () => void
-  /** Pause the auto-dismiss timer (hover, focus). */
-  pause: () => void
-  /** Resume the auto-dismiss timer (pointer leave, blur). */
-  resume: () => void
-}
-
-export const ToastItemContext = createContext<ToastItemContextValue | null>(
-  null,
-)
-
-export function useToastItemContext(): ToastItemContextValue {
-  const ctx = useContext(ToastItemContext)
-  if (!ctx) {
-    throw new Error(
-      'Toast.Title / Toast.Description / Toast.Action / Toast.Close / Toast.Icon must be rendered inside a Toast.',
-    )
-  }
-  return ctx
 }

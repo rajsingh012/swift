@@ -48,7 +48,7 @@ const INBOX_MESSAGES: ReadonlyArray<{
   },
   {
     id: 'msg2',
-    title: 'ixigo · Refund processed',
+    title: 'Swift · Refund processed',
     body:
       'Your refund of ₹2,340 for booking IX12345 has been credited back to ' +
       'the original payment method. Allow 3–5 business days.',
