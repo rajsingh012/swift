@@ -1,0 +1,177 @@
+/**
+ * Avatar — tokens, deterministic colour palette, loading shimmer,
+ * and the AvatarGroup overlap + z-stacking.
+ *
+ *     <Avatar style={{ '--avatar-radius': '0.25rem' }}>...</Avatar>
+ *
+ * The 8-colour palette is exposed as `--avatar-palette-0` …
+ * `--avatar-palette-7` (with matching `*-color` text variants), so
+ * consumers can re-skin the fallback bg without touching JS. The
+ * Avatar root picks a slot via a DJB2 hash of the `name` prop (see
+ * `Avatar.utils.ts`); the result is deterministic and SSR-safe.
+ *
+ * Group overlap + leftmost-on-top z-stacking is driven entirely by
+ * `nth-child` selectors here so no per-child inline style is needed.
+ * Supports up to 10 avatars before z-index falls through to 0 — by
+ * which point you'd typically want `max` + an overflow tile anyway.
+ *
+ * ── Reduced motion ────────────────────────────────────────────────
+ * The shimmer animation collapses to a static placeholder (no motion)
+ * under `prefers-reduced-motion: reduce`. Loading state still applies
+ * so the empty avatar reads as a placeholder.
+ */
+
+.swift-avatar {
+  --avatar-radius: 0.5rem;
+  /* Ring colour that separates overlapping avatars in a group. Pulled
+     from the page surface by default so the avatars feel like they're
+     punched out of the background. */
+  --avatar-badge-ring: var(--color-surface);
+}
+
+.swift-avatar-group {
+  /* Overlap distance per `data-overlap` step. Per-group inline style
+     can override. */
+  --avatar-overlap-small: -4px;
+  --avatar-overlap-medium: -8px;
+  --avatar-overlap-large: -12px;
+}
+
+/* ── 8-colour palette · light mode ────────────────────────────────── */
+/* First four slots map to the design system's semantic muted/strong
+   pairs so they always match a re-themed brand. Slots 4–7 are custom
+   hues (blue / purple / teal / pink) defined inline so the palette
+   stays visually varied even when a consumer themes the brand to one
+   of the existing four. All bgs are pale enough for dark text. */
+
+:root {
+  --avatar-palette-0: var(--color-brand-50);
+  --avatar-palette-0-color: var(--color-brand-700);
+
+  --avatar-palette-1: var(--color-critical-50);
+  --avatar-palette-1-color: var(--color-critical-700);
+
+  --avatar-palette-2: var(--color-warning-50);
+  --avatar-palette-2-color: var(--color-warning-700);
+
+  --avatar-palette-3: var(--color-success-50);
+  --avatar-palette-3-color: var(--color-success-700);
+
+  --avatar-palette-4: oklch(94% 0.05 250);
+  --avatar-palette-4-color: oklch(35% 0.15 250);
+
+  --avatar-palette-5: oklch(94% 0.05 290);
+  --avatar-palette-5-color: oklch(35% 0.15 290);
+
+  --avatar-palette-6: oklch(94% 0.05 200);
+  --avatar-palette-6-color: oklch(35% 0.15 200);
+
+  --avatar-palette-7: oklch(94% 0.05 350);
+  --avatar-palette-7-color: oklch(35% 0.15 350);
+}
+
+/* ── 8-colour palette · dark mode ─────────────────────────────────── */
+/* Mirror the structure: design-system pairs for 0–3 (using *-900 bgs
+   and *-300 text); custom hues for 4–7 with low-chroma dark bgs and
+   high-chroma light text. */
+
+[data-theme="dark"] {
+  --avatar-palette-0: var(--color-brand-900);
+  --avatar-palette-0-color: var(--color-brand-300);
+
+  --avatar-palette-1: var(--color-critical-900);
+  --avatar-palette-1-color: var(--color-critical-300);
+
+  --avatar-palette-2: var(--color-warning-900);
+  --avatar-palette-2-color: var(--color-warning-300);
+
+  --avatar-palette-3: var(--color-success-900);
+  --avatar-palette-3-color: var(--color-success-300);
+
+  --avatar-palette-4: oklch(25% 0.05 250);
+  --avatar-palette-4-color: oklch(85% 0.10 250);
+
+  --avatar-palette-5: oklch(25% 0.05 290);
+  --avatar-palette-5-color: oklch(85% 0.10 290);
+
+  --avatar-palette-6: oklch(25% 0.05 200);
+  --avatar-palette-6-color: oklch(85% 0.10 200);
+
+  --avatar-palette-7: oklch(25% 0.05 350);
+  --avatar-palette-7-color: oklch(85% 0.10 350);
+}
+
+/* ── In-group ring ────────────────────────────────────────────────── */
+/* Avatars inside an `<AvatarGroup>` get a surface-coloured outline so
+   they read as separate cards under the negative-margin overlap. Uses
+   `box-shadow` (not `outline`) so it respects the avatar's
+   border-radius — `outline` ignores `border-radius` until very recent
+   browsers. */
+
+.swift-avatar[data-in-group="true"] {
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+
+/* ── Group overlap ────────────────────────────────────────────────── */
+/* Negative margin on each sibling after the first pulls them onto the
+   previous one. Logical inset (`margin-inline-start`) so RTL works
+   without a separate rule. */
+
+.swift-avatar-group[data-overlap="small"] > .swift-avatar + .swift-avatar {
+  margin-inline-start: var(--avatar-overlap-small);
+}
+.swift-avatar-group[data-overlap="medium"] > .swift-avatar + .swift-avatar {
+  margin-inline-start: var(--avatar-overlap-medium);
+}
+.swift-avatar-group[data-overlap="large"] > .swift-avatar + .swift-avatar {
+  margin-inline-start: var(--avatar-overlap-large);
+}
+
+/* ── Group z-stacking · last on top ───────────────────────────────── */
+/* DOM order = visual order; each subsequent avatar sits *on top of*
+   the previous one (so the `+N` overflow tile — always last — caps
+   the right end on top of every visible avatar). No explicit z-index
+   is needed: `position: relative` makes z-index applicable, and the
+   default paint order lays later DOM siblings on top of earlier ones.
+   Works for any number of avatars without an nth-child ceiling. */
+
+.swift-avatar-group > .swift-avatar { position: relative; }
+
+/* ── Hide broken <img> when load failed ───────────────────────────── */
+/* When `<Avatar.Image>` errors out, the browser draws the img's `alt`
+   as the broken-image placeholder (the famous "Picasso of broken
+   images") — which then visibly overlaps the Fallback's initials.
+   The auto-rendered Image already uses `alt=""` (see Avatar.tsx), but
+   compound-mode consumers may pass their own alt — hiding the img on
+   error guarantees the Fallback gets the slot to itself. */
+.swift-avatar[data-state="error"] .swift-avatar-image {
+  display: none;
+}
+
+/* ── Loading skeleton · shimmer ───────────────────────────────────── */
+/* Linear gradient swept across the avatar bg via `background-position`
+   keyframes. The 200% sizing keeps the bright stripe always visible
+   somewhere in the box. */
+
+@keyframes swift-avatar-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.swift-avatar[data-loading="true"] {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-muted) 0%,
+    color-mix(in srgb, var(--color-surface-muted) 60%, transparent) 50%,
+    var(--color-surface-muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: swift-avatar-shimmer 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-avatar[data-loading="true"] {
+    animation: none;
+    background: var(--color-surface-muted);
+  }
+}

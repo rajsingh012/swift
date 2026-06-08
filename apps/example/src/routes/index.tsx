@@ -1,6 +1,7 @@
 import { useState, type ComponentType } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Accordion } from '@swift/components/Accordion'
+import { Avatar, AvatarGroup } from '@swift/components/Avatar'
 import { Badge } from '@swift/components/Badge'
 import { Button } from '@swift/components/Button'
 import { Card } from '@swift/components/Card'
@@ -340,6 +341,50 @@ function ButtonsCard() {
           </Button>
           <Button variant="danger" size="sm">Delete</Button>
           <Button variant="link" size="sm">Read more</Button>
+        </div>
+      </Card.Content>
+    </Card>
+  )
+}
+
+const TEAM = [
+  { name: 'Raj Singh', src: 'https://i.pravatar.cc/120?img=11' },
+  { name: 'Jane Doe', src: 'https://i.pravatar.cc/120?img=23' },
+  { name: 'Aman Mehta', src: 'https://i.pravatar.cc/120?img=33' },
+  { name: 'Priya Sharma', src: 'https://i.pravatar.cc/120?img=44' },
+  { name: 'Lee Park', src: 'https://i.pravatar.cc/120?img=55' },
+  { name: 'Sara Khan', src: 'https://i.pravatar.cc/120?img=66' },
+] as const
+
+function AvatarsCard() {
+  return (
+    <Card variant="outlined" className="h-full">
+      <Card.Header divider>
+        <Card.Title>Avatars</Card.Title>
+        <Card.Description>5 sizes · 3 shapes · status badge · group with overflow.</Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <Avatar size="sm" src="https://i.pravatar.cc/120?img=11" name="Raj Singh" />
+            <Avatar size="md" src="https://i.pravatar.cc/120?img=23" name="Jane Doe" />
+            <Avatar size="lg" src="https://i.pravatar.cc/120?img=33" name="Aman Mehta">
+              <Avatar.Badge status="online" />
+            </Avatar>
+            <Avatar size="lg" name="Priya Sharma" />
+            <Avatar size="lg" />
+          </div>
+
+          <div className="flex items-center justify-between gap-3">
+            <Text variant="body-xs" color="muted" className="tracking-wide uppercase">
+              Team
+            </Text>
+            <AvatarGroup max={3} aria-label="Engineering team">
+              {TEAM.map((p) => (
+                <Avatar key={p.name} src={p.src} name={p.name} />
+              ))}
+            </AvatarGroup>
+          </div>
         </div>
       </Card.Content>
     </Card>
@@ -892,6 +937,7 @@ function ComponentPlayground() {
       </div>
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         <ButtonsCard />
+        <AvatarsCard />
         <BadgesCard />
         <ChipsCard />
         <TabsCard />
