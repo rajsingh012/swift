@@ -30,6 +30,11 @@
       "import": "./dist/Alert.js",
       "require": "./dist/Alert.cjs"
     },
+    "./Avatar": {
+      "types": "./dist/src/Avatar/index.d.ts",
+      "import": "./dist/Avatar.js",
+      "require": "./dist/Avatar.cjs"
+    },
     "./Badge": {
       "types": "./dist/src/Badge/index.d.ts",
       "import": "./dist/Badge.js",
