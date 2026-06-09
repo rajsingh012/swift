@@ -85,6 +85,11 @@
       "import": "./dist/Radio.js",
       "require": "./dist/Radio.cjs"
     },
+    "./SegmentedControl": {
+      "types": "./dist/src/SegmentedControl/index.d.ts",
+      "import": "./dist/SegmentedControl.js",
+      "require": "./dist/SegmentedControl.cjs"
+    },
     "./Sheet": {
       "types": "./dist/src/Sheet/index.d.ts",
       "import": "./dist/Sheet.js",
