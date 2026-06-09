@@ -1,0 +1,201 @@
+/**
+ * SegmentedControl — token-driven chrome. Every visual dimension and colour
+ * resolves through a `--segmented-*` custom property so a consumer can
+ * retheme one instance inline (`style={{ '--segmented-indicator-bg': '#fff' }}`)
+ * or globally via a higher-level selector.
+ *
+ * The sliding pill is positioned imperatively by SegmentedControlIndicator
+ * (transform + width/height) so the React render doesn't fire on every
+ * measurement. Everything else lives here in plain CSS.
+ *
+ * Structure (z-order):
+ *   .swift-segmented            ← track (relative; holds the pill + items)
+ *     .swift-segmented-indicator ← pill  (absolute, z-index 0)
+ *     .swift-segmented-item …    ← items (relative, z-index 1)
+ */
+
+.swift-segmented {
+  --segmented-radius: var(--radius-full);
+  --segmented-gap: 0;
+  --segmented-padding: 0.3125rem;
+
+  /* White, floating track with a fully-rounded brand pill behind the active
+     item — the inactive items read in brand colour, the active item flips to
+     on-brand (white). Retheme any of these inline / per-instance. */
+  --segmented-bg: var(--color-surface-elevated);
+  --segmented-shadow: var(--shadow-level2);
+  --segmented-indicator-bg: var(--color-surface-brand);
+  --segmented-indicator-radius: var(--radius-full);
+  --segmented-indicator-shadow: var(--shadow-level1);
+
+  --segmented-item-color: var(--color-content-brand);
+  --segmented-item-active-color: var(--color-content-on-brand);
+  --segmented-item-disabled-color: var(--color-content-subtle);
+  --segmented-item-bg-hover: var(--color-surface-brand-muted);
+  --segmented-item-gap: 0.375rem;
+
+  /* Size-driven dimensions — overridden per data-size below. */
+  --segmented-min-height: 2.25rem;          /* md */
+  --segmented-item-padding-x: 1.125rem;
+  --segmented-item-padding-y: 0.375rem;
+  --segmented-font-size: 0.875rem;
+
+  --segmented-transition-duration: 200ms;
+  --segmented-transition-ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+  position: relative;
+  display: inline-flex;
+  gap: var(--segmented-gap);
+  padding: var(--segmented-padding);
+  border-radius: var(--segmented-radius);
+  background: var(--segmented-bg);
+  box-shadow: var(--segmented-shadow);
+  /* isolate so the pill's z-index:0 sits below items but above the track bg
+     without leaking into the page's stacking context. */
+  isolation: isolate;
+}
+
+.swift-segmented[data-orientation="vertical"] {
+  flex-direction: column;
+}
+
+/* ── Sizes ─────────────────────────────────────────────────────────── */
+
+.swift-segmented[data-size="sm"] {
+  --segmented-min-height: 1.875rem;
+  --segmented-item-padding-x: 0.875rem;
+  --segmented-item-padding-y: 0.25rem;
+  --segmented-font-size: 0.8125rem;
+}
+
+.swift-segmented[data-size="lg"] {
+  --segmented-min-height: 2.75rem;
+  --segmented-item-padding-x: 1.375rem;
+  --segmented-item-padding-y: 0.5rem;
+  --segmented-font-size: 1rem;
+}
+
+/* ── Width modes ───────────────────────────────────────────────────── */
+
+/* fitContent (default) — items sized to their content. */
+
+/* fullWidth — fill the container; items share the available width equally. */
+.swift-segmented[data-width="full"] {
+  display: flex;
+  width: 100%;
+}
+.swift-segmented[data-width="full"] .swift-segmented-item {
+  flex: 1 1 0;
+}
+.swift-segmented[data-width="full"][data-orientation="vertical"] {
+  width: auto;
+}
+
+/* equalWidth — every item equals the widest; container stays content-sized.
+   inline-grid with equal auto-columns gives this for free. */
+.swift-segmented[data-width="equal"] {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+.swift-segmented[data-width="equal"][data-orientation="vertical"] {
+  grid-auto-flow: row;
+  grid-auto-rows: 1fr;
+}
+
+/* ── Item ──────────────────────────────────────────────────────────── */
+
+.swift-segmented-item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--segmented-item-gap);
+  min-height: var(--segmented-min-height);
+  padding: var(--segmented-item-padding-y) var(--segmented-item-padding-x);
+  border: 0;
+  border-radius: var(--segmented-indicator-radius);
+  background: transparent;
+  font: inherit;
+  font-size: var(--segmented-font-size);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--segmented-item-color);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--segmented-transition-duration)
+    var(--segmented-transition-ease);
+}
+
+.swift-segmented-item:hover:not([data-state="checked"]):not(:disabled) {
+  /* Subtle brand tint — NOT the active (on-brand/white) colour, which would
+     wash the label out against the white track. */
+  background: var(--segmented-item-bg-hover);
+}
+
+.swift-segmented-item[data-state="checked"] {
+  color: var(--segmented-item-active-color);
+  font-weight: 600;
+}
+
+.swift-segmented-item:disabled {
+  color: var(--segmented-item-disabled-color);
+  cursor: not-allowed;
+}
+
+/* Keyboard focus shows a single ring around the whole track — NOT a box on
+   the individual item. Because this is a radiogroup with roving tabindex +
+   selection-follows-focus, focus always lands on the selected (pill) item, so
+   a per-item outline would just redraw on top of the pill and visibly jump
+   from segment to segment while arrowing. The track ring stays put and still
+   gives keyboard users a clear focus cue. `:has(:focus-visible)` keeps it to
+   keyboard focus only (no ring on mouse click). */
+.swift-segmented-item:focus-visible {
+  outline: none;
+}
+
+.swift-segmented:has(.swift-segmented-item:focus-visible) {
+  outline: 2px solid var(--color-stroke-brand);
+  outline-offset: 2px;
+}
+
+/* The whole control is read-only — keep the pointer affordance neutral. */
+.swift-segmented[data-readonly="true"] .swift-segmented-item:not(:disabled) {
+  cursor: default;
+}
+
+/* ── Indicator (sliding pill) ──────────────────────────────────────── */
+/* Absolutely positioned against the track. transform + width/height are
+   written inline by SegmentedControlIndicator. Starts collapsed + transparent
+   until the active item is measured. */
+
+.swift-segmented-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  border-radius: var(--segmented-indicator-radius);
+  background: var(--segmented-indicator-bg);
+  box-shadow: var(--segmented-indicator-shadow);
+  pointer-events: none;
+  transition:
+    transform var(--segmented-transition-duration)
+      var(--segmented-transition-ease),
+    width var(--segmented-transition-duration) var(--segmented-transition-ease),
+    height var(--segmented-transition-duration) var(--segmented-transition-ease);
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-segmented-item,
+  .swift-segmented-indicator {
+    transition-duration: 1ms !important;
+  }
+}

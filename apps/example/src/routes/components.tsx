@@ -33,6 +33,7 @@ import {
   InputPanel,
   ListItemPanel,
   RadioPanel,
+  SegmentedControlPanel,
   SheetPanel,
   SliderPanel,
   SwitchPanel,
@@ -60,6 +61,7 @@ type ComponentName =
   | 'Input'
   | 'ListItem'
   | 'Radio'
+  | 'SegmentedControl'
   | 'Sheet'
   | 'Slider'
   | 'Switch'
@@ -85,6 +87,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Input', icon: Edit },
   { name: 'ListItem', icon: Document },
   { name: 'Radio', icon: CheckCircleFilled },
+  { name: 'SegmentedControl', icon: GridSmall },
   { name: 'Sheet', icon: ArrowRightLong },
   { name: 'Slider', icon: Filter },
   { name: 'Switch', icon: Notifications },
@@ -109,6 +112,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Input: InputPanel,
   ListItem: ListItemPanel,
   Radio: RadioPanel,
+  SegmentedControl: SegmentedControlPanel,
   Sheet: SheetPanel,
   Slider: SliderPanel,
   Switch: SwitchPanel,

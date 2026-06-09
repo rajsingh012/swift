@@ -29,6 +29,7 @@ export default defineConfig({
         Input: resolve(__dirname, 'src/Input/index.ts'),
         ListItem: resolve(__dirname, 'src/ListItem/index.ts'),
         Radio: resolve(__dirname, 'src/Radio/index.ts'),
+        SegmentedControl: resolve(__dirname, 'src/SegmentedControl/index.ts'),
         Sheet: resolve(__dirname, 'src/Sheet/index.ts'),
         Slider: resolve(__dirname, 'src/Slider/index.ts'),
         Switch: resolve(__dirname, 'src/Switch/index.ts'),
