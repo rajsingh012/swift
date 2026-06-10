@@ -29,6 +29,36 @@ const PLACEMENTS: ReadonlyArray<Placement> = [
   'left-end',
 ]
 
+// Every condition shown at once in the "Live gallery" — both variants, all
+// four sides, arrow/no-arrow, leading icon, dismissible close, interactive.
+// Column placement keeps each side-opening tooltip pointed away from its
+// neighbours (right→left column, left→right column).
+type GalleryCondition = {
+  key: string
+  variant: TooltipVariant
+  placement: Placement
+  label: string
+  arrow?: boolean
+  icon?: boolean
+  close?: boolean
+  interactive?: boolean
+}
+
+const GALLERY_CONDITIONS: ReadonlyArray<GalleryCondition> = [
+  // Row 1 — sides + arrow, default vs brand
+  { key: 'r-def', variant: 'default', placement: 'right', label: 'right · arrow' },
+  { key: 't-def', variant: 'default', placement: 'top', label: 'top · default' },
+  { key: 'l-brand', variant: 'brand', placement: 'left', label: 'left · brand' },
+  // Row 2 — icon / close
+  { key: 'r-icon', variant: 'brand', placement: 'right', label: 'icon', icon: true },
+  { key: 'b-close', variant: 'default', placement: 'bottom', label: 'dismissible', icon: true, close: true },
+  { key: 'l-close', variant: 'brand', placement: 'left', label: 'close', close: true },
+  // Row 3 — no-arrow / interactive / start-align
+  { key: 'r-noarrow', variant: 'default', placement: 'right', label: 'no arrow', arrow: false },
+  { key: 't-interactive', variant: 'brand', placement: 'top', label: 'interactive', interactive: true },
+  { key: 'l-start', variant: 'default', placement: 'left-start', label: 'left-start' },
+]
+
 // Laid out for a 3-column grid: `right`-placement in the left column and
 // `left`-placement in the right column, so each side-opening tooltip has room
 // to render away from its neighbours instead of over them.
@@ -142,6 +172,7 @@ const ROOT_PROPS: ReadonlyArray<PropRow> = [
 
 export function TooltipPanel() {
   const [controlledOpen, setControlledOpen] = useState(false)
+  const [galleryOpen, setGalleryOpen] = useState(true)
 
   return (
     <div className="grid grid-cols-1 gap-10 [&>*]:min-w-0">
@@ -153,6 +184,54 @@ export function TooltipPanel() {
           {DESCRIPTION}
         </Text>
       </header>
+
+      {/* ── Live gallery · all states at once ─────────────────────── */}
+      <section>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <SectionHeader>Live gallery · all states</SectionHeader>
+          <Button size="sm" variant="secondary" onClick={() => setGalleryOpen((v) => !v)}>
+            {galleryOpen ? 'Hide all' : 'Show all'}
+          </Button>
+        </div>
+        <Text variant="body-sm" color="secondary" className="mb-3 block">
+          Every condition rendered open at the same time — both variants, all
+          four sides, with/without arrow, leading icon, dismissible close, and
+          interactive. Toggle them with the button (each is{' '}
+          <code>open={'{galleryOpen}'}</code>).
+        </Text>
+        <div className="rounded-lg border border-stroke bg-surface-muted p-6">
+          <div className="grid grid-cols-2 gap-x-10 gap-y-16 py-8 sm:grid-cols-3">
+            {GALLERY_CONDITIONS.map((c) => (
+              <div key={c.key} className="flex min-h-16 items-center justify-center">
+                <Tooltip
+                  open={galleryOpen}
+                  placement={c.placement}
+                  interactive={c.interactive}
+                >
+                  <Tooltip.Trigger>
+                    <Button
+                      variant={c.variant === 'brand' ? 'primary' : 'outline'}
+                      size="sm"
+                    >
+                      {c.label}
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Portal>
+                    <Tooltip.Content variant={c.variant}>
+                      <span className="flex items-center gap-1.5 whitespace-nowrap">
+                        {c.icon ? <LinkIcon /> : null}
+                        {c.label}
+                        {c.close ? <Tooltip.Close /> : null}
+                      </span>
+                      {c.arrow === false ? null : <Tooltip.Arrow />}
+                    </Tooltip.Content>
+                  </Tooltip.Portal>
+                </Tooltip>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── Basic ─────────────────────────────────────────────────── */}
       <section>
