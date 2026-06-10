@@ -125,6 +125,11 @@
       "import": "./dist/TimePicker.js",
       "require": "./dist/TimePicker.cjs"
     },
+    "./Tooltip": {
+      "types": "./dist/src/Tooltip/index.d.ts",
+      "import": "./dist/Tooltip.js",
+      "require": "./dist/Tooltip.cjs"
+    },
     "./YearPicker": {
       "types": "./dist/src/YearPicker/index.d.ts",
       "import": "./dist/YearPicker.js",
