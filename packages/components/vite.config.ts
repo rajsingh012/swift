@@ -37,6 +37,7 @@ export default defineConfig({
         Text: resolve(__dirname, 'src/Text/index.ts'),
         Toast: resolve(__dirname, 'src/Toast/index.ts'),
         TimePicker: resolve(__dirname, 'src/TimePicker/index.ts'),
+        Tooltip: resolve(__dirname, 'src/Tooltip/index.ts'),
         YearPicker: resolve(__dirname, 'src/YearPicker/index.ts'),
       },
       formats: ['es', 'cjs'],

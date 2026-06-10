@@ -1,0 +1,216 @@
+/**
+ * Tooltip — token-driven inverse surface with an arrow, sitting above
+ * every other overlay so it stays visible inside Sheets / Dialogs. The
+ * engine (internal/floating.ts) writes `--tooltip-arrow-x/y` and the
+ * `data-side` / `data-align` attributes; CSS turns those into the arrow
+ * position, transform-origin, and entrance/exit animation.
+ */
+
+.swift-tooltip-content {
+  /* default variant — elevated surface, readable in light AND dark.
+     Uses --color-stroke (not -muted) so the edge is visible even when the
+     surface matches the page background (white-on-white in light mode,
+     neutral-800-on-neutral-900 in dark). */
+  --tooltip-bg: var(--color-surface-elevated);
+  --tooltip-color: var(--color-content);
+  --tooltip-border: var(--color-stroke);
+  --tooltip-radius: var(--radius-md);
+  --tooltip-shadow: var(--shadow-level4);
+  --tooltip-padding-inline: 0.625rem;
+  --tooltip-padding-block: 0.375rem;
+  --tooltip-font-size: 0.8125rem;
+  --tooltip-line-height: 1.125rem;
+  --tooltip-max-width: 18rem;
+  --tooltip-offset: 8px;
+  --tooltip-arrow-size: 10px;
+  --tooltip-animation-duration: 150ms;
+  --tooltip-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Above Sheet (z-50) and Toast (z-60) so tooltips work inside dialogs. */
+  --tooltip-z-index: 70;
+  --tooltip-arrow-x: 0px;
+  --tooltip-arrow-y: 0px;
+
+  z-index: var(--tooltip-z-index);
+  max-width: var(--tooltip-max-width);
+  padding: var(--tooltip-padding-block) var(--tooltip-padding-inline);
+  border-radius: var(--tooltip-radius);
+  background: var(--tooltip-bg);
+  color: var(--tooltip-color);
+  border: 1px solid var(--tooltip-border);
+  box-shadow: var(--tooltip-shadow);
+  font-size: var(--tooltip-font-size);
+  line-height: var(--tooltip-line-height);
+  /* A tooltip is decorative chrome — don't let it eat pointer events. */
+  pointer-events: none;
+  /* Wrap long text rather than overflow the max-width. */
+  overflow-wrap: break-word;
+}
+
+/* ── Variants ──────────────────────────────────────────────────── */
+.swift-tooltip-content[data-variant="brand"] {
+  --tooltip-bg: var(--color-surface-brand);
+  --tooltip-color: var(--color-content-on-brand);
+  --tooltip-border: transparent;
+}
+
+/* Interactive + click-triggered tooltips accept the pointer (rich content
+   with links/buttons; clicks inside must register, not pass through). */
+.swift-tooltip-content[data-interactive],
+.swift-tooltip-content[data-clickable] {
+  pointer-events: auto;
+}
+
+/* ── Arrow ─────────────────────────────────────────────────────────
+ * A rotated square sharing the surface colour. It straddles the content
+ * edge: the outer half pokes out as a triangle, the inner half blends
+ * into the content background (same colour, no border on the arrow). */
+
+.swift-tooltip-arrow {
+  position: absolute;
+  width: var(--tooltip-arrow-size);
+  height: var(--tooltip-arrow-size);
+  background: var(--tooltip-bg);
+}
+
+/* Physical (not logical) offsets: `data-side` and --tooltip-arrow-x/y are
+   already resolved to physical coordinates by the engine, so the arrow must
+   not flip again under RTL. Borders are applied only to the two outward-
+   facing edges of the rotated square so the bubble outline continues cleanly
+   into the tip (and the inner half stays seamless with the surface). */
+.swift-tooltip-content[data-side="top"] .swift-tooltip-arrow {
+  bottom: 0;
+  left: var(--tooltip-arrow-x);
+  transform: translateY(50%) rotate(45deg);
+  border-right: 1px solid var(--tooltip-border);
+  border-bottom: 1px solid var(--tooltip-border);
+}
+
+.swift-tooltip-content[data-side="bottom"] .swift-tooltip-arrow {
+  top: 0;
+  left: var(--tooltip-arrow-x);
+  transform: translateY(-50%) rotate(45deg);
+  border-left: 1px solid var(--tooltip-border);
+  border-top: 1px solid var(--tooltip-border);
+}
+
+.swift-tooltip-content[data-side="left"] .swift-tooltip-arrow {
+  right: 0;
+  top: var(--tooltip-arrow-y);
+  transform: translateX(50%) rotate(45deg);
+  border-top: 1px solid var(--tooltip-border);
+  border-right: 1px solid var(--tooltip-border);
+}
+
+.swift-tooltip-content[data-side="right"] .swift-tooltip-arrow {
+  left: 0;
+  top: var(--tooltip-arrow-y);
+  transform: translateX(-50%) rotate(45deg);
+  border-bottom: 1px solid var(--tooltip-border);
+  border-left: 1px solid var(--tooltip-border);
+}
+
+/* ── Interactive hover bridge ──────────────────────────────────────
+ * A transparent pad spanning the offset gap toward the trigger, so the
+ * pointer stays "inside" while crossing from trigger to content and the
+ * tooltip doesn't flicker shut mid-traverse. Interactive only. */
+
+.swift-tooltip-content[data-interactive]::before {
+  content: "";
+  position: absolute;
+  /* transparent — purely a pointer-capture surface */
+}
+
+.swift-tooltip-content[data-interactive][data-side="top"]::before {
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: var(--tooltip-offset);
+}
+
+.swift-tooltip-content[data-interactive][data-side="bottom"]::before {
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: var(--tooltip-offset);
+}
+
+.swift-tooltip-content[data-interactive][data-side="left"]::before {
+  left: 100%;
+  top: 0;
+  bottom: 0;
+  width: var(--tooltip-offset);
+}
+
+.swift-tooltip-content[data-interactive][data-side="right"]::before {
+  right: 100%;
+  top: 0;
+  bottom: 0;
+  width: var(--tooltip-offset);
+}
+
+/* ── Animation ─────────────────────────────────────────────────────
+ * Scale + fade out of the trigger edge. transform-origin is set per
+ * side so the tooltip grows from the side nearest the trigger. */
+
+.swift-tooltip-content[data-side="top"] {
+  transform-origin: bottom center;
+}
+.swift-tooltip-content[data-side="bottom"] {
+  transform-origin: top center;
+}
+.swift-tooltip-content[data-side="left"] {
+  transform-origin: center right;
+}
+.swift-tooltip-content[data-side="right"] {
+  transform-origin: center left;
+}
+
+.swift-tooltip-content[data-state="open"] {
+  animation: swift-tooltip-in var(--tooltip-animation-duration)
+    var(--tooltip-ease) both;
+}
+
+.swift-tooltip-content[data-state="closed"] {
+  animation: swift-tooltip-out var(--tooltip-animation-duration)
+    var(--tooltip-ease) both;
+}
+
+@keyframes swift-tooltip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes swift-tooltip-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+/* ── Touch long-press ──────────────────────────────────────────────
+ * While a press is in flight, suppress the OS selection / callout so the
+ * long-press reads as "show tooltip" rather than "select text". Scoped to
+ * the press window so we never permanently break selection. */
+
+.swift-tooltip-trigger[data-pressing="true"],
+[data-tooltip-pressing="true"] {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-tooltip-content {
+    animation-duration: 1ms !important;
+  }
+}

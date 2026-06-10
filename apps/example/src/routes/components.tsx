@@ -16,6 +16,7 @@ import { Document } from '@swift/icons/Document'
 import { Edit } from '@swift/icons/Edit'
 import { Filter } from '@swift/icons/Filter'
 import { GridSmall } from '@swift/icons/GridSmall'
+import { InfoCircle } from '@swift/icons/InfoCircle'
 import { Notifications } from '@swift/icons/Notifications'
 import { Tag } from '@swift/icons/Tag'
 import { View } from '@swift/icons/View'
@@ -41,6 +42,7 @@ import {
   TextPanel,
   ToastPanel,
   TimePickerPanel,
+  TooltipPanel,
   YearPickerPanel,
 } from '../Components'
 import { SidebarLayout } from '../lib/SidebarLayout'
@@ -69,6 +71,7 @@ type ComponentName =
   | 'Text'
   | 'Toast'
   | 'TimePicker'
+  | 'Tooltip'
   | 'YearPicker'
 
 // Sidebar list — kept alphabetically ascending. New components should be
@@ -95,6 +98,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Text', icon: Document },
   { name: 'Toast', icon: Alert },
   { name: 'TimePicker', icon: SandTimeFilled },
+  { name: 'Tooltip', icon: InfoCircle },
   { name: 'YearPicker', icon: CalendarModify },
 ]
 
@@ -120,6 +124,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Text: TextPanel,
   Toast: ToastPanel,
   TimePicker: TimePickerPanel,
+  Tooltip: TooltipPanel,
   YearPicker: YearPickerPanel,
 }
 
