@@ -17,7 +17,11 @@ export function cx(...parts: Array<string | undefined | null | false>): string {
  *  vars without re-implementing the variant matrix. */
 export const rootClasses =
   'swift-avatar relative inline-flex shrink-0 items-center justify-center ' +
-  'overflow-hidden select-none ' +
+  // NOTE: no `overflow-hidden` here — the root must NOT clip, or a corner
+  // badge gets cut into a half-moon by the circular shape. The image clips
+  // itself to the shape via `border-radius: inherit` (see imageClasses);
+  // the rounded background is clipped by border-radius anyway.
+  'select-none ' +
   // Background falls through to one of the palette slots via the inline
   // --avatar-bg var (set by the root from the hashed colour index).
   'bg-[var(--avatar-bg,var(--color-surface-muted))] ' +
@@ -44,8 +48,10 @@ export const rootShapeClasses: Record<AvatarShape, string> = {
 
 /* ── Image ──────────────────────────────────────────────────────── */
 
+// `rounded-[inherit]` clips the image to the avatar's shape (circle /
+// rounded / square) now that the root no longer has overflow-hidden.
 export const imageClasses =
-  'swift-avatar-image absolute inset-0 size-full object-cover'
+  'swift-avatar-image absolute inset-0 size-full object-cover rounded-[inherit]'
 
 /* ── Fallback ───────────────────────────────────────────────────── */
 
