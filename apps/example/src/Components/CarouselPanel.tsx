@@ -356,7 +356,7 @@ export function CarouselPanel() {
   <Carousel.Indicators />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel aria-label="Featured destinations">
               <Carousel.Viewport>
                 <Carousel.Track>
@@ -396,7 +396,7 @@ export function CarouselPanel() {
 
 <p>Showing slide {index + 1} of {HERO_SLIDES.length}</p>`}
         >
-          <div className="flex w-full flex-col gap-3">
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
             <Carousel
               index={controlled}
               onIndexChange={setControlled}
@@ -443,7 +443,7 @@ export function CarouselPanel() {
   <Carousel.Indicators />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel slidesPerView={3} gap={16} aria-label="Product rail">
               <Carousel.Viewport>
                 <Carousel.Track>
@@ -479,7 +479,7 @@ export function CarouselPanel() {
   <Carousel.Indicators />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel
               slidesPerView={1.5}
               gap={24}
@@ -516,7 +516,7 @@ export function CarouselPanel() {
   <Carousel.Indicators />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel loop aria-label="Looping carousel">
               <Carousel.Viewport>
                 <Carousel.Track>
@@ -556,7 +556,7 @@ export function CarouselPanel() {
   <Carousel.Indicators />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel
               autoplay
               autoplayDelay={3000}
@@ -609,7 +609,7 @@ export function CarouselPanel() {
   <Carousel.Indicators />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel
               variant="fade"
               autoplay
@@ -656,7 +656,7 @@ export function CarouselPanel() {
   <Carousel.Indicators />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel
               effect="peek"
               align="center"
@@ -704,7 +704,7 @@ export function CarouselPanel() {
   <Carousel.Indicators />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel
               effect="coverflow"
               align="center"
@@ -765,7 +765,7 @@ export function CarouselPanel() {
   <Carousel.Progress />
 </Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel
               autoplay
               autoplayDelay={2500}
@@ -809,7 +809,7 @@ export function CarouselPanel() {
   )}
 </Carousel.Indicators>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel aria-label="Numbered carousel">
               <Carousel.Viewport>
                 <Carousel.Track>
@@ -845,7 +845,7 @@ export function CarouselPanel() {
           code={`<Carousel.Previous>Prev</Carousel.Previous>
 <Carousel.Next>Next</Carousel.Next>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel
               aria-label="Carousel with text controls"
               classes={{
@@ -877,7 +877,7 @@ export function CarouselPanel() {
         <PreviewRow
           code={`<Carousel dir="rtl" aria-label="RTL carousel">…</Carousel>`}
         >
-          <div className="w-full">
+          <div className="mx-auto w-full max-w-3xl">
             <Carousel dir="rtl" aria-label="RTL carousel">
               <Carousel.Viewport>
                 <Carousel.Track>
