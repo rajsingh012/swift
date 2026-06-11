@@ -54,6 +54,9 @@ export interface TimePickerRootProps {
   /** Focusable but not editable. */
   readOnly?: boolean
 
+  /** Explicit direction. Otherwise sniffed from `closest('[dir]')` on the trigger. */
+  dir?: 'ltr' | 'rtl'
+
   /** Explicit id for the popover content (else auto-generated). */
   id?: string
 

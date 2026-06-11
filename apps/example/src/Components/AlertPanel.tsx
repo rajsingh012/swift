@@ -9,7 +9,32 @@ import { Button } from '@swift/components/Button'
 import { Text } from '@swift/components/Text'
 import { Bookmark } from '@swift/icons/Bookmark'
 import { CopyableImport } from '../lib/CopyableImport'
+import { Playground, type Knob } from './Playground'
 import { BrowserCompat, CodeBlock, PreviewRow, SectionHeader } from './shared'
+
+const ALERT_KNOBS: ReadonlyArray<Knob> = [
+  {
+    type: 'select',
+    name: 'variant',
+    options: ['default', 'success', 'warning', 'error', 'info'],
+    defaultValue: 'default',
+  },
+  {
+    type: 'select',
+    name: 'appearance',
+    options: ['subtle', 'soft', 'solid', 'outline', 'left-accent'],
+    defaultValue: 'subtle',
+  },
+  { type: 'segmented', name: 'size', options: ['sm', 'md', 'lg'], defaultValue: 'md' },
+  { type: 'boolean', name: 'dismissible' },
+  { type: 'text', name: 'title', defaultValue: 'Payment received' },
+  {
+    type: 'text',
+    name: 'children',
+    defaultValue: 'Your booking is confirmed and the receipt is on its way.',
+    asChildren: true,
+  },
+]
 
 const DESCRIPTION =
   'Inline banner / notice for success, error, warning, info, and neutral system messages. Supports both a convenience API (variant + title + children + dismissible) and a fully compound API (`Alert.Icon`, `Alert.Title`, `Alert.Description`, `Alert.Actions`, `Alert.Close`) — picked automatically based on the children. Variant drives the default icon and ARIA role (`error` → `role="alert"`, others → `role="status"`); five appearances cover the common visual treatments (subtle, soft, solid, outline, left-accent); three sizes scale padding + gap + type. Dismiss runs through `usePresence` for a polished exit; reduced-motion collapses it to 1 ms.'
@@ -183,6 +208,28 @@ export function AlertPanel() {
           {DESCRIPTION}
         </Text>
       </header>
+
+      <section>
+        <SectionHeader>Playground</SectionHeader>
+        <Playground
+          component="Alert"
+          knobs={ALERT_KNOBS}
+          render={(v) => (
+            <Alert
+              /* Remount when any knob changes so a dismissed alert
+                 (uncontrolled defaultOpen) comes back on interaction. */
+              key={JSON.stringify(v)}
+              variant={v.variant as AlertVariant}
+              appearance={v.appearance as AlertAppearance}
+              size={v.size as AlertSize}
+              dismissible={v.dismissible === true}
+              title={String(v.title)}
+            >
+              {String(v.children)}
+            </Alert>
+          )}
+        />
+      </section>
 
       {/* ── Basic ─────────────────────────────────────────────────── */}
       <section>

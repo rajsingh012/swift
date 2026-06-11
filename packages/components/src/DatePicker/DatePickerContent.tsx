@@ -64,7 +64,7 @@ export const DatePickerContent = forwardRef<HTMLDivElement, DatePickerContentPro
       ...rest
     } = props
 
-    const { open, setOpen, contentId, triggerRef } = useDatePicker(
+    const { open, setOpen, contentId, triggerRef, dir } = useDatePicker(
       'DatePicker.Content',
     )
 
@@ -180,12 +180,16 @@ export const DatePickerContent = forwardRef<HTMLDivElement, DatePickerContentPro
 
     if (!shouldRender) return null
 
+    // `dir` is rendered explicitly — the content is portaled, so it can't
+    // inherit a `[dir]` set on the trigger's subtree. CSS logical
+    // properties inside the popover respond to the resolved direction.
     return (
       <div
         ref={mergeRefs(ref, contentRef)}
         id={contentId}
         role="dialog"
         aria-modal={false}
+        dir={dir}
         data-state={open ? 'open' : 'closed'}
         tabIndex={-1}
         style={{

@@ -4,8 +4,10 @@ import {
   forwardRef,
   isValidElement,
   type Ref,
-  type RefObject,
 } from 'react'
+import { cx } from '../internal/cx'
+import { mergeRenderProps } from '../internal/props'
+import { mergeRefs } from '../internal/refs'
 import type {
   TextAlign,
   TextColor,
@@ -15,7 +17,7 @@ import type {
   TextProps,
   TextRenderProps,
   TextVariant,
-} from './text.types'
+} from './Text.types'
 
 const weightClassMap: Record<TextFontWeight, string> = {
   normal: 'font-normal',
@@ -63,58 +65,6 @@ const defaultVariantMapping: Record<TextVariant, TextElementTag> = {
   'body-xs': 'span',
 }
 
-function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
-
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>): Ref<T> {
-  return (node: T | null) => {
-    for (const r of refs) {
-      if (!r) continue
-      if (typeof r === 'function') r(node)
-      else (r as RefObject<T | null>).current = node
-    }
-  }
-}
-
-function mergeProps(
-  internal: Record<string, unknown>,
-  external: Record<string, unknown>,
-): Record<string, unknown> {
-  const merged: Record<string, unknown> = { ...internal, ...external }
-
-  if (internal.className || external.className) {
-    merged.className = cx(
-      internal.className as string | undefined,
-      external.className as string | undefined,
-    )
-  }
-
-  if (internal.style || external.style) {
-    merged.style = {
-      ...(internal.style as object | undefined),
-      ...(external.style as object | undefined),
-    }
-  }
-
-  for (const key of Object.keys(external)) {
-    if (
-      key.startsWith('on') &&
-      typeof internal[key] === 'function' &&
-      typeof external[key] === 'function'
-    ) {
-      const a = internal[key] as (...args: unknown[]) => void
-      const b = external[key] as (...args: unknown[]) => void
-      merged[key] = (...args: unknown[]) => {
-        a(...args)
-        b(...args)
-      }
-    }
-  }
-
-  return merged
-}
-
 export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   {
     variant = 'body-md',
@@ -160,7 +110,10 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
 
   if (isValidElement(render)) {
     const externalProps = render.props as Record<string, unknown>
-    const merged = mergeProps(ownProps as Record<string, unknown>, externalProps)
+    const merged = mergeRenderProps(
+      ownProps as Record<string, unknown>,
+      externalProps,
+    )
     merged.ref = mergeRefs(
       (render as { ref?: Ref<HTMLElement> }).ref,
       ref,

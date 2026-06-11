@@ -37,6 +37,7 @@ export function SidebarLayout({
   selectedKey,
   triggerLabel,
   sidebar,
+  header,
   children,
 }: {
   title: ReactNode
@@ -44,6 +45,11 @@ export function SidebarLayout({
   selectedKey: string
   triggerLabel: ReactNode
   sidebar: ReactNode
+  /** Optional slim chrome bar pinned above the scroll area (breadcrumbs,
+   *  toolbars). Lives OUTSIDE the scroller — never `position: sticky`
+   *  inside the padded scroll surface; that breaks down with negative
+   *  margins and translucent backgrounds. */
+  header?: ReactNode
   children: ReactNode
 }) {
   const [open, setOpen] = useState(false)
@@ -72,8 +78,9 @@ export function SidebarLayout({
 
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        {/* Mobile section switcher */}
-        <div className="flex shrink-0 items-center gap-2 border-b border-stroke bg-surface px-4 py-2.5 lg:hidden">
+        {/* Mobile section switcher — translucent + blurred to match the
+            app header's chrome. */}
+        <div className="sticky top-0 z-20 flex shrink-0 items-center gap-2 border-b border-stroke bg-surface/80 px-4 py-2.5 backdrop-blur lg:hidden">
           <Button
             variant="outline"
             size="sm"
@@ -87,13 +94,30 @@ export function SidebarLayout({
           </Button>
         </div>
 
-        {/* `overflow-x-hidden` is a hard wall — the page can NEVER scroll
-            sideways. Any wide content (long-line <pre>, deep table, etc.)
-            must own its own scroll surface; nothing leaks to the parent.
-            Combined with `[&>*]:min-w-0` on each panel's grid, the
-            sections obey the panel width and the <pre>'s own
-            `overflow-x:auto` does the scrolling internally. */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8">{children}</main>
+        {header ? (
+          <div className="flex shrink-0 items-center border-b border-stroke bg-surface px-4 py-2.5 sm:px-6 lg:px-8">
+            {header}
+          </div>
+        ) : null}
+
+        <div className="relative flex min-h-0 flex-1 flex-col">
+          {/* Soft fade where content meets the top edge of the scroll area.
+              Purely decorative; any positioned chrome inside `main`
+              (z-10+) paints above it. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 z-1 h-6 bg-linear-to-b from-surface to-transparent"
+          />
+          {/* `overflow-x-hidden` is a hard wall — the page can NEVER scroll
+              sideways. Any wide content (long-line <pre>, deep table, etc.)
+              must own its own scroll surface; nothing leaks to the parent.
+              Combined with `[&>*]:min-w-0` on each panel's grid, the
+              sections obey the panel width and the <pre>'s own
+              `overflow-x:auto` does the scrolling internally. */}
+          <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8">
+            {children}
+          </main>
+        </div>
       </div>
 
       {/* Mobile drawer */}

@@ -13,8 +13,8 @@
   --sheet-overlay-bg: var(--color-surface-overlay);
   --sheet-radius: var(--radius-lg);
   --sheet-shadow: var(--shadow-level5);
-  --sheet-animation-duration: 320ms;
-  --sheet-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --sheet-animation-duration: var(--motion-duration-slow, 320ms);
+  --sheet-ease: var(--motion-ease-standard);
 
   background: var(--sheet-bg);
   box-shadow: var(--sheet-shadow);

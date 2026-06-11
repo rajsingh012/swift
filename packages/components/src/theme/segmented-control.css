@@ -40,8 +40,8 @@
   --segmented-item-padding-y: 0.375rem;
   --segmented-font-size: 0.875rem;
 
-  --segmented-transition-duration: 200ms;
-  --segmented-transition-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --segmented-transition-duration: var(--motion-duration-normal, 200ms);
+  --segmented-transition-ease: var(--motion-ease-standard);
 
   position: relative;
   display: inline-flex;

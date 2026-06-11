@@ -10,8 +10,8 @@
   --datepicker-bg: var(--color-surface-elevated);
   --datepicker-radius: var(--radius-md);
   --datepicker-shadow: var(--shadow-level4);
-  --datepicker-animation-duration: 160ms;
-  --datepicker-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --datepicker-animation-duration: var(--motion-duration-fast, 150ms);
+  --datepicker-ease: var(--motion-ease-snappy);
 
   /* Range backgrounds — soft tints of the brand colour so the bar reads
      as part of the selection without competing with the start/end pills. */

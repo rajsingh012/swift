@@ -1,6 +1,4 @@
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 export const triggerClasses =
   'swift-datepicker-trigger inline-flex items-center gap-2 ' +
@@ -12,7 +10,7 @@ export const triggerClasses =
   'data-[placeholder=true]:text-content-muted'
 
 export const contentClasses =
-  'swift-datepicker-content fixed z-50 outline-none ' +
+  'swift-datepicker-content fixed z-[var(--z-modal,50)] outline-none ' +
   'rounded-lg border border-stroke bg-surface-elevated shadow-[var(--shadow-level4)] ' +
   'p-3 min-w-[16rem]'
 

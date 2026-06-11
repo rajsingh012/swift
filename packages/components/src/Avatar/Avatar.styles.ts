@@ -5,9 +5,7 @@ import type {
   AvatarStatus,
 } from './Avatar.types'
 
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 /* ── Root ───────────────────────────────────────────────────────────
  *  `swift-avatar` class hooks `theme/avatar.css` for tokens + shimmer

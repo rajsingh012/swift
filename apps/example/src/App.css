@@ -1,0 +1,76 @@
+/**
+ * App-shell extras on top of motion.css — imported from routes/__root.tsx.
+ *
+ * Everything here resolves from semantic tokens (--color-surface-*,
+ * --color-content-*, --motion-*) so both themes keep working, and every
+ * animation is covered by the prefers-reduced-motion block at the bottom.
+ */
+
+/* ── Hero aurora backdrop ───────────────────────────────────────────
+   Layered radial washes of the brand / new / highlight surfaces at low
+   alpha, oversized so `.aurora` (motion.css) can drift them slowly. */
+.hero-aurora {
+  background-image:
+    radial-gradient(
+      42% 60% at 18% 20%,
+      color-mix(in oklab, var(--color-surface-brand) 13%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      38% 55% at 82% 16%,
+      color-mix(in oklab, var(--color-surface-new) 11%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      48% 64% at 55% 88%,
+      color-mix(in oklab, var(--color-surface-highlight) 9%, transparent),
+      transparent 72%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-surface-brand-muted) 40%, transparent),
+      transparent 65%
+    );
+}
+
+/* ── "Swift" wordmark gradient ──────────────────────────────────── */
+
+.brand-gradient-text {
+  background-image: linear-gradient(
+    92deg,
+    var(--color-content-brand),
+    var(--color-content-new)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Theme-toggle icon swap ─────────────────────────────────────────
+   The icon span is keyed on the active theme, so this quarter-turn +
+   fade replays every time the glyph changes. */
+@keyframes theme-icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.theme-icon-swap {
+  display: inline-flex;
+  animation: theme-icon-in var(--motion-duration-normal, 200ms)
+    var(--motion-ease-snappy, ease-out) both;
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon-swap {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}

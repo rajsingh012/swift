@@ -26,8 +26,8 @@
   --toast-shadow-behind: 0 4px 14px rgb(0 0 0 / 0.08);
   /* Reposition / enter / exit duration. Out-quint settles smoothly
      without the elastic feel of out-expo at the tail end. */
-  --toast-duration: 320ms;
-  --toast-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --toast-duration: var(--motion-duration-slow, 320ms);
+  --toast-ease: var(--motion-ease-emphasized);
   /* Per-step peek distance (collapsed). Multiplied by --toast-index. */
   --toast-peek: 18px;
   /* Per-step scale shrink (collapsed). 1 - index * step, floored. */

@@ -147,3 +147,13 @@
    is overflow:hidden. Animation runs purely on the compositor thread
    (no layout reflow per frame), which is why drag and tween feel
    smooth even with heavy image content inside slides. */
+
+/* Reduced motion — collapse the fade/peek transitions to 1ms (kept
+   non-zero so any `transitionend` listeners still fire; matches the
+   pattern used by the other components). The programmatic-scroll tween
+   is driven from JS and is out of scope for this stylesheet. */
+@media (prefers-reduced-motion: reduce) {
+  .swift-carousel .swift-carousel-item {
+    transition-duration: 1ms !important;
+  }
+}

@@ -1,6 +1,4 @@
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 /* The CSS hooks every part attaches to. All styling lives in theme/tabs.css —
    these strings are the data-attribute anchors and nothing else. */

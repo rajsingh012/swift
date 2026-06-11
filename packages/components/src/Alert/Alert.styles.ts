@@ -1,8 +1,6 @@
 import type { AlertAppearance, AlertSize, AlertVariant } from './Alert.types'
 
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 /* ── Root ───────────────────────────────────────────────────────────
  *  `swift-alert` class hooks `theme/alert.css` for animations,

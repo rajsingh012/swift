@@ -32,8 +32,8 @@
      --color-stroke-brand gets a matching ring. */
   --switch-focus-ring: color-mix(in srgb, var(--color-stroke-brand) 30%, transparent);
 
-  --switch-transition-duration: 160ms;
-  --switch-transition-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --switch-transition-duration: var(--motion-duration-fast, 150ms);
+  --switch-transition-ease: var(--motion-ease-standard);
 }
 
 /* ── Size variants ────────────────────────────────────────────────── */

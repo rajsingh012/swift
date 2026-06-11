@@ -8,6 +8,7 @@ export default defineConfig({
     tailwindcss(),
     dts({
       include: ['src'],
+      exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
       entryRoot: 'src',
       insertTypesEntry: true,
     }),

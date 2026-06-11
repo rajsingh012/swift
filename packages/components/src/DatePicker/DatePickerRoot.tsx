@@ -45,6 +45,7 @@ export function DatePickerRoot(props: DatePickerRootProps) {
     max,
     disabledDates,
     locale: localeProp,
+    dir: dirProp,
     id: idProp,
     name,
     form,
@@ -267,6 +268,20 @@ export function DatePickerRoot(props: DatePickerRootProps) {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const locale = resolveLocale(localeProp)
 
+  // ── RTL detection (sniff on mount, skip on SSR) ─────────────────
+  // The root renders no element of its own, so sniff from the trigger —
+  // the nearest node in normal flow. Re-runs on open so late-mounted
+  // triggers are picked up. Explicit `dir` prop always wins.
+  const [detectedDir, setDetectedDir] = useState<'ltr' | 'rtl'>('ltr')
+  useEffect(() => {
+    if (dirProp !== undefined) return
+    const el = triggerRef.current
+    if (!el) return
+    const dirAttr = el.closest('[dir]')?.getAttribute('dir')
+    setDetectedDir(dirAttr === 'rtl' ? 'rtl' : 'ltr')
+  }, [dirProp, open])
+  const dir = dirProp ?? detectedDir
+
   const ctx = useMemo<DatePickerContextValue>(
     () => ({
       mode,
@@ -285,6 +300,7 @@ export function DatePickerRoot(props: DatePickerRootProps) {
       numberOfMonths,
       showWeekNumbers,
       locale,
+      dir,
       min,
       max,
       isDateDisabled,
@@ -310,6 +326,7 @@ export function DatePickerRoot(props: DatePickerRootProps) {
       numberOfMonths,
       showWeekNumbers,
       locale,
+      dir,
       min,
       max,
       isDateDisabled,

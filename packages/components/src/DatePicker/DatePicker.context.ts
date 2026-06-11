@@ -43,6 +43,13 @@ export interface DatePickerContextValue {
   showWeekNumbers: boolean
   locale: string
 
+  /**
+   * Resolved writing direction — explicit `dir` prop or sniffed from the
+   * trigger. Flips horizontal arrow-key navigation in the grid (the
+   * visual week runs right-to-left when 'rtl').
+   */
+  dir: 'ltr' | 'rtl'
+
   min?: Date
   max?: Date
   isDateDisabled: (date: Date) => boolean

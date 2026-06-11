@@ -2,7 +2,9 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 
 
-const router = createRouter({routeTree})
+// Cross-fade route changes via the View Transitions API where supported
+// (motion.css styles ::view-transition-*; unsupported browsers just swap).
+const router = createRouter({ routeTree, defaultViewTransition: true })
 
 function App() {
   return <RouterProvider router={router} />

@@ -1,6 +1,4 @@
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 /* ── Trigger ───────────────────────────────────────────────────── */
 
@@ -20,7 +18,7 @@ export const triggerIconClasses =
 /* ── Content (popover) ─────────────────────────────────────────── */
 
 export const contentClasses =
-  'swift-timepicker-content fixed z-50 outline-none ' +
+  'swift-timepicker-content fixed z-[var(--z-modal,50)] outline-none ' +
   'rounded-lg border border-stroke bg-surface-elevated shadow-(--shadow-level4) ' +
   'flex flex-col min-w-[16rem]'
 

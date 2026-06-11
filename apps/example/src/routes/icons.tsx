@@ -1,10 +1,11 @@
-import { useMemo, useRef, useState, type ComponentType } from 'react'
+import { useMemo, useRef, useState, type ComponentType, type CSSProperties } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@swift/components/Button'
 import { Text } from '@swift/components/Text'
 import * as Icons from '@swift/icons'
 import { downloadIcon, type IconFormat } from '@swift/icons/download'
 import { Download } from '@swift/icons/Download'
+import { CopyableImport } from '../lib/CopyableImport'
 import { useIconSearch } from '../lib/iconSearch'
 import { SidebarLayout } from '../lib/SidebarLayout'
 import { useToast } from '../lib/Toast'
@@ -42,6 +43,11 @@ function colorFor(name: string) {
   let hash = 0
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0
   return ICON_COLOR_PALETTE[hash % ICON_COLOR_PALETTE.length]
+}
+
+/** Inline stagger index for the motion.css `anim-*` utilities (55ms steps, capped). */
+function stagger(i: number) {
+  return { '--stagger-i': Math.min(i, 12) } as CSSProperties
 }
 
 function readableName(name: string) {
@@ -133,7 +139,27 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
   )
 }
 
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="flex min-w-0 flex-col gap-1">
+      <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
+        {label}
+      </Text>
+      {children}
+    </label>
+  )
+}
+
 const DOWNLOAD_SIZES = [24, 48, 96, 256, 512] as const
+
+/* Rainbow ramp is deliberate — structural styling stays on tokens. */
+const PREVIEW_RAMP = [
+  { size: 16, color: 'text-blue-600' },
+  { size: 20, color: 'text-emerald-600' },
+  { size: 24, color: 'text-violet-600' },
+  { size: 32, color: 'text-orange-500' },
+  { size: 48, color: 'text-red-500' },
+] as const
 
 function RouteComponent() {
   const [selected, setSelected] = useState(allIcons[0]?.[0] ?? '')
@@ -193,21 +219,25 @@ function RouteComponent() {
           </Text>
         ) : (
           <ul className="space-y-0.5">
-            {filtered.map(([name, C]) => {
+            {filtered.map(([name, C], i) => {
               const isActive = name === selected
               return (
-                <li key={name}>
+                <li key={name} className="anim-fade-in" style={stagger(i)}>
                   <button
                     type="button"
                     onClick={() => setSelected(name)}
-                    className={`group flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${isActive
+                    aria-current={isActive || undefined}
+                    className={`group flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors duration-150 ${isActive
                       ? 'bg-surface-brand-muted font-semibold text-content-brand'
-                      : 'font-medium text-content hover:bg-surface-muted'
+                      : 'font-medium text-content hover:bg-surface-muted hover:text-content-strong'
                       }`}
                   >
                     <C
                       size={18}
-                      className={isActive ? 'text-content-brand' : colorFor(name)}
+                      className={`shrink-0 transition duration-150 motion-reduce:transition-none ${isActive
+                        ? 'text-content-brand'
+                        : `${colorFor(name)} opacity-70 group-hover:scale-110 group-hover:opacity-100 motion-reduce:group-hover:scale-100`
+                        }`}
                     />
                     <span className="truncate">{name}</span>
                   </button>
@@ -223,122 +253,144 @@ function RouteComponent() {
           Select an icon from the sidebar.
         </Text>
       ) : (
-        <div className="grid gap-8">
-          <header className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="flex size-20 items-center justify-center rounded-lg border border-stroke bg-surface-muted text-content-strong">
-                <Selected size={48} ref={previewRef} />
-              </div>
-              <div>
-                <Text variant="heading-lg" fontWeight="semibold" color="primary">
-                  {selected}
-                </Text>
-                <Text variant="body-sm" color="secondary" className="block">
-                  {readableName(selected)}
-                </Text>
-              </div>
+        <div className="grid gap-8 *:min-w-0">
+          <header className="anim-fade-up grid gap-4" style={stagger(0)}>
+            <div>
+              <Text variant="heading-lg" fontWeight="semibold" color="primary">
+                {selected}
+              </Text>
+              <Text variant="body-sm" color="secondary" className="block">
+                {readableName(selected)}
+              </Text>
             </div>
 
-            <div className="flex flex-wrap items-end gap-3 rounded-xl border border-stroke bg-surface-elevated p-3">
-              <label className="flex flex-col gap-1">
-                <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
-                  Format
-                </Text>
-                <select
-                  value={format}
-                  onChange={(e) => setFormat(e.target.value as IconFormat)}
-                  className="cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content"
-                >
-                  <option value="svg">SVG</option>
-                  <option value="webp">WebP</option>
-                  <option value="png">PNG</option>
-                  <option value="jpeg">JPEG</option>
-                </select>
-              </label>
-              <label className="flex flex-col gap-1">
-                <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
-                  Size
-                </Text>
-                <select
-                  value={size}
-                  onChange={(e) => setSize(Number(e.target.value) as (typeof DOWNLOAD_SIZES)[number])}
-                  disabled={format === 'svg'}
-                  className="cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {DOWNLOAD_SIZES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}px
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col gap-1">
-                <Text variant="body-xs" color="muted" fontWeight="semibold" className="tracking-wide uppercase">
-                  Color
-                </Text>
-                <div className="flex items-center gap-2 rounded-md border border-stroke bg-surface px-2 py-1">
-                  <input
-                    type="color"
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    aria-label="Pick icon color"
-                    className="size-6 cursor-pointer rounded border-0 bg-transparent p-0"
-                  />
-                  <input
-                    type="text"
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    spellCheck={false}
-                    className="w-20 bg-transparent font-mono text-sm text-content outline-none"
-                  />
+            <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px] md:items-start">
+              {/* Preview — keyed on `selected` so each pick re-runs the scale-in. */}
+              <div
+                key={selected}
+                className="anim-scale-in overflow-hidden rounded-xl border border-stroke bg-surface-elevated shadow-level1"
+              >
+                <div className="flex items-center justify-center bg-linear-to-br from-surface-muted via-surface to-surface-muted px-6 py-10 text-content-strong">
+                  <Selected size={64} ref={previewRef} />
                 </div>
-              </label>
-              <Button onClick={handleDownload} loading={downloading}>
-                <Button.LeftIcon>
-                  <Download size={16} />
-                </Button.LeftIcon>
-                Download
-              </Button>
+                <div className="flex flex-wrap items-end justify-center gap-x-7 gap-y-3 border-t border-stroke-muted px-6 py-4">
+                  {PREVIEW_RAMP.map(({ size: rampSize, color: rampColor }, i) => (
+                    <div
+                      key={rampSize}
+                      className="anim-scale-in flex flex-col items-center gap-1.5"
+                      style={stagger(i + 1)}
+                    >
+                      <div className="flex h-12 items-end">
+                        <Selected size={rampSize} className={rampColor} />
+                      </div>
+                      <Text variant="body-xs" color="muted" fontFamily="mono">
+                        {rampSize}px
+                      </Text>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Download controls */}
+              <div className="rounded-xl border border-stroke bg-surface-elevated p-4 shadow-level1">
+                <Text
+                  variant="body-xs"
+                  fontWeight="semibold"
+                  color="muted"
+                  className="block uppercase tracking-wide"
+                >
+                  Download
+                </Text>
+                <div className="mt-3 grid gap-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Format">
+                      <select
+                        value={format}
+                        onChange={(e) => setFormat(e.target.value as IconFormat)}
+                        className="w-full cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content"
+                      >
+                        <option value="svg">SVG</option>
+                        <option value="webp">WebP</option>
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPEG</option>
+                      </select>
+                    </Field>
+                    <Field label="Size">
+                      <select
+                        value={size}
+                        onChange={(e) => setSize(Number(e.target.value) as (typeof DOWNLOAD_SIZES)[number])}
+                        disabled={format === 'svg'}
+                        className="w-full cursor-pointer rounded-md border border-stroke bg-surface px-2.5 py-1.5 text-sm text-content disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {DOWNLOAD_SIZES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}px
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                  </div>
+                  <Field label="Color">
+                    <div className="flex items-center gap-2 rounded-md border border-stroke bg-surface px-2 py-1">
+                      <input
+                        type="color"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        aria-label="Pick icon color"
+                        className="size-6 cursor-pointer rounded border-0 bg-transparent p-0"
+                      />
+                      <input
+                        type="text"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        spellCheck={false}
+                        className="w-full min-w-0 bg-transparent font-mono text-sm text-content outline-none"
+                      />
+                    </div>
+                  </Field>
+                  <Button
+                    onClick={handleDownload}
+                    loading={downloading}
+                    classes={{ root: 'group w-full' }}
+                  >
+                    <Button.LeftIcon>
+                      <Download
+                        size={16}
+                        className="transition-transform duration-150 group-hover:translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
+                      />
+                    </Button.LeftIcon>
+                    Download
+                  </Button>
+                </div>
+              </div>
             </div>
           </header>
 
-          <section>
+          <section className="anim-fade-up" style={stagger(1)}>
+            <SectionHeader>Import</SectionHeader>
+            <CopyableImport
+              label="Named deep import"
+              code={`import { ${selected} } from '@swift/icons/${selected}'`}
+            />
+          </section>
+
+          <section className="anim-fade-up" style={stagger(2)}>
             <SectionHeader>Description</SectionHeader>
             <Text variant="para-md" color="secondary">
               {describe(selected)}
             </Text>
           </section>
 
-          <section>
-            <SectionHeader>Sizes</SectionHeader>
-            <div className="flex flex-wrap items-end gap-6">
-              {[
-                { size: 16, color: 'text-blue-600' },
-                { size: 20, color: 'text-emerald-600' },
-                { size: 24, color: 'text-violet-600' },
-                { size: 32, color: 'text-orange-500' },
-                { size: 48, color: 'text-red-500' },
-              ].map(({ size, color }) => (
-                <div key={size} className="flex flex-col items-center gap-1">
-                  <Selected size={size} className={color} />
-                  <Text variant="body-xs" color="muted">
-                    {size}px
-                  </Text>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section>
+          <section className="anim-fade-up" style={stagger(3)}>
             <SectionHeader>Colors</SectionHeader>
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
               {[
-                { label: 'default', text: 'text-content-strong', bg: 'bg-surface-muted', labelTone: 'muted' as const },
-                { label: 'brand', text: 'text-content-brand', bg: 'bg-surface-brand-muted', labelTone: 'muted' as const },
-                { label: 'success', text: 'text-content-success', bg: 'bg-surface-success-muted', labelTone: 'muted' as const },
-                { label: 'warning', text: 'text-content-warning', bg: 'bg-surface-warning-muted', labelTone: 'muted' as const },
-                { label: 'critical', text: 'text-content-critical', bg: 'bg-surface-critical-muted', labelTone: 'muted' as const },
-                { label: 'highlight', text: 'text-content-highlight', bg: 'bg-surface-highlight-muted', labelTone: 'muted' as const }
+                { label: 'default', text: 'text-content-strong', bg: 'bg-surface-muted' },
+                { label: 'brand', text: 'text-content-brand', bg: 'bg-surface-brand-muted' },
+                { label: 'success', text: 'text-content-success', bg: 'bg-surface-success-muted' },
+                { label: 'warning', text: 'text-content-warning', bg: 'bg-surface-warning-muted' },
+                { label: 'critical', text: 'text-content-critical', bg: 'bg-surface-critical-muted' },
+                { label: 'highlight', text: 'text-content-highlight', bg: 'bg-surface-highlight-muted' },
               ].map(({ label, text, bg }) => (
                 <div
                   key={label}
@@ -356,10 +408,10 @@ function RouteComponent() {
             </div>
           </section>
 
-          <section>
+          <section className="anim-fade-up" style={stagger(4)}>
             <SectionHeader>Props</SectionHeader>
             <div className="overflow-hidden rounded-xl border border-stroke bg-surface-elevated">
-              <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
+              <div className="hidden grid-cols-[200px_1fr_120px] gap-6 border-b border-stroke-muted bg-surface-muted px-6 py-3 md:grid">
                 <Text
                   variant="body-xs"
                   fontWeight="bold"
@@ -422,32 +474,6 @@ function RouteComponent() {
               ))}
             </div>
           </section>
-
-          {/* <section>
-            <SectionHeader>Import</SectionHeader>
-            <div className="grid gap-3">
-              <CopyableImport
-                label="Named import"
-                code={`import { ${selected} } from '@swift/icons'`}
-              />
-              <CopyableImport
-                label="Named deep import"
-                code={`import { ${selected} } from '@swift/icons/${selected}'`}
-              />
-              <CopyableImport
-                label="Default deep import"
-                code={`import ${selected} from '@swift/icons/${selected}'`}
-              />
-            </div>
-          </section> */}
-
-          {/* <section>
-            <SectionHeader>Usage</SectionHeader>
-            <pre className="overflow-x-auto overscroll-contain touch-pan-x rounded bg-surface-inverse p-3 text-xs leading-relaxed text-content-inverse">
-              {`<${selected} size={24} />
-<${selected} size={32} className="text-content-brand" />`}
-            </pre>
-          </section> */}
         </div>
       )}
     </SidebarLayout>

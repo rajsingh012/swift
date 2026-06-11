@@ -25,8 +25,8 @@
 
   --tabs-list-border: var(--color-stroke);
 
-  --tabs-transition-duration: 180ms;
-  --tabs-transition-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --tabs-transition-duration: var(--motion-duration-normal, 200ms);
+  --tabs-transition-ease: var(--motion-ease-standard);
 }
 
 /* ── List ─────────────────────────────────────────────────────────── */

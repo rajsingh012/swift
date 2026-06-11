@@ -121,6 +121,4 @@ export const groupOrientationClasses = {
   vertical: 'flex flex-col items-start gap-2',
 } as const
 
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'

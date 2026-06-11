@@ -35,6 +35,7 @@ export function TimePickerRoot(props: TimePickerRootProps) {
     max,
     disabled = false,
     readOnly = false,
+    dir: dirProp,
     id: idProp,
     name,
     form,
@@ -122,6 +123,20 @@ export function TimePickerRoot(props: TimePickerRootProps) {
   const contentId = idProp ?? `swift-timepicker-${reactId}`
   const triggerRef = useRef<HTMLButtonElement | null>(null)
 
+  // ── RTL detection (sniff on mount, skip on SSR) ──────────────
+  // The root renders no element of its own, so sniff from the trigger —
+  // the nearest node in normal flow. Re-runs on open so late-mounted
+  // triggers are picked up. Explicit `dir` prop always wins.
+  const [detectedDir, setDetectedDir] = useState<'ltr' | 'rtl'>('ltr')
+  useEffect(() => {
+    if (dirProp !== undefined) return
+    const el = triggerRef.current
+    if (!el) return
+    const dirAttr = el.closest('[dir]')?.getAttribute('dir')
+    setDetectedDir(dirAttr === 'rtl' ? 'rtl' : 'ltr')
+  }, [dirProp, open])
+  const dir = dirProp ?? detectedDir
+
   const ctx = useMemo<TimePickerContextValue>(
     () => ({
       value: displayValue,
@@ -142,6 +157,7 @@ export function TimePickerRoot(props: TimePickerRootProps) {
       max,
       disabled,
       readOnly,
+      dir,
       slots,
       contentId,
       triggerRef,
@@ -165,6 +181,7 @@ export function TimePickerRoot(props: TimePickerRootProps) {
       max,
       disabled,
       readOnly,
+      dir,
       slots,
       contentId,
     ],

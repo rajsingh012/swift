@@ -13,7 +13,28 @@ import { Person } from '@swift/icons/Person'
 import { Star } from '@swift/icons/Star'
 import { Tag } from '@swift/icons/Tag'
 import { CopyableImport } from '../lib/CopyableImport'
+import { Playground, type Knob } from './Playground'
 import { CodeBlock, PreviewRow, SectionHeader } from './shared'
+
+type BadgeKnobVariant = 'default' | 'success' | 'warning' | 'error' | 'info'
+
+const BADGE_KNOBS: ReadonlyArray<Knob> = [
+  {
+    type: 'select',
+    name: 'variant',
+    options: ['default', 'success', 'warning', 'error', 'info'],
+    defaultValue: 'default',
+  },
+  {
+    type: 'segmented',
+    name: 'appearance',
+    options: ['solid', 'soft', 'outline', 'subtle'],
+    defaultValue: 'soft',
+  },
+  { type: 'segmented', name: 'size', options: ['sm', 'md', 'lg'], defaultValue: 'md' },
+  { type: 'boolean', name: 'pill' },
+  { type: 'text', name: 'children', defaultValue: 'New', asChildren: true },
+]
 
 const DESCRIPTION =
   'Compact status, count, and label element. Five variants × four appearances × three sizes, with built-in support for dots, counts, icons, removable chips, and clickable affordances. Themes automatically under [data-theme="dark"].'
@@ -214,6 +235,24 @@ export function BadgePanel() {
           {DESCRIPTION}
         </Text>
       </header>
+
+      <section>
+        <SectionHeader>Playground</SectionHeader>
+        <Playground
+          component="Badge"
+          knobs={BADGE_KNOBS}
+          render={(v) => (
+            <Badge
+              variant={v.variant as BadgeKnobVariant}
+              appearance={v.appearance as 'solid' | 'soft' | 'outline' | 'subtle'}
+              size={v.size as 'sm' | 'md' | 'lg'}
+              pill={v.pill === true}
+            >
+              {String(v.children)}
+            </Badge>
+          )}
+        />
+      </section>
 
       {/* ── Variants ───────────────────────────────────────────────── */}
       <section>

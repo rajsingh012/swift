@@ -34,7 +34,7 @@ import {
 } from './ListItem.styles'
 import { ListItemTitle } from './ListItemTitle'
 import type {
-  ListItemComponent,
+  ListItemComponent as ListItemComponentType,
   ListItemOwnProps,
 } from './ListItem.types'
 
@@ -223,4 +223,4 @@ function ListItemLoadingSkeleton() {
   )
 }
 
-export const ListItemComponent = ListItemRoot as unknown as ListItemComponent
+export const ListItemComponent = ListItemRoot as unknown as ListItemComponentType

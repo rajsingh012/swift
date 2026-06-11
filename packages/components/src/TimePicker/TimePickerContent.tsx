@@ -52,6 +52,7 @@ export const TimePickerContent = forwardRef<HTMLDivElement, TimePickerContentPro
       contentId,
       triggerRef,
       discardPending,
+      dir,
     } = useTimePicker('TimePicker.Content')
 
     const contentRef = useRef<HTMLDivElement | null>(null)
@@ -159,12 +160,16 @@ export const TimePickerContent = forwardRef<HTMLDivElement, TimePickerContentPro
 
     if (!shouldRender) return null
 
+    // `dir` is rendered explicitly — the content is portaled, so it can't
+    // inherit a `[dir]` set on the trigger's subtree. CSS logical
+    // properties inside the popover respond to the resolved direction.
     return (
       <div
         ref={mergeRefs(ref, contentRef)}
         id={contentId}
         role="dialog"
         aria-modal={false}
+        dir={dir}
         data-state={open ? 'open' : 'closed'}
         tabIndex={-1}
         style={{

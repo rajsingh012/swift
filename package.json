@@ -7,12 +7,20 @@
     "dev": "pnpm --filter @swift/example dev",
     "build": "pnpm -r --filter \"./packages/*\" build && pnpm --filter @swift/example build",
     "build:libs": "pnpm -r --filter \"./packages/*\" build",
-    "lint": "pnpm -r lint",
+    "test": "pnpm -r --filter \"./packages/*\" test",
+    "lint": "pnpm -r --filter \"./packages/*\" lint",
+    "typecheck": "pnpm -r --filter \"./packages/*\" typecheck",
     "clean": "pnpm -r exec rm -rf dist node_modules .turbo .tsbuildinfo && rm -rf node_modules",
     "publish:libs": "pnpm -r --filter \"./packages/*\" publish --access public --no-git-checks"
   },
   "devDependencies": {
-    "typescript": "~6.0.2"
+    "@changesets/cli": "^2.31.0",
+    "eslint": "^9.39.4",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.59.2"
   },
   "packageManager": "pnpm@9.0.0"
 }

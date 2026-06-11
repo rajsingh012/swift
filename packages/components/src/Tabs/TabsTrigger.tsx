@@ -5,6 +5,7 @@ import {
   useMemo,
   type KeyboardEvent,
   type MouseEvent,
+  type Ref,
 } from 'react'
 import { Slot } from '../internal/Slot'
 import { mergeRefs } from '../internal/refs'
@@ -161,7 +162,7 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
     }
 
     return (
-      <button ref={mergedRef} {...triggerProps}>
+      <button ref={mergedRef as Ref<HTMLButtonElement>} {...triggerProps}>
         {children}
       </button>
     )

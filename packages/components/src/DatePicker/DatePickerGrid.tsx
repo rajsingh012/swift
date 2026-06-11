@@ -33,6 +33,7 @@ export const DatePickerGrid = forwardRef<HTMLTableElement, DatePickerGridProps>(
       numberOfMonths,
       showWeekNumbers,
       locale,
+      dir,
       min,
       max,
       isDateDisabled,
@@ -85,14 +86,19 @@ export const DatePickerGrid = forwardRef<HTMLTableElement, DatePickerGridProps>(
       const key = event.key
       const shift = event.shiftKey
 
+      // The grid is visually mirrored in RTL, so horizontal arrows flip:
+      // Left = next day, Right = previous day. Vertical / paging keys are
+      // unaffected.
+      const dayStep = dir === 'rtl' ? -1 : 1
+
       switch (key) {
         case 'ArrowLeft':
           event.preventDefault()
-          moveFocusTo(focusedDate.subtract(1, 'day'))
+          moveFocusTo(focusedDate.subtract(dayStep, 'day'))
           return
         case 'ArrowRight':
           event.preventDefault()
-          moveFocusTo(focusedDate.add(1, 'day'))
+          moveFocusTo(focusedDate.add(dayStep, 'day'))
           return
         case 'ArrowUp':
           event.preventDefault()

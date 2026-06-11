@@ -5,6 +5,7 @@ import {
   useMemo,
   type KeyboardEvent,
   type MouseEvent,
+  type Ref,
 } from 'react'
 import { Slot } from '../internal/Slot'
 import { mergeRefs } from '../internal/refs'
@@ -148,7 +149,7 @@ export const SegmentedControlItem = forwardRef<
   }
 
   return (
-    <button ref={mergedRef} {...itemProps}>
+    <button ref={mergedRef as Ref<HTMLButtonElement>} {...itemProps}>
       {children}
     </button>
   )

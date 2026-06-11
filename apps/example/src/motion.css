@@ -1,0 +1,194 @@
+/**
+ * Showcase motion utilities.
+ *
+ * Built on the design-system motion tokens (--motion-ease-*,
+ * --motion-duration-* from @swift/components/theme.css). Every utility
+ * collapses under prefers-reduced-motion at the bottom of this file —
+ * never add a motion class without checking it's covered there.
+ *
+ * Stagger pattern: parents set nothing; each child sets `--stagger-i`
+ * (0, 1, 2, …) inline and gets `animation-delay: i * 55ms`. `backwards`
+ * fill keeps children invisible until their delay elapses.
+ */
+
+@keyframes showcase-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes showcase-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes showcase-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Track is rendered twice back-to-back; -50% loops seamlessly. */
+@keyframes showcase-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Slow background-position drift for oversized gradients (hero aurora). */
+@keyframes showcase-aurora {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes showcase-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.anim-fade-up {
+  animation: showcase-fade-up var(--motion-duration-slow, 320ms)
+    var(--motion-ease-emphasized, ease-out) backwards;
+  animation-delay: calc(var(--stagger-i, 0) * 55ms);
+}
+
+.anim-fade-in {
+  animation: showcase-fade-in var(--motion-duration-slow, 320ms)
+    var(--motion-ease-emphasized, ease-out) backwards;
+  animation-delay: calc(var(--stagger-i, 0) * 55ms);
+}
+
+.anim-scale-in {
+  animation: showcase-scale-in var(--motion-duration-normal, 200ms)
+    var(--motion-ease-snappy, ease-out) backwards;
+  animation-delay: calc(var(--stagger-i, 0) * 55ms);
+}
+
+/* ── Marquee ────────────────────────────────────────────────────── */
+
+.marquee {
+  overflow: hidden;
+  /* Soft fade at both edges so tiles don't clip hard. */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: showcase-marquee var(--marquee-duration, 48s) linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-reverse .marquee-track {
+  animation-direction: reverse;
+}
+
+/* ── Hover micro-interactions ───────────────────────────────────── */
+
+.hover-lift {
+  transition:
+    transform var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    box-shadow var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out);
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-level3);
+}
+
+/* Nudges a child arrow/icon on group hover (pair with `group`). */
+.group .group-hover-nudge {
+  transition: transform var(--motion-duration-fast, 150ms)
+    var(--motion-ease-snappy, ease-out);
+}
+
+.group:hover .group-hover-nudge {
+  transform: translateX(3px);
+}
+
+.aurora {
+  background-size: 200% 200%;
+  animation: showcase-aurora 16s var(--motion-ease-standard, ease-in-out)
+    infinite;
+}
+
+/* ── Route view transitions (cross-fade + slight rise) ──────────── */
+
+::view-transition-old(root) {
+  animation: showcase-fade-in var(--motion-duration-fast, 150ms)
+    var(--motion-ease-standard, ease) reverse both;
+}
+
+::view-transition-new(root) {
+  animation: showcase-fade-up var(--motion-duration-normal, 200ms)
+    var(--motion-ease-emphasized, ease-out) both;
+}
+
+/* ── Reduced motion: everything above collapses ─────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-up,
+  .anim-fade-in,
+  .anim-scale-in,
+  .marquee-track,
+  .aurora,
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .hover-lift,
+  .group .group-hover-nudge {
+    transition: none;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  .group:hover .group-hover-nudge {
+    transform: none;
+  }
+}

@@ -13,7 +13,35 @@ import { Star } from '@swift/icons/Star'
 import { Tag } from '@swift/icons/Tag'
 import { Train } from '@swift/icons/Train'
 import { CopyableImport } from '../lib/CopyableImport'
+import { Playground, type Knob } from './Playground'
 import { CodeBlock, PreviewRow, SectionHeader } from './shared'
+
+type ChipKnobVariant =
+  | 'default'
+  | 'primary'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+
+const CHIP_KNOBS: ReadonlyArray<Knob> = [
+  {
+    type: 'select',
+    name: 'variant',
+    options: ['default', 'primary', 'success', 'warning', 'error', 'info'],
+    defaultValue: 'default',
+  },
+  {
+    type: 'segmented',
+    name: 'appearance',
+    options: ['solid', 'soft', 'outline'],
+    defaultValue: 'soft',
+  },
+  { type: 'segmented', name: 'size', options: ['sm', 'md', 'lg'], defaultValue: 'md' },
+  { type: 'boolean', name: 'selected' },
+  { type: 'boolean', name: 'disabled' },
+  { type: 'text', name: 'children', defaultValue: 'Flights', asChildren: true },
+]
 
 const DESCRIPTION =
   'Interactive label. Six variants × three appearances × three sizes, with a `<ChipGroup>` wrapper for single / multi-select filter UIs. Use Chip for actions and selection; use Badge for read-only labels and counts.'
@@ -250,6 +278,25 @@ export function ChipPanel() {
           {DESCRIPTION}
         </Text>
       </header>
+
+      <section>
+        <SectionHeader>Playground</SectionHeader>
+        <Playground
+          component="Chip"
+          knobs={CHIP_KNOBS}
+          render={(v) => (
+            <Chip
+              variant={v.variant as ChipKnobVariant}
+              appearance={v.appearance as 'solid' | 'soft' | 'outline'}
+              size={v.size as 'sm' | 'md' | 'lg'}
+              selected={v.selected === true}
+              disabled={v.disabled === true}
+            >
+              {String(v.children)}
+            </Chip>
+          )}
+        />
+      </section>
 
       {/* ── Variants ───────────────────────────────────────────── */}
       <section>

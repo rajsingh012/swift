@@ -1,6 +1,4 @@
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 export const rootClasses =
   'flex w-full flex-col divide-y divide-stroke overflow-hidden rounded-lg border border-stroke bg-surface-elevated text-content'

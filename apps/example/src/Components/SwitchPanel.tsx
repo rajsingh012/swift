@@ -3,7 +3,28 @@ import { Switch, SwitchGroup, type SwitchApi } from '@swift/components/Switch'
 import { Text } from '@swift/components/Text'
 import { Check } from '@swift/icons/Check'
 import { CopyableImport } from '../lib/CopyableImport'
+import { Playground, type Knob } from './Playground'
 import { CodeBlock, PreviewRow, SectionHeader } from './shared'
+
+type SwitchKnobVariant = 'default' | 'success' | 'warning' | 'info' | 'neutral'
+
+const SWITCH_KNOBS: ReadonlyArray<Knob> = [
+  { type: 'segmented', name: 'size', options: ['sm', 'md', 'lg'], defaultValue: 'md' },
+  {
+    type: 'select',
+    name: 'variant',
+    options: ['default', 'success', 'warning', 'info', 'neutral'],
+    defaultValue: 'default',
+  },
+  { type: 'boolean', name: 'disabled' },
+  { type: 'boolean', name: 'loading' },
+  {
+    type: 'text',
+    name: 'children',
+    defaultValue: 'Enable notifications',
+    asChildren: true,
+  },
+]
 
 const DESCRIPTION =
   'Accessible toggle switch with three sizes, semantic variants, loading state, controlled & uncontrolled APIs, native form compatibility, full ARIA wiring, and a compound API for custom layouts. Built on a hidden <input type="checkbox" role="switch">, so labels click-toggle, Space activates, and form submission Just Works.'
@@ -572,6 +593,24 @@ export function SwitchPanel() {
           {DESCRIPTION}
         </Text>
       </header>
+
+      <section>
+        <SectionHeader>Playground</SectionHeader>
+        <Playground
+          component="Switch"
+          knobs={SWITCH_KNOBS}
+          render={(v) => (
+            <Switch
+              size={v.size as 'sm' | 'md' | 'lg'}
+              variant={v.variant as SwitchKnobVariant}
+              disabled={v.disabled === true}
+              loading={v.loading === true}
+            >
+              {String(v.children)}
+            </Switch>
+          )}
+        />
+      </section>
 
       <section>
         <SectionHeader>Basic</SectionHeader>

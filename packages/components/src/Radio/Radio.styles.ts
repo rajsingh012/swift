@@ -1,8 +1,6 @@
 import type { RadioSize } from './Radio.types'
 
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 /* ── Root layout ────────────────────────────────────────────────── */
 
@@ -67,7 +65,7 @@ export const hiddenInputClasses =
 
 export const indicatorClasses =
   'pointer-events-none inline-block rounded-full bg-surface-brand ' +
-  'transition-transform '
+  'transition-transform duration-150 motion-reduce:transition-none '
 
 export const indicatorSizeClasses: Record<RadioSize, string> = {
   sm: 'h-1.5 w-1.5',

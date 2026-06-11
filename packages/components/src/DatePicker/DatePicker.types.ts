@@ -78,6 +78,9 @@ interface DatePickerCommonProps {
   /** BCP-47 locale for month / weekday labels. Defaults to `navigator.language`. */
   locale?: string
 
+  /** Explicit direction. Otherwise sniffed from `closest('[dir]')` on the trigger. */
+  dir?: 'ltr' | 'rtl'
+
   /** Explicit id for the popover content (else auto-generated). */
   id?: string
 

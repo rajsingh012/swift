@@ -1,8 +1,6 @@
 import type { ToastPosition } from './Toast.types'
 
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 /* ── Portal wrapper ─────────────────────────────────────────────────
  *  Single root the portal mounts under. Doesn't render anything itself
@@ -18,7 +16,7 @@ export const portalWrapperClasses = 'swift-toast-portal pointer-events-none'
  *  heights. Logical inset properties (`start-4` / `end-4`) so RTL
  *  flips left/right positions for free. z-60 sits above Sheet's z-50. */
 const VIEWPORT_BASE =
-  'swift-toast-viewport fixed z-[60] w-[var(--toast-width,calc(100vw-2rem))] ' +
+  'swift-toast-viewport fixed z-[var(--z-toast,60)] w-[var(--toast-width,calc(100vw-2rem))] ' +
   'max-w-[var(--toast-max-width,420px)] p-0 m-0 list-none ' +
   // Pointer-events disabled on the container — `:has(.swift-toast:hover)`
   // still works because it tests the child's hover state, not the <ol>'s.
@@ -58,5 +56,5 @@ export const viewportPositionClasses: Record<ToastPosition, string> = {
 export const rootClasses =
   'swift-toast pointer-events-auto absolute inset-x-0 ' +
   'rounded-[var(--toast-radius,0.625rem)] ' +
-  'shadow-[var(--toast-shadow,0_8px_24px_rgb(0_0_0_/_0.12))] ' +
+  'shadow-[var(--toast-shadow,var(--shadow-level4))] ' +
   'min-w-0 max-w-full will-change-transform'

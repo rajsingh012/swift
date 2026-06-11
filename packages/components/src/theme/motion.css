@@ -1,0 +1,27 @@
+/**
+ * Motion tokens — the shared easing curves and duration scale every
+ * component's animation resolves through.
+ *
+ * Easings:
+ *   --motion-ease-standard    structural slides / indicator moves
+ *                             (sheet, switch, tabs, segmented control)
+ *   --motion-ease-emphasized  out-quint entrances that settle softly
+ *                             (alert, toast)
+ *   --motion-ease-snappy      out-expo pop for transient overlays
+ *                             (tooltip, date picker)
+ *
+ * Durations (three-step scale):
+ *   --motion-duration-fast    150ms — micro interactions (tooltip, switch)
+ *   --motion-duration-normal  200ms — standard enter/exit (accordion, tabs)
+ *   --motion-duration-slow    320ms — large surfaces (sheet, toast)
+ */
+
+:root {
+  --motion-ease-standard: cubic-bezier(0.32, 0.72, 0, 1);
+  --motion-ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 200ms;
+  --motion-duration-slow: 320ms;
+}

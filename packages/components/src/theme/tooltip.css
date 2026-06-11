@@ -23,10 +23,11 @@
   --tooltip-max-width: 18rem;
   --tooltip-offset: 8px;
   --tooltip-arrow-size: 10px;
-  --tooltip-animation-duration: 150ms;
-  --tooltip-ease: cubic-bezier(0.16, 1, 0.3, 1);
-  /* Above Sheet (z-50) and Toast (z-60) so tooltips work inside dialogs. */
-  --tooltip-z-index: 70;
+  --tooltip-animation-duration: var(--motion-duration-fast, 150ms);
+  --tooltip-ease: var(--motion-ease-snappy);
+  /* Above Sheet (--z-modal: 50) and Toast (--z-toast: 60) so tooltips work
+     inside dialogs. */
+  --tooltip-z-index: var(--z-tooltip, 70);
   --tooltip-arrow-x: 0px;
   --tooltip-arrow-y: 0px;
 

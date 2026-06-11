@@ -9,7 +9,7 @@
   grid-template-rows: minmax(0, 0fr);
   min-height: 0;
   overflow: hidden;
-  transition: grid-template-rows 200ms ease-out;
+  transition: grid-template-rows var(--motion-duration-normal, 200ms) ease-out;
 }
 
 .swift-accordion-content[data-state="closed"] {

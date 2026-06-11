@@ -74,8 +74,10 @@ export interface AlertOwnProps {
   actions?: ReactNode
 
   /** Override the auto-derived ARIA role (defaults to `alert` for the
-   *  `error` variant, `status` otherwise). */
-  role?: 'alert' | 'status'
+   *  `error` variant, `status` otherwise). Pass `presentation` / `none`
+   *  when a host element already owns the live-region semantics (e.g.
+   *  Toast) so nested live regions don't double-announce. */
+  role?: 'alert' | 'status' | 'presentation' | 'none'
 
   classes?: AlertClasses
   children?: ReactNode
@@ -99,8 +101,9 @@ export interface AlertRootProps
   onOpenChange?: (open: boolean) => void
   /** Whether nested Alert.Close should render. Default true. */
   dismissible?: boolean
-  /** Override the auto-derived ARIA role. */
-  role?: 'alert' | 'status'
+  /** Override the auto-derived ARIA role. `presentation` / `none` opt
+   *  out of live-region semantics entirely. */
+  role?: 'alert' | 'status' | 'presentation' | 'none'
   classes?: AlertClasses
   children?: ReactNode
 }

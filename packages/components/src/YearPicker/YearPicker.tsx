@@ -1,13 +1,10 @@
 import { forwardRef, useEffect, useRef } from 'react'
+import { cx } from '../internal/cx'
 import { mergeRefs } from '../internal/refs'
 import { useControllableState } from '../internal/state'
 import type { YearPickerProps } from './YearPicker.types'
 
 const DEFAULT_WINDOW = 50
-
-function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
 
 /**
  * Visual year picker — a scrollable column where the selected year is
@@ -109,7 +106,7 @@ export const YearPicker = forwardRef<HTMLDivElement, YearPickerProps>(
                 className={cx(
                   'inline-flex items-center justify-center min-w-[6rem] py-1 px-3 ' +
                     'rounded-md tabular-nums leading-tight cursor-pointer outline-none ' +
-                    'transition-all duration-150 ' +
+                    'transition-all duration-150 motion-reduce:transition-none ' +
                     'hover:text-content-strong hover:bg-surface-muted ' +
                     'focus-visible:ring-2 focus-visible:ring-stroke-brand/30 ' +
                     'disabled:cursor-not-allowed disabled:opacity-40',

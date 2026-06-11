@@ -244,9 +244,10 @@ function renderAlertContent(
     <Alert
       variant={toast.type}
       appearance={toast.appearance}
-      // role lives on the parent <li>; suppress here by setting `status`
-      // (the default) and letting the <li>'s aria-live drive announcement.
-      role="status"
+      // The parent <li> owns the live-region semantics; `presentation`
+      // strips the Alert's own role + aria-live so screen readers see a
+      // single region instead of nested ones double-announcing.
+      role="presentation"
       // dismissible so <Alert.Close> renders even though we don't actually
       // hand it Alert's own close — onClick.preventDefault() takes over.
       dismissible

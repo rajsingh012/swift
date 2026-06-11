@@ -1,6 +1,4 @@
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 /* CSS hooks for each part. All styling lives in theme/segmented-control.css —
    these strings are the class anchors and nothing else. */

@@ -12,6 +12,7 @@ import { IconSearchContext } from '../lib/iconSearch'
 import { ToastProvider } from '../lib/Toast'
 import { ThemeProvider, useTheme } from '../lib/Theme'
 import { Button } from '@swift/components'
+import '../App.css'
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>
 
@@ -72,9 +73,9 @@ function RootLayout() {
                 </button>
                 <Link
                   to="/"
-                  className="text-base font-semibold tracking-tight text-content-strong"
+                  className="text-base font-semibold tracking-tight text-content-strong transition-opacity duration-200 hover:opacity-80"
                 >
-                  Swift
+                  <span className="brand-gradient-text">Swift</span>
                 </Link>
                 <nav className="hidden items-center gap-1 lg:flex">
                   {NAV_ROUTES.map(({ to, label, icon, iconColorClass }) => (
@@ -159,12 +160,16 @@ function ThemeToggleButton() {
   const { theme, toggle } = useTheme()
   return (
     <Button
-      variant="primary"
+      variant="ghost"
+      iconOnly
       onClick={toggle}
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
       aria-label="Toggle theme"
     >
-      {theme === 'light' ? <Night size={18} /> : <Afternoon size={18} />}
+      {/* Keyed on theme so the quarter-turn swap replays on every toggle. */}
+      <span key={theme} className="theme-icon-swap" aria-hidden="true">
+        {theme === 'light' ? <Night size={18} /> : <Afternoon size={18} />}
+      </span>
     </Button>
   )
 }
@@ -184,10 +189,10 @@ function NavItem({
     <Link
       to={to}
       activeProps={{
-        className: 'bg-surface-brand-muted text-content-brand',
+        className: 'bg-surface-brand-muted text-content-brand shadow-level1',
       }}
       activeOptions={{ exact: true }}
-      className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-content transition-colors hover:bg-surface-muted hover:text-content-strong"
+      className="flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium text-content transition-[background-color,color,box-shadow] duration-200 hover:bg-surface-muted hover:text-content-strong"
     >
       {Icon ? <Icon size={16} className={`${iconColorClass ?? ''} shrink-0`} /> : null}
       <span>{children}</span>

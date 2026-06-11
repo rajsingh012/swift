@@ -25,6 +25,8 @@ export interface TabsRootContextValue {
   lazyMount: boolean
   /** Horizontal pointer swipe on the active content flips tabs. */
   swipeable: boolean
+  /** Arrow-key (and swipe) navigation wraps past the ends. */
+  loop: boolean
 
   /** Map of value → trigger DOM node. Populated by TabsTrigger via
    *  registerTrigger; consumed by focusTrigger for keyboard nav and by

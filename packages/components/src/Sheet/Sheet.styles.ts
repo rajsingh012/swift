@@ -1,10 +1,10 @@
 import type { SheetSide } from './Sheet.types'
 
 export const overlayClasses =
-  'swift-sheet-overlay fixed inset-0 z-40 bg-surface-overlay'
+  'swift-sheet-overlay fixed inset-0 z-[var(--z-overlay,40)] bg-surface-overlay'
 
 export const contentBaseClasses =
-  'swift-sheet-content fixed z-50 flex flex-col overflow-hidden text-content outline-none'
+  'swift-sheet-content fixed z-[var(--z-modal,50)] flex flex-col overflow-hidden text-content outline-none'
 
 export const sideClasses: Record<SheetSide, string> = {
   right: 'inset-y-0 right-0 h-full border-l border-stroke',

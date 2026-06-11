@@ -174,7 +174,9 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
         ref={setNodeRef}
         id={id}
         role={role}
-        aria-live={role === 'alert' ? 'assertive' : 'polite'}
+        aria-live={
+          role === 'alert' ? 'assertive' : role === 'status' ? 'polite' : undefined
+        }
         aria-labelledby={hasTitle || useCompound ? titleId : undefined}
         aria-describedby={hasBody || useCompound ? descriptionId : undefined}
         data-variant={variant}

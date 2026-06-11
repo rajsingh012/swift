@@ -15,6 +15,8 @@
 @import "./radius.css";
 @import "./shadows.css";
 @import "./typography.css";
+@import "./motion.css";
+@import "./z-index.css";
 @import "./accordion.css";
 @import "./sheet.css";
 @import "./list-item.css";

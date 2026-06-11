@@ -9,9 +9,14 @@ export function SectionHeader({ children }: { children: ReactNode }) {
       variant="body-xs"
       fontWeight="semibold"
       color="muted"
-      className="mb-3 block uppercase tracking-wide"
+      className="mb-3 flex items-center gap-2 uppercase tracking-wide"
       variantMapping={{ 'body-xs': 'h2' }}
     >
+      {/* Leading accent dash — decorative, token-colored. */}
+      <span
+        aria-hidden
+        className="h-0.5 w-3 shrink-0 rounded-full bg-surface-brand"
+      />
       {children}
     </Text>
   )
@@ -49,7 +54,7 @@ export function BrowserCompat({
   caveats?: ReadonlyArray<ReactNode>
 }) {
   return (
-    <div className="grid gap-4 rounded-xl border border-stroke bg-surface-elevated p-5">
+    <div className="grid gap-4 rounded-xl border border-stroke bg-surface-elevated p-5 shadow-level1">
       <Text variant="body-sm" color="secondary">
         {baseline}
       </Text>
@@ -63,7 +68,7 @@ export function BrowserCompat({
           >
             Required platform APIs
           </Text>
-          <div className="grid gap-2 rounded-lg border border-stroke-muted">
+          <div className="grid gap-2 rounded-lg border border-stroke-muted bg-surface">
             {features.map(({ name, notes, support }) => (
               <div
                 key={name}

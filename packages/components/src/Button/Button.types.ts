@@ -24,15 +24,24 @@ export interface ButtonClasses {
   loader?: string
 }
 
-export interface ButtonOwnProps {
+export interface ButtonBaseProps {
   variant?: ButtonVariant
   size?: ButtonSize
   loading?: boolean
   fullWidth?: boolean
-  iconOnly?: boolean
   disableRipple?: boolean
   classes?: ButtonClasses
 }
+
+/** Icon-only buttons render no visible text, so an accessible name is
+ *  required — `iconOnly: true` forces `aria-label` or `aria-labelledby`
+ *  at the type level. */
+export type ButtonIconOnlyProps =
+  | { iconOnly: true; 'aria-label': string; 'aria-labelledby'?: string }
+  | { iconOnly: true; 'aria-label'?: string; 'aria-labelledby': string }
+  | { iconOnly?: false; 'aria-label'?: string; 'aria-labelledby'?: string }
+
+export type ButtonOwnProps = ButtonBaseProps & ButtonIconOnlyProps
 
 type AsProp<E extends ElementType> = { as?: E }
 

@@ -1,4 +1,11 @@
-import { useState, type ComponentType } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ComponentType,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Accordion } from '@swift/components/Accordion'
 import { Avatar, AvatarGroup } from '@swift/components/Avatar'
@@ -58,6 +65,73 @@ export const Route = createFileRoute('/')({
 })
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>
+
+/** Inline custom property consumed by motion.css stagger (55ms per step). */
+const stagger = (i: number): CSSProperties => ({ '--stagger-i': i }) as CSSProperties
+
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
+
+/** rAF count-up from 0 → target on mount; renders the target immediately
+ *  when the user prefers reduced motion. Cubic ease-out, ~0.9s. */
+function useCountUp(target: number, durationMs = 900): number {
+  const [value, setValue] = useState(() => (prefersReducedMotion() ? target : 0))
+
+  useEffect(() => {
+    if (prefersReducedMotion()) {
+      setValue(target)
+      return
+    }
+    let raf = 0
+    const start = performance.now()
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / durationMs, 1)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setValue(Math.round(target * eased))
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [target, durationMs])
+
+  return value
+}
+
+/** Fades a below-the-fold section up once it scrolls into view.
+ *  Reduced-motion users (and pre-IO browsers) see content immediately. */
+function Reveal({ children, className = '' }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const node = ref.current
+    if (!node || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') {
+      setShown(true)
+      return
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    )
+    io.observe(node)
+    return () => io.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref} className={`${shown ? 'anim-fade-up' : 'opacity-0'} ${className}`}>
+      {children}
+    </div>
+  )
+}
 
 const STATS: ReadonlyArray<{
   label: string
@@ -288,30 +362,42 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   )
 }
 
+/** Splits values like "60+" into a counted number + literal suffix. */
+function StatValue({ value }: { value: string }) {
+  const match = /^(\d+)(.*)$/.exec(value)
+  const target = match ? Number(match[1]) : 0
+  const count = useCountUp(target)
+  return (
+    <Text variant="heading-md" fontWeight="bold" color="primary" className="tabular-nums">
+      {match ? `${count}${match[2]}` : value}
+    </Text>
+  )
+}
+
 function StatsStrip() {
   return (
     <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      {STATS.map(({ label, value, icon: Icon, accent, blurb }) => (
-        <Card key={label} variant="outlined" size="sm">
-          <Card.Content>
-            <div className="flex items-start gap-3">
-              <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted ${accent}`}>
-                <Icon size={18} />
-              </span>
-              <div className="flex min-w-0 flex-col">
-                <Text variant="heading-md" fontWeight="bold" color="primary">
-                  {value}
-                </Text>
-                <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
-                  {label}
-                </Text>
-                <Text variant="body-xs" color="secondary" className="mt-0.5">
-                  {blurb}
-                </Text>
+      {STATS.map(({ label, value, icon: Icon, accent, blurb }, i) => (
+        <div key={label} className="anim-fade-up" style={stagger(i + 4)}>
+          <Card variant="outlined" size="sm" className="hover-lift h-full">
+            <Card.Content>
+              <div className="flex items-start gap-3">
+                <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted ${accent}`}>
+                  <Icon size={18} />
+                </span>
+                <div className="flex min-w-0 flex-col">
+                  <StatValue value={value} />
+                  <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
+                    {label}
+                  </Text>
+                  <Text variant="body-xs" color="secondary" className="mt-0.5">
+                    {blurb}
+                  </Text>
+                </div>
               </div>
-            </div>
-          </Card.Content>
-        </Card>
+            </Card.Content>
+          </Card>
+        </div>
       ))}
     </section>
   )
@@ -929,10 +1015,10 @@ function ComponentPlayground() {
         </div>
         <Link
           to="/components"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-content-brand hover:underline"
+          className="group inline-flex items-center gap-1 text-sm font-semibold text-content-brand hover:underline"
         >
           Open the docs
-          <ArrowRight size={14} />
+          <ArrowRight size={14} className="group-hover-nudge" />
         </Link>
       </div>
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -1022,7 +1108,55 @@ function SearchCard() {
   )
 }
 
+function IconTile({ Icon, color }: { Icon: IconComponent; color: string }) {
+  return (
+    <div
+      className="group flex size-12 shrink-0 items-center justify-center rounded-xl border border-stroke bg-surface-elevated transition-colors hover:border-stroke-brand hover:bg-surface-muted"
+      title={Icon.name}
+    >
+      <Icon size={18} className={`${color} transition-transform group-hover:scale-110`} />
+    </div>
+  )
+}
+
+/** One marquee lane. motion.css loops the track with a -50% translate, so
+ *  each half must (a) be identical and (b) outgrow the container — the
+ *  15-tile row renders four times (2 per half; duplicates aria-hidden).
+ *  Trailing `pr-2` mirrors the inter-tile gap across the seam; hover
+ *  pauses the lane. */
+function MarqueeRow({
+  icons,
+  duration,
+  reverse = false,
+}: {
+  icons: ReadonlyArray<{ Icon: IconComponent; color: string }>
+  duration: string
+  reverse?: boolean
+}) {
+  const row = (hidden: boolean) => (
+    <div className="flex gap-2 pr-2" aria-hidden={hidden || undefined}>
+      {icons.map((tile, i) => (
+        <IconTile key={i} {...tile} />
+      ))}
+    </div>
+  )
+  return (
+    <div
+      className={`marquee ${reverse ? 'marquee-reverse' : ''}`}
+      style={{ '--marquee-duration': duration } as CSSProperties}
+    >
+      <div className="marquee-track">
+        {row(false)}
+        {row(true)}
+        {row(true)}
+        {row(true)}
+      </div>
+    </div>
+  )
+}
+
 function IconWall() {
+  const mid = Math.ceil(ICON_WALL.length / 2)
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -1034,22 +1168,15 @@ function IconWall() {
         </div>
         <Link
           to="/icons"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-content-brand hover:underline"
+          className="group inline-flex items-center gap-1 text-sm font-semibold text-content-brand hover:underline"
         >
           Browse all
-          <ArrowRight size={14} />
+          <ArrowRight size={14} className="group-hover-nudge" />
         </Link>
       </div>
-      <div className="grid grid-cols-6 gap-2 sm:grid-cols-10 lg:grid-cols-15">
-        {ICON_WALL.map(({ Icon, color }, i) => (
-          <div
-            key={i}
-            className="group flex aspect-square items-center justify-center rounded-lg border border-stroke bg-surface-elevated transition-colors hover:border-stroke-brand hover:bg-surface-muted"
-            title={Icon.name}
-          >
-            <Icon size={18} className={`${color} transition-transform group-hover:scale-110`} />
-          </div>
-        ))}
+      <div className="flex flex-col gap-2">
+        <MarqueeRow icons={ICON_WALL.slice(0, mid)} duration="44s" />
+        <MarqueeRow icons={ICON_WALL.slice(mid)} duration="56s" reverse />
       </div>
     </section>
   )
@@ -1060,19 +1187,27 @@ function HomeRoute() {
 
   return (
     <div className="h-full w-full overflow-y-auto bg-surface">
-      <div className="mx-auto flex max-w-6xl flex-col gap-12 px-8 py-16">
-        <header className="flex flex-col items-center gap-3 text-center">
-          <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
-            Swift Design System
-          </Badge>
-          <Text variant="heading-xl" fontWeight="bold">
-            icons, components, and tokens — all in one place.
-          </Text>
-          <Text variant="para-md" color="secondary" className="max-w-xl">
-            A small, themed set of building blocks. Browse the icon library, explore components, or
-            inspect the design tokens that power them.
-          </Text>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
+      <div className="mx-auto flex max-w-6xl flex-col gap-16 px-8 py-16">
+        <header className="relative isolate flex flex-col items-center gap-3 overflow-hidden rounded-3xl px-6 py-14 text-center">
+          {/* Aurora backdrop — token-tinted gradients, slow drift via motion.css. */}
+          <div aria-hidden="true" className="hero-aurora aurora pointer-events-none absolute inset-0 -z-10" />
+          <div className="anim-fade-up" style={stagger(0)}>
+            <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
+              Swift Design System
+            </Badge>
+          </div>
+          <div className="anim-fade-up" style={stagger(1)}>
+            <Text variant="heading-xl" fontWeight="bold">
+              Icons, components, and tokens — all in one place.
+            </Text>
+          </div>
+          <div className="anim-fade-up" style={stagger(2)}>
+            <Text variant="para-md" color="secondary" className="mx-auto max-w-xl">
+              A small, themed set of building blocks. Browse the icon library, explore components,
+              or inspect the tokens that power them.
+            </Text>
+          </div>
+          <div className="anim-fade-up mt-2 flex flex-wrap items-center justify-center gap-2" style={stagger(3)}>
             <Button as={Link} to="/components">
               <Button.LeftIcon><Settings size={14} /></Button.LeftIcon>
               Explore components
@@ -1090,67 +1225,81 @@ function HomeRoute() {
 
         <StatsStrip />
 
-        <WhatsNew />
+        <Reveal>
+          <WhatsNew />
+        </Reveal>
 
-        <ToastPlayground />
+        <Reveal>
+          <ToastPlayground />
+        </Reveal>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-col">
-              <SectionLabel>Theme preview</SectionLabel>
-              <Text variant="body-sm" color="secondary">
-                Pick a mode — both surfaces below render with the same tokens.
-              </Text>
-            </div>
-            <ThemeSwitcher />
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <ThemePreviewCard
-              scope="light"
-              active={theme === 'light'}
-              onActivate={() => setTheme('light')}
-            />
-            <ThemePreviewCard
-              scope="dark"
-              active={theme === 'dark'}
-              onActivate={() => setTheme('dark')}
-            />
-          </div>
-        </section>
-
-        <ComponentPlayground />
-
-        <IconWall />
-
-        <section className="grid gap-3 sm:grid-cols-3">
-          {SECTIONS.map(({ to, label, icon: Icon, accent, blurb }) => (
-            <Link
-              key={to}
-              to={to}
-              className="group flex flex-col gap-2 rounded-xl border border-stroke bg-surface-elevated p-5 transition-colors hover:border-stroke-brand hover:bg-surface-muted"
-            >
-              <div className="flex items-center gap-2">
-                <Icon size={18} className={accent} />
-                <Text variant="body-md" fontWeight="semibold" color="primary" fontFamily='mono'>
-                  {label}
+        <Reveal>
+          <section className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-col">
+                <SectionLabel>Theme preview</SectionLabel>
+                <Text variant="body-sm" color="secondary">
+                  Pick a mode — both surfaces below render with the same tokens.
                 </Text>
               </div>
-              <Text variant="body-sm" color="secondary">
-                {blurb}
-              </Text>
-              <Text
-                variant="body-xs"
-                fontWeight="semibold"
-                color="primary"
-                className="mt-auto inline-flex items-center gap-1 pt-1 text-content-brand"
+              <ThemeSwitcher />
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <ThemePreviewCard
+                scope="light"
+                active={theme === 'light'}
+                onActivate={() => setTheme('light')}
+              />
+              <ThemePreviewCard
+                scope="dark"
+                active={theme === 'dark'}
+                onActivate={() => setTheme('dark')}
+              />
+            </div>
+          </section>
+        </Reveal>
+
+        <Reveal>
+          <ComponentPlayground />
+        </Reveal>
+
+        <Reveal>
+          <IconWall />
+        </Reveal>
+
+        <Reveal>
+          <section className="grid gap-3 sm:grid-cols-3">
+            {SECTIONS.map(({ to, label, icon: Icon, accent, blurb }) => (
+              <Link
+                key={to}
+                to={to}
+                className="group hover-lift flex flex-col gap-2 rounded-xl border border-stroke bg-surface-elevated p-5 hover:border-stroke-brand"
               >
-                Browse
-                <ArrowRight size={12} />
-              </Text>
-            </Link>
-          ))}
-        </section>
+                <div className="flex items-center gap-2">
+                  <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted transition-transform duration-200 group-hover:scale-105 ${accent}`}>
+                    <Icon size={18} />
+                  </span>
+                  <Text variant="body-md" fontWeight="semibold" color="primary" fontFamily='mono'>
+                    {label}
+                  </Text>
+                </div>
+                <Text variant="body-sm" color="secondary">
+                  {blurb}
+                </Text>
+                <Text
+                  variant="body-xs"
+                  fontWeight="semibold"
+                  color="primary"
+                  className="mt-auto inline-flex items-center gap-1 pt-1 text-content-brand"
+                >
+                  Browse
+                  <ArrowRight size={12} className="group-hover-nudge" />
+                </Text>
+              </Link>
+            ))}
+          </section>
+        </Reveal>
       </div>
     </div>
   )

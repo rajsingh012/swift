@@ -13,7 +13,30 @@ import { Search } from '@swift/icons/Search'
 import { Settings } from '@swift/icons/Settings'
 import { Star } from '@swift/icons/Star'
 import { CopyableImport } from '../lib/CopyableImport'
+import { Playground, type Knob } from './Playground'
 import { CodeBlock, PreviewRow, SectionHeader } from './shared'
+
+type ButtonKnobVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'danger'
+  | 'link'
+
+const BUTTON_KNOBS: ReadonlyArray<Knob> = [
+  {
+    type: 'select',
+    name: 'variant',
+    options: ['primary', 'secondary', 'outline', 'ghost', 'danger', 'link'],
+    defaultValue: 'primary',
+  },
+  { type: 'segmented', name: 'size', options: ['sm', 'md', 'lg'], defaultValue: 'md' },
+  { type: 'boolean', name: 'loading' },
+  { type: 'boolean', name: 'fullWidth' },
+  { type: 'boolean', name: 'disabled' },
+  { type: 'text', name: 'children', defaultValue: 'Book now', asChildren: true },
+]
 
 const DESCRIPTION =
   'Clickable affordance built as a compound component. Six variants, three sizes, polymorphic via `as`, loading + icon-only states, slot-level className overrides, and a built-in ripple.'
@@ -158,6 +181,25 @@ export function ButtonPanel() {
           {DESCRIPTION}
         </Text>
       </header>
+
+      <section>
+        <SectionHeader>Playground</SectionHeader>
+        <Playground
+          component="Button"
+          knobs={BUTTON_KNOBS}
+          render={(v) => (
+            <Button
+              variant={v.variant as ButtonKnobVariant}
+              size={v.size as 'sm' | 'md' | 'lg'}
+              loading={v.loading === true}
+              fullWidth={v.fullWidth === true}
+              disabled={v.disabled === true}
+            >
+              {String(v.children)}
+            </Button>
+          )}
+        />
+      </section>
 
       <section>
         <SectionHeader>Variants</SectionHeader>

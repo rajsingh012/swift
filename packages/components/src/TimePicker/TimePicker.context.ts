@@ -38,6 +38,14 @@ export interface TimePickerContextValue {
   disabled: boolean
   readOnly: boolean
 
+  /**
+   * Resolved writing direction — explicit `dir` prop or sniffed from the
+   * trigger. The steppers have no horizontal arrow-key navigation, so
+   * this currently only drives the popover's `dir` attribute (CSS
+   * logical properties).
+   */
+  dir: 'ltr' | 'rtl'
+
   /** Ordered columns derived from hourCycle + showSeconds. */
   slots: ReadonlyArray<TimePickerColumnSlot>
 

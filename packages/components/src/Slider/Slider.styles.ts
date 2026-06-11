@@ -1,6 +1,4 @@
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+export { cx } from '../internal/cx'
 
 /* ── Root ───────────────────────────────────────────────────────── */
 
@@ -45,7 +43,7 @@ export const thumbClasses =
   'h-[var(--slider-thumb-size)] w-[var(--slider-thumb-size)] ' +
   'bg-[var(--slider-thumb-bg)] border-2 border-[var(--slider-thumb-border)] ' +
   'shadow-[var(--slider-thumb-shadow)] cursor-grab ' +
-  'transition-[box-shadow,transform] outline-none ' +
+  'transition-[box-shadow,transform] duration-150 motion-reduce:transition-none outline-none ' +
   'data-[orientation=horizontal]:top-1/2 data-[orientation=horizontal]:-translate-y-1/2 ' +
   'data-[orientation=horizontal]:-translate-x-1/2 ' +
   'data-[orientation=vertical]:left-1/2 data-[orientation=vertical]:-translate-x-1/2 ' +

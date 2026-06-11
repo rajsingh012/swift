@@ -5,7 +5,28 @@ import { Mail } from '@swift/icons/Mail'
 import { Person } from '@swift/icons/Person'
 import { Search } from '@swift/icons/Search'
 import { CopyableImport } from '../lib/CopyableImport'
+import { Playground, type Knob } from './Playground'
 import { CodeBlock, PreviewRow, SectionHeader } from './shared'
+
+const INPUT_KNOBS: ReadonlyArray<Knob> = [
+  {
+    type: 'segmented',
+    name: 'variant',
+    options: ['outlined', 'filled', 'flushed'],
+    defaultValue: 'outlined',
+  },
+  { type: 'segmented', name: 'size', options: ['sm', 'md', 'lg'], defaultValue: 'md' },
+  {
+    type: 'segmented',
+    name: 'labelPlacement',
+    options: ['top', 'floating'],
+    defaultValue: 'top',
+  },
+  { type: 'text', name: 'label', defaultValue: 'Email' },
+  { type: 'text', name: 'placeholder', defaultValue: 'you@example.com' },
+  { type: 'boolean', name: 'disabled' },
+  { type: 'boolean', name: 'invalid' },
+]
 
 const DESCRIPTION =
   'Form field component. Three variants, three sizes, four semantic states, top + floating labels, stackable end-slot affordances (clear / password toggle / loading), character count, full ARIA wiring, and an OTP-ready Input.Group.'
@@ -497,6 +518,25 @@ export function InputPanel() {
           {DESCRIPTION}
         </Text>
       </header>
+
+      <section>
+        <SectionHeader>Playground</SectionHeader>
+        <Playground
+          component="Input"
+          knobs={INPUT_KNOBS}
+          render={(v) => (
+            <Input
+              variant={v.variant as 'outlined' | 'filled' | 'flushed'}
+              size={v.size as 'sm' | 'md' | 'lg'}
+              labelPlacement={v.labelPlacement as 'top' | 'floating'}
+              label={String(v.label)}
+              placeholder={String(v.placeholder)}
+              disabled={v.disabled === true}
+              invalid={v.invalid === true}
+            />
+          )}
+        />
+      </section>
 
       <section>
         <SectionHeader>Variants · top label</SectionHeader>

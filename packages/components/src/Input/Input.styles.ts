@@ -5,9 +5,9 @@ import type {
   InputVariant,
 } from './Input.types'
 
-export function cx(...parts: Array<string | undefined | null | false>): string {
-  return parts.filter(Boolean).join(' ')
-}
+import { cx } from '../internal/cx'
+
+export { cx }
 
 /* ── Root layout ────────────────────────────────────────────────── */
 
@@ -153,7 +153,7 @@ export const requiredAsteriskClasses = 'text-content-critical'
 const floatingLabelBase =
   'pointer-events-none absolute select-none ' +
   'text-content-muted ' +
-  'transition-all duration-150 ease-out ' +
+  'transition-all duration-150 ease-out motion-reduce:transition-none ' +
   'origin-[0_0]'
 
 /**

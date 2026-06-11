@@ -1,0 +1,15 @@
+/**
+ * Z-index tokens — the stacking strata for floating chrome.
+ *
+ *   --z-overlay  40  Sheet overlay / scrim (sits under its panel)
+ *   --z-modal    50  Sheet panel, DatePicker / TimePicker popovers
+ *   --z-toast    60  Toast viewport (above modals so feedback is never hidden)
+ *   --z-tooltip  70  Tooltip (above everything — must work inside dialogs)
+ */
+
+:root {
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-tooltip: 70;
+}

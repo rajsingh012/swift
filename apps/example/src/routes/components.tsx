@@ -1,6 +1,7 @@
-import { type ComponentType } from 'react'
+import { type ComponentType, type CSSProperties } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@swift/components/Button'
+import { Text } from '@swift/components/Text'
 import { Alert } from '@swift/icons/Alert'
 import { Calendar } from '@swift/icons/Calendar'
 import { Flag } from '@swift/icons/Flag'
@@ -164,22 +165,43 @@ function RouteComponent() {
       triggerLabel={selected}
       sidebar={
         <ul className="space-y-0.5">
-          {components.map(({ name, icon: Icon }) => {
+          {components.map(({ name, icon: Icon }, i) => {
             const isActive = name === selected
             return (
-              <li key={name}>
+              <li
+                key={name}
+                className="anim-fade-in"
+                // Cap the stagger so the tail of the list doesn't take
+                // seconds to appear — items 15+ share one delay slot.
+                style={{ '--stagger-i': Math.min(i, 15) } as CSSProperties}
+              >
                 <Button
                   variant="unstyled"
                   onClick={() => setSelected(name)}
                   classes={{
-                    root: `flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
+                    root: `group relative flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-[background-color,color] duration-(--motion-duration-fast) ease-(--motion-ease-standard) ${
                       isActive
                         ? 'bg-surface-brand-muted font-semibold text-content-brand'
                         : 'font-medium text-content hover:bg-surface-muted'
                     }`,
                   }}
                 >
-                  <Icon size={16} className="shrink-0" />
+                  {/* Active accent bar — scale + opacity transition makes
+                      switching items feel alive without any layout shift. */}
+                  <span
+                    aria-hidden
+                    className={`absolute left-0.5 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-surface-brand transition-[opacity,scale] duration-(--motion-duration-normal) ease-(--motion-ease-emphasized) ${
+                      isActive ? 'scale-y-100 opacity-100' : 'scale-y-50 opacity-0'
+                    }`}
+                  />
+                  <Icon
+                    size={16}
+                    className={`shrink-0 transition-[color,scale] duration-(--motion-duration-fast) ease-(--motion-ease-standard) group-hover:scale-[1.06] ${
+                      isActive
+                        ? ''
+                        : 'text-content-muted group-hover:text-content'
+                    }`}
+                  />
                   <span className="truncate">{name}</span>
                 </Button>
               </li>
@@ -187,8 +209,35 @@ function RouteComponent() {
           })}
         </ul>
       }
+      header={
+        /* Slim breadcrumb chrome. Panels render their own heading-xl title,
+           so this stays minimal: "Components / Button". Rendered by the
+           layout as fixed chrome above the scroll area — content scrolls
+           under it, never over it. */
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5">
+          <Text variant="body-xs" color="muted">
+            Components
+          </Text>
+          <span aria-hidden className="select-none text-xs text-content-muted">
+            /
+          </span>
+          {/* Keyed so the name cross-fades when the selection changes. */}
+          <Text
+            key={selected}
+            variant="body-xs"
+            fontWeight="semibold"
+            className="anim-fade-in inline-block"
+          >
+            {selected}
+          </Text>
+        </nav>
+      }
     >
-      <Panel />
+      {/* `key` remounts the panel on switch — state reset between components
+          is intentional — and re-runs the entrance animation each time. */}
+      <div key={selected} className="anim-fade-up">
+        <Panel />
+      </div>
     </SidebarLayout>
   )
 }

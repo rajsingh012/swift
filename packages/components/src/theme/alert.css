@@ -26,9 +26,9 @@
 
 .swift-alert {
   --alert-radius: 0.625rem;
-  --alert-duration: 220ms;
-  --alert-exit-duration: 180ms;
-  --alert-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --alert-duration: var(--motion-duration-normal, 200ms);
+  --alert-exit-duration: var(--motion-duration-normal, 200ms);
+  --alert-ease: var(--motion-ease-emphasized);
 }
 
 /* ── Soft ─────────────────────────────────────────────────────────── */

@@ -7,4 +7,4 @@ export type {
   TextFontFamily,
   TextRender,
   TextRenderProps,
-} from './text.types'
+} from './Text.types'

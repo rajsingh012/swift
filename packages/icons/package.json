@@ -35,7 +35,8 @@
     "build": "vite build && tsc -p tsconfig.build.json",
     "postbuild": "node -e \"require('node:fs').rmSync('src_temp',{recursive:true,force:true})\"",
     "generate": "node scripts/generate.mjs",
-    "lint": "echo \"(no lint configured)\""
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "peerDependencies": {
     "react": ">=18"

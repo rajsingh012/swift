@@ -29,6 +29,7 @@ export const DatePickerTimeFields = forwardRef<HTMLDivElement, DatePickerTimeFie
       withTime,
       timeProps,
       setTime,
+      dir,
     } = useDatePicker('DatePicker.TimeFields')
 
     if (!withTime) return null
@@ -39,6 +40,9 @@ export const DatePickerTimeFields = forwardRef<HTMLDivElement, DatePickerTimeFie
       showSeconds: timeProps?.showSeconds,
       min: timeProps?.min,
       max: timeProps?.max,
+      // Inherit the DatePicker's resolved direction — the embedded
+      // TimePicker's own sniffing would race against popover mount.
+      dir,
     }
 
     if (mode === 'single') {
