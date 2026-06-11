@@ -66,11 +66,42 @@
     var(--motion-ease-snappy, ease-out) both;
 }
 
+/* ── Footer heartbeat ───────────────────────────────────────────────
+   Double-thump then rest, like a resting pulse — runs on the heart
+   glyph in the "designed & developed" footer line. */
+@keyframes footer-heart-beat {
+  0%,
+  70%,
+  100% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.25);
+  }
+  40% {
+    transform: scale(1);
+  }
+  55% {
+    transform: scale(1.18);
+  }
+}
+
+.footer-heart {
+  display: inline-flex;
+  transform-origin: center;
+  animation: footer-heart-beat 2.4s var(--motion-ease-standard, ease-in-out)
+    infinite;
+}
+
 /* ── Reduced motion ─────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   .theme-icon-swap {
     animation-duration: 1ms !important;
     animation-delay: 0ms !important;
+  }
+
+  .footer-heart {
+    animation: none;
   }
 }

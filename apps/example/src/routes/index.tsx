@@ -1407,6 +1407,100 @@ function MarqueeTile({ i }: { i: number }) {
 
 /* ── Route ──────────────────────────────────────────────────────── */
 
+/* ── Footer ─────────────────────────────────────────────────────── */
+
+function FooterLink({
+  to,
+  search,
+  children,
+}: {
+  to: '/icons' | '/components' | '/foundations'
+  search?: { c: string }
+  children: ReactNode
+}) {
+  return (
+    <Link
+      to={to}
+      search={search}
+      className="text-sm text-content transition-colors hover:text-content-brand"
+    >
+      {children}
+    </Link>
+  )
+}
+
+function HomeFooter() {
+  return (
+    <footer className="border-t border-stroke bg-surface-muted">
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-8 py-10">
+        <div className="flex flex-wrap items-start justify-between gap-8">
+          <div className="flex max-w-xs flex-col gap-2">
+            <Text variant="body-lg" fontWeight="bold">
+              <span className="brand-gradient-text">Swift</span>
+            </Text>
+            <Text variant="body-sm" color="secondary">
+              Icons, components, and tokens for swift product surfaces —
+              typed, themed, zero dependencies.
+            </Text>
+          </div>
+
+          <nav aria-label="Footer" className="flex gap-12 sm:gap-16">
+            <div className="flex flex-col gap-2">
+              <Text
+                variant="body-xs"
+                fontWeight="semibold"
+                color="muted"
+                className="tracking-wide uppercase"
+              >
+                Explore
+              </Text>
+              <FooterLink to="/icons">Icons</FooterLink>
+              <FooterLink to="/components">Components</FooterLink>
+              <FooterLink to="/foundations">Foundations</FooterLink>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Text
+                variant="body-xs"
+                fontWeight="semibold"
+                color="muted"
+                className="tracking-wide uppercase"
+              >
+                Try it
+              </Text>
+              <FooterLink to="/components" search={{ c: 'Button' }}>
+                Live playground
+              </FooterLink>
+              <FooterLink to="/components" search={{ c: 'Toast' }}>
+                Toast demos
+              </FooterLink>
+              <FooterLink to="/foundations">Design tokens</FooterLink>
+            </div>
+          </nav>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stroke pt-5">
+          <Text variant="body-xs" color="muted">
+            © {new Date().getFullYear()} Swift Design System
+          </Text>
+          <Text
+            variant="body-xs"
+            color="muted"
+            className="inline-flex items-center gap-1.5"
+          >
+            Designed &amp; developed with
+            <Heart
+              size={12}
+              title="love"
+              className="footer-heart text-content-critical"
+            />
+            by the Swift team
+          </Text>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
 function HomeRoute() {
   const { theme, setTheme } = useTheme()
 
@@ -1648,6 +1742,10 @@ function HomeRoute() {
           </section>
         </Reveal>
       </div>
+
+      <Reveal>
+        <HomeFooter />
+      </Reveal>
     </div>
   )
 }
