@@ -1,4 +1,6 @@
 import {
+  createContext,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -15,6 +17,7 @@ import { Card } from '@swift/components/Card'
 import { Checkbox } from '@swift/components/Checkbox'
 import { Chip } from '@swift/components/Chip'
 import { Input } from '@swift/components/Input'
+import { SegmentedControl } from '@swift/components/SegmentedControl'
 import { Switch } from '@swift/components/Switch'
 import { Tabs } from '@swift/components/Tabs'
 import { Text } from '@swift/components/Text'
@@ -58,6 +61,7 @@ import { Train } from '@swift/icons/Train'
 import { TrendUp } from '@swift/icons/TrendUp'
 import { Wallet } from '@swift/icons/Wallet'
 import { Wifi } from '@swift/icons/Wifi'
+import { CodeBlock } from '../Components/shared'
 import { useTheme, type Theme } from '../lib/Theme'
 
 export const Route = createFileRoute('/')({
@@ -101,9 +105,9 @@ function useCountUp(target: number, durationMs = 900): number {
   return value
 }
 
-/** Fades a below-the-fold section up once it scrolls into view.
- *  Reduced-motion users (and pre-IO browsers) see content immediately. */
-function Reveal({ children, className = '' }: { children: ReactNode; className?: string }) {
+/** IntersectionObserver "has scrolled into view" flag. Reduced-motion
+ *  users (and pre-IO browsers) see content immediately. */
+function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
   const [shown, setShown] = useState(false)
 
@@ -126,6 +130,12 @@ function Reveal({ children, className = '' }: { children: ReactNode; className?:
     return () => io.disconnect()
   }, [])
 
+  return { ref, shown }
+}
+
+/** Fades a below-the-fold section up once it scrolls into view. */
+function Reveal({ children, className = '' }: { children: ReactNode; className?: string }) {
+  const { ref, shown } = useReveal()
   return (
     <div ref={ref} className={`${shown ? 'anim-fade-up' : 'opacity-0'} ${className}`}>
       {children}
@@ -133,18 +143,80 @@ function Reveal({ children, className = '' }: { children: ReactNode; className?:
   )
 }
 
-const STATS: ReadonlyArray<{
-  label: string
-  value: string
-  icon: IconComponent
-  accent: string
-  blurb: string
-}> = [
-  { label: 'Icons', value: '310', icon: Star, accent: 'text-content-highlight', blurb: 'tree-shakeable SVGs' },
-  { label: 'Components', value: '19', icon: Settings, accent: 'text-content-brand', blurb: 'typed & themable' },
-  { label: 'Themes', value: '2', icon: Afternoon, accent: 'text-content-new', blurb: 'light & dark, same tokens' },
-  { label: 'Variants', value: '60+', icon: Tag, accent: 'text-content-success', blurb: 'across the system' },
-]
+/* ── Bento grid plumbing ────────────────────────────────────────────
+   The grid is split into horizontal "bands" — each band is its own
+   2/4/6-column grid (mobile/md/lg) sharing the same gap, so visually
+   they read as one continuous bento. Each band owns an
+   IntersectionObserver and broadcasts `shown` via context so tiles run
+   their own staggered fade-up the moment the band scrolls in. */
+
+const BandShownContext = createContext(true)
+
+function BentoBand({ children }: { children: ReactNode }) {
+  const { ref, shown } = useReveal()
+  return (
+    <BandShownContext.Provider value={shown}>
+      <div
+        ref={ref}
+        className="grid auto-rows-[minmax(140px,auto)] grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6"
+      >
+        {children}
+      </div>
+    </BandShownContext.Provider>
+  )
+}
+
+const TILE_CHROME =
+  'hover-lift group flex flex-col gap-3 overflow-hidden rounded-2xl border border-stroke bg-surface-elevated p-5 hover:border-stroke-brand'
+
+/** Per-tile entrance: staggered fade-up once the band reveals.
+ *  Stagger index is capped at 10 so late tiles don't lag behind. */
+function useTileEntrance(i: number) {
+  const shown = useContext(BandShownContext)
+  return {
+    entranceClass: shown ? 'anim-fade-up' : 'opacity-0',
+    entranceStyle: stagger(Math.min(i, 10)),
+  }
+}
+
+/** Shared bento tile. `bare` skips the chrome for children that already
+ *  draw their own card (e.g. TripCard). Pass grid spans via className. */
+function Tile({
+  i = 0,
+  className = '',
+  bare = false,
+  children,
+}: {
+  i?: number
+  className?: string
+  bare?: boolean
+  children: ReactNode
+}) {
+  const { entranceClass, entranceStyle } = useTileEntrance(i)
+  return (
+    <div
+      className={`${entranceClass} ${bare ? '' : TILE_CHROME} ${className}`}
+      style={entranceStyle}
+    >
+      {children}
+    </div>
+  )
+}
+
+function TileHeader({ title, desc }: { title: string; desc?: string }) {
+  return (
+    <div className="flex flex-col">
+      <Text variant="body-md" fontWeight="semibold" color="primary">
+        {title}
+      </Text>
+      {desc ? (
+        <Text variant="body-xs" color="muted">
+          {desc}
+        </Text>
+      ) : null}
+    </div>
+  )
+}
 
 const SHOWCASE_ICONS: ReadonlyArray<{ Icon: IconComponent; color: string }> = [
   { Icon: Star, color: 'text-content-highlight' },
@@ -374,43 +446,254 @@ function StatValue({ value }: { value: string }) {
   )
 }
 
-function StatsStrip() {
+/** Stat layout shared by the count-up tiles (icon top, number bottom). */
+function StatBody({
+  icon: Icon,
+  accent,
+  value,
+  label,
+  blurb,
+}: {
+  icon: IconComponent
+  accent: string
+  value: string
+  label: string
+  blurb: string
+}) {
   return (
-    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      {STATS.map(({ label, value, icon: Icon, accent, blurb }, i) => (
-        <div key={label} className="anim-fade-up" style={stagger(i + 4)}>
-          <Card variant="outlined" size="sm" className="hover-lift h-full">
-            <Card.Content>
-              <div className="flex items-start gap-3">
-                <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted ${accent}`}>
-                  <Icon size={18} />
-                </span>
-                <div className="flex min-w-0 flex-col">
-                  <StatValue value={value} />
-                  <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
-                    {label}
-                  </Text>
-                  <Text variant="body-xs" color="secondary" className="mt-0.5">
-                    {blurb}
-                  </Text>
-                </div>
-              </div>
-            </Card.Content>
-          </Card>
-        </div>
-      ))}
+    <>
+      <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted ${accent}`}>
+        <Icon size={18} />
+      </span>
+      <div className="mt-auto flex min-w-0 flex-col">
+        <StatValue value={value} />
+        <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
+          {label}
+        </Text>
+        <Text variant="body-xs" color="secondary" className="mt-0.5">
+          {blurb}
+        </Text>
+      </div>
+    </>
+  )
+}
+
+/** 1×1 stat tile that links out (Icons → /icons, Components → /components). */
+function StatLinkTile({
+  i,
+  to,
+  ...stat
+}: {
+  i: number
+  to: '/icons' | '/components'
+  icon: IconComponent
+  accent: string
+  value: string
+  label: string
+  blurb: string
+}) {
+  const { entranceClass, entranceStyle } = useTileEntrance(i)
+  return (
+    <Link
+      to={to}
+      className={`${entranceClass} ${TILE_CHROME} col-span-1`}
+      style={entranceStyle}
+    >
+      <StatBody {...stat} />
+    </Link>
+  )
+}
+
+/* ── Principles (Overview) ──────────────────────────────────────── */
+
+const PRINCIPLES: ReadonlyArray<{
+  icon: IconComponent
+  accent: string
+  title: string
+  blurb: string
+}> = [
+  {
+    icon: Flash,
+    accent: 'text-content-warning',
+    title: 'Zero dependencies',
+    blurb:
+      'Every primitive — positioning engine included — is hand-rolled. React is the only thing in your bundle.',
+  },
+  {
+    icon: Afternoon,
+    accent: 'text-content-new',
+    title: 'Token-driven theming',
+    blurb:
+      'Palettes → semantic → component tokens. Light and dark resolve from the same semantic layer.',
+  },
+  {
+    icon: CheckCircle,
+    accent: 'text-content-success',
+    title: 'Accessible by default',
+    blurb:
+      'Keyboard navigation, ARIA wiring, focus rings, RTL, and reduced-motion support across the set.',
+  },
+  {
+    icon: TrendUp,
+    accent: 'text-content-brand',
+    title: 'Tree-shakeable',
+    blurb:
+      'Per-component and per-icon entry points — you ship only what you import.',
+  },
+]
+
+function PrincipleTile({
+  i,
+  icon: Icon,
+  accent,
+  title,
+  blurb,
+}: {
+  i: number
+  icon: IconComponent
+  accent: string
+  title: string
+  blurb: string
+}) {
+  return (
+    <Tile i={i} className="col-span-1 gap-2">
+      <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted ${accent}`}>
+        <Icon size={18} />
+      </span>
+      <Text variant="body-md" fontWeight="semibold" color="primary">
+        {title}
+      </Text>
+      <Text variant="body-xs" color="secondary">
+        {blurb}
+      </Text>
+    </Tile>
+  )
+}
+
+/* ── Installation ───────────────────────────────────────────────── */
+
+const PM_COMMANDS = {
+  pnpm: 'pnpm add @swift/components @swift/icons',
+  npm: 'npm install @swift/components @swift/icons',
+  yarn: 'yarn add @swift/components @swift/icons',
+  bun: 'bun add @swift/components @swift/icons',
+} as const
+
+type PackageManager = keyof typeof PM_COMMANDS
+
+const SETUP_SNIPPET = `// main.tsx — import the stylesheet once
+import '@swift/components/styles.css'
+
+// then compose anywhere
+import { Button } from '@swift/components/Button'
+import { Flight } from '@swift/icons/Flight'
+
+<Button>
+  <Button.LeftIcon><Flight size={16} /></Button.LeftIcon>
+  Book now
+</Button>`
+
+/** Step 1 of the old two-step install card, condensed into a tile.
+ *  Step 2 (the stylesheet-import snippet) lives in SetupSection below. */
+function InstallTile({ i }: { i: number }) {
+  const [pm, setPm] = useState<PackageManager>('pnpm')
+  const [copied, setCopied] = useState(false)
+  const command = PM_COMMANDS[pm]
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(command)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      /* clipboard unavailable */
+    }
+  }
+
+  return (
+    <Tile i={i} className="col-span-2 md:col-span-4 lg:col-span-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <TileHeader title="Install" desc="Two packages, one stylesheet import." />
+        <SegmentedControl
+          size="sm"
+          value={pm}
+          onValueChange={(value) => setPm(value as PackageManager)}
+          aria-label="Package manager"
+        >
+          <SegmentedControl.Indicator />
+          {(Object.keys(PM_COMMANDS) as PackageManager[]).map((manager) => (
+            <SegmentedControl.Item key={manager} value={manager}>
+              {manager}
+            </SegmentedControl.Item>
+          ))}
+        </SegmentedControl>
+      </div>
+      <div className="relative mt-auto">
+        {/* Keyed on the manager so switching re-runs the fade. */}
+        <pre
+          key={pm}
+          className="anim-fade-in overflow-x-auto overscroll-contain touch-pan-x rounded-lg bg-surface-inverse p-3 pr-12 text-xs leading-relaxed text-content-inverse"
+        >
+          <span aria-hidden className="select-none opacity-50">
+            ${' '}
+          </span>
+          {command}
+        </pre>
+        <button
+          type="button"
+          onClick={handleCopy}
+          aria-label={copied ? 'Copied' : 'Copy install command'}
+          className="absolute top-1/2 right-2 flex size-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-content-inverse/70 transition-colors hover:bg-content-inverse/10 hover:text-content-inverse"
+        >
+          {copied ? (
+            <Check size={14} className="anim-scale-in text-content-success" />
+          ) : (
+            <Text variant="body-xs" className="text-inherit">
+              copy
+            </Text>
+          )}
+        </button>
+      </div>
+      <Text variant="body-xs" color="muted">
+        Zero runtime dependencies — React is the only peer. Dark mode is one
+        attribute: <code>{'<html data-theme="dark">'}</code>.
+      </Text>
+    </Tile>
+  )
+}
+
+/** Step 2 of the old install card: stylesheet import + compose snippet. */
+function SetupSection() {
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-col">
+        <SectionLabel>Setup</SectionLabel>
+        <Text variant="body-sm" color="secondary">
+          Import the stylesheet, then compose — themed and tree-shakeable out
+          of the box.
+        </Text>
+      </div>
+      <div className="flex flex-col gap-3 rounded-xl border border-stroke bg-surface-elevated p-5">
+        <CodeBlock code={SETUP_SNIPPET} />
+        <Text variant="body-xs" color="muted">
+          Components and icons are deep-importable — bundlers ship only the
+          entries you touch.
+        </Text>
+      </div>
     </section>
   )
 }
 
-function ButtonsCard() {
+/* ── Bento tiles ────────────────────────────────────────────────── */
+
+function ButtonsTile({ i }: { i: number }) {
   return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Buttons</Card.Title>
-        <Card.Description>Seven variants · three sizes · loading + icon slots.</Card.Description>
-      </Card.Header>
-      <Card.Content>
+    <Tile i={i} className="col-span-2 row-span-2">
+      <TileHeader title="Buttons" desc="Seven variants · three sizes · loading + icon slots." />
+      <div className="flex flex-col gap-1.5">
+        <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
+          Variants
+        </Text>
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm">
             <Button.LeftIcon><Check size={14} /></Button.LeftIcon>
@@ -428,8 +711,313 @@ function ButtonsCard() {
           <Button variant="danger" size="sm">Delete</Button>
           <Button variant="link" size="sm">Read more</Button>
         </div>
+      </div>
+      <div className="mt-auto flex flex-col gap-1.5">
+        <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
+          Sizes
+        </Text>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button size="sm">Small</Button>
+          <Button size="md">Medium</Button>
+          <Button size="lg">Large</Button>
+        </div>
+      </div>
+    </Tile>
+  )
+}
+
+function TripCard() {
+  return (
+    <Card variant="elevated" className="h-full">
+      <Card.Header divider>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <Card.Title>Delhi → Goa</Card.Title>
+            <Card.Description>Sat, 14 Jun · Non-stop · 2h 30m</Card.Description>
+          </div>
+          <Badge variant="success" appearance="soft" startIcon={<Check size={12} />}>
+            Confirmed
+          </Badge>
+        </div>
+      </Card.Header>
+      <Card.Content>
+        <div className="grid grid-cols-3 items-center gap-3 text-center">
+          <div>
+            <Text variant="heading-sm" fontWeight="semibold">06:20</Text>
+            <Text variant="body-xs" color="muted" className="block">DEL · T1</Text>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <Flight size={18} className="text-content-brand" />
+            <div className="h-px w-full bg-stroke" />
+            <Text variant="body-xs" color="muted">2h 30m</Text>
+          </div>
+          <div>
+            <Text variant="heading-sm" fontWeight="semibold">08:50</Text>
+            <Text variant="body-xs" color="muted" className="block">GOX</Text>
+          </div>
+        </div>
       </Card.Content>
+      <Card.Footer divider muted>
+        <div className="flex w-full items-center justify-between">
+          <Text variant="body-sm" fontWeight="semibold" color="primary">
+            ₹4,820
+          </Text>
+          <Button size="sm">
+            View
+            <Button.RightIcon><ArrowRight size={14} /></Button.RightIcon>
+          </Button>
+        </div>
+      </Card.Footer>
     </Card>
+  )
+}
+
+/** Sun/moon switch wired to the real theme + the token swatch strip
+ *  (absorbed from the old ThemeCardInline + the "Themes" stat). */
+function ThemeTile({ i }: { i: number }) {
+  const { theme, toggle } = useTheme()
+  const Icon = theme === 'light' ? Afternoon : Night
+  return (
+    <Tile i={i} className="col-span-1">
+      <div className="flex items-center justify-between gap-2">
+        {/* Keyed on the theme so .theme-icon-swap replays on every flip. */}
+        <span key={theme} className="theme-icon-swap text-content-new">
+          <Icon size={20} />
+        </span>
+        <Switch
+          size="sm"
+          checked={theme === 'dark'}
+          onCheckedChange={toggle}
+          aria-label="Toggle dark mode"
+        />
+      </div>
+      <div className="mt-auto flex flex-col gap-2">
+        <div className="flex h-4 overflow-hidden rounded-md border border-stroke">
+          {SWATCHES.map((bg) => (
+            <div key={bg} className={`flex-1 ${bg}`} />
+          ))}
+        </div>
+        <div className="flex flex-col">
+          <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
+            2 themes
+          </Text>
+          <Text variant="body-xs" color="secondary">
+            light & dark, same tokens — current:{' '}
+            <strong className="text-content-strong capitalize">{theme}</strong>
+          </Text>
+        </div>
+      </div>
+    </Tile>
+  )
+}
+
+/** One-tap taste of the imperative toast() API (full playground below). */
+function ToastTile({ i }: { i: number }) {
+  return (
+    <Tile i={i} className="col-span-1">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted text-content-success">
+        <Notifications size={18} />
+      </span>
+      <div className="mt-auto flex flex-col gap-2">
+        <TileHeader title="Toast" desc="Imperative toast() API." />
+        <Button size="sm" variant="secondary" onClick={() => toast.success('Profile updated')}>
+          Fire a toast
+        </Button>
+      </div>
+    </Tile>
+  )
+}
+
+/** Live Switches + selectable Chips (merged SwitchCard + ChipsCard). */
+function SwitchChipsTile({ i }: { i: number }) {
+  const [filter, setFilter] = useState<string>('flights')
+  const [wifi, setWifi] = useState(true)
+  const [push, setPush] = useState(false)
+  const [eco, setEco] = useState(true)
+  return (
+    <Tile i={i} className="col-span-2">
+      <TileHeader
+        title="Switches & Chips"
+        desc="Three sizes · five variants · selectable groups with leading icons."
+      />
+      <div className="flex flex-wrap gap-2">
+        {TRAVEL_CHIPS.map(({ value, label, icon: Icon }) => (
+          <Chip
+            key={value}
+            value={value}
+            size="sm"
+            variant="primary"
+            appearance={filter === value ? 'solid' : 'soft'}
+            selected={filter === value}
+            onSelectedChange={() => setFilter(value)}
+            startIcon={<Icon size={14} />}
+            showCheckOnSelected={false}
+          >
+            {label}
+          </Chip>
+        ))}
+      </div>
+      <div className="mt-auto grid gap-x-4 gap-y-2 sm:grid-cols-2">
+        <Switch size="sm" checked={wifi} onCheckedChange={setWifi}>
+          In-flight Wi-Fi
+        </Switch>
+        <Switch size="sm" variant="success" checked={eco} onCheckedChange={setEco}>
+          Eco fares only
+        </Switch>
+        <Switch size="sm" variant="info" checked={push} onCheckedChange={setPush}>
+          Push notifications
+        </Switch>
+        <Switch size="sm" variant="warning" disabled>
+          Premium add-ons
+        </Switch>
+      </div>
+    </Tile>
+  )
+}
+
+/** Deep-link into the components playground (old ComponentPlayground header). */
+function PlaygroundCtaTile({ i }: { i: number }) {
+  const { entranceClass, entranceStyle } = useTileEntrance(i)
+  return (
+    <Link
+      to="/components"
+      search={{ c: 'Button' }}
+      className={`${entranceClass} ${TILE_CHROME} col-span-2 md:col-span-3 lg:col-span-2`}
+      style={entranceStyle}
+    >
+      <TileHeader
+        title="Try the live playground"
+        desc="Every Swift component, live and themable. Click around — state is real."
+      />
+      <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-content-brand">
+        Open the docs
+        <ArrowRight size={14} className="group-hover-nudge" />
+      </span>
+    </Link>
+  )
+}
+
+/** "Just shipped" — the two newest primitives, wired live (old WhatsNew). */
+function WhatsNewTile({ i }: { i: number }) {
+  const [alerts, setAlerts] = useState(true)
+  const [savings, setSavings] = useState(false)
+  return (
+    <Tile i={i} className="col-span-2 row-span-2">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col">
+          <SectionLabel>Just shipped</SectionLabel>
+          <Text variant="body-xs" color="secondary">
+            The two newest primitives — wired live, click between them.
+          </Text>
+        </div>
+        <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
+          new
+        </Badge>
+      </div>
+
+      <Tabs defaultValue="tabs">
+        <Tabs.List>
+          <Tabs.Trigger value="tabs">Tabs</Tabs.Trigger>
+          <Tabs.Trigger value="switch">Switch</Tabs.Trigger>
+          <Tabs.Indicator />
+        </Tabs.List>
+        <Tabs.Content value="tabs" className="pt-4">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Text variant="heading-sm" fontWeight="semibold" color="primary">
+                Compound Tabs · automatic & manual activation.
+              </Text>
+              <Text variant="body-sm" color="secondary">
+                Animated indicator, horizontal-swipe gestures, optional lazy mounts. Roving
+                focus, arrow keys, Home/End — all wired. Yes, this tile is using it.
+              </Text>
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                  indicator
+                </Chip>
+                <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                  lazyMount
+                </Chip>
+                <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                  RTL
+                </Chip>
+                <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                  swipeable
+                </Chip>
+              </div>
+            </div>
+            <Tabs defaultValue="overview" className="rounded-lg border border-stroke bg-surface p-3">
+              <Tabs.List>
+                <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+                <Tabs.Trigger value="pricing">Pricing</Tabs.Trigger>
+                <Tabs.Trigger value="reviews">Reviews</Tabs.Trigger>
+                <Tabs.Indicator />
+              </Tabs.List>
+              <Tabs.Content value="overview" className="pt-3">
+                <Text variant="body-xs" color="secondary">
+                  Nested Tabs render inside their parent. State is independent.
+                </Text>
+              </Tabs.Content>
+              <Tabs.Content value="pricing" className="pt-3">
+                <Text variant="body-xs" color="secondary">
+                  ₹4,820 onwards · taxes & fees included.
+                </Text>
+              </Tabs.Content>
+              <Tabs.Content value="reviews" className="pt-3">
+                <Text variant="body-xs" color="secondary">
+                  4.6 ★ from 2,418 travellers.
+                </Text>
+              </Tabs.Content>
+            </Tabs>
+          </div>
+        </Tabs.Content>
+        <Tabs.Content value="switch" className="pt-4">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Text variant="heading-sm" fontWeight="semibold" color="primary">
+                Switch · accessible toggle, three sizes, five variants.
+              </Text>
+              <Text variant="body-sm" color="secondary">
+                Native <code>input[type=checkbox][role=switch]</code> under the hood — labels
+                click-toggle, Space activates, form submission works. Loading state included.
+              </Text>
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                  sm · md · lg
+                </Chip>
+                <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                  success / warning / info
+                </Chip>
+                <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
+                  loading
+                </Chip>
+              </div>
+            </div>
+            <div className="flex flex-col gap-3 rounded-lg border border-stroke bg-surface p-3">
+              <Switch
+                size="sm"
+                checked={alerts}
+                onCheckedChange={setAlerts}
+                description="Pings you when fares drop."
+              >
+                Price alerts
+              </Switch>
+              <Switch
+                size="sm"
+                variant="success"
+                checked={savings}
+                onCheckedChange={setSavings}
+              >
+                Auto-apply savings
+              </Switch>
+              <Switch size="sm" variant="warning" disabled defaultChecked>
+                Sync (disabled)
+              </Switch>
+            </div>
+          </div>
+        </Tabs.Content>
+      </Tabs>
+    </Tile>
   )
 }
 
@@ -442,161 +1030,170 @@ const TEAM = [
   { name: 'Sara Khan', src: 'https://i.pravatar.cc/120?img=66' },
 ] as const
 
-function AvatarsCard() {
+function AvatarsTile({ i }: { i: number }) {
   return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Avatars</Card.Title>
-        <Card.Description>5 sizes · 3 shapes · status badge · group with overflow.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <Avatar size="sm" src="https://i.pravatar.cc/120?img=11" name="Raj Singh" />
-            <Avatar size="md" src="https://i.pravatar.cc/120?img=23" name="Jane Doe" />
-            <Avatar size="lg" src="https://i.pravatar.cc/120?img=33" name="Aman Mehta">
-              <Avatar.Badge status="online" />
-            </Avatar>
-            <Avatar size="lg" name="Priya Sharma" />
-            <Avatar size="lg" />
-          </div>
-
-          <div className="flex items-center justify-between gap-3">
-            <Text variant="body-xs" color="muted" className="tracking-wide uppercase">
-              Team
-            </Text>
-            <AvatarGroup max={3} aria-label="Engineering team">
-              {TEAM.map((p) => (
-                <Avatar key={p.name} src={p.src} name={p.name} />
-              ))}
-            </AvatarGroup>
-          </div>
-        </div>
-      </Card.Content>
-    </Card>
-  )
-}
-
-function BadgesCard() {
-  return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Badges</Card.Title>
-        <Card.Description>Status pills · counts · soft & solid appearance.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success" appearance="soft" startIcon={<Check size={12} />}>Confirmed</Badge>
-          <Badge variant="warning" appearance="soft" startIcon={<Flash size={12} />}>Limited</Badge>
-          <Badge variant="error" appearance="soft">Sold out</Badge>
-          <Badge variant="info" appearance="soft" startIcon={<InfoCircle size={12} />}>New</Badge>
-          <Badge variant="default" appearance="outline">Beta</Badge>
-          <Badge variant="error" count={12} />
-          <Badge status="online" />
-          <Badge status="away" />
-          <Badge status="busy" />
-        </div>
-      </Card.Content>
-    </Card>
-  )
-}
-
-function ChipsCard() {
-  const [filter, setFilter] = useState<string>('flights')
-  return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Chips</Card.Title>
-        <Card.Description>Selectable, grouped, with leading icons.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <div className="flex flex-wrap gap-2">
-          {TRAVEL_CHIPS.map(({ value, label, icon: Icon }) => (
-            <Chip
-              key={value}
-              value={value}
-              size="sm"
-              variant="primary"
-              appearance={filter === value ? 'solid' : 'soft'}
-              selected={filter === value}
-              onSelectedChange={() => setFilter(value)}
-              startIcon={<Icon size={14} />}
-              showCheckOnSelected={false}
-            >
-              {label}
-            </Chip>
+    <Tile i={i} className="col-span-2">
+      <TileHeader title="Avatars" desc="5 sizes · 3 shapes · status badge · group with overflow." />
+      <div className="flex flex-wrap items-center gap-3">
+        <Avatar size="sm" src="https://i.pravatar.cc/120?img=11" name="Raj Singh" />
+        <Avatar size="md" src="https://i.pravatar.cc/120?img=23" name="Jane Doe" />
+        <Avatar size="lg" src="https://i.pravatar.cc/120?img=33" name="Aman Mehta">
+          <Avatar.Badge status="online" />
+        </Avatar>
+        <Avatar size="lg" name="Priya Sharma" />
+        <Avatar size="lg" />
+      </div>
+      <div className="mt-auto flex items-center justify-between gap-3">
+        <Text variant="body-xs" color="muted" className="tracking-wide uppercase">
+          Team
+        </Text>
+        <AvatarGroup max={3} aria-label="Engineering team">
+          {TEAM.map((p) => (
+            <Avatar key={p.name} src={p.src} name={p.name} />
           ))}
-        </div>
-      </Card.Content>
-    </Card>
+        </AvatarGroup>
+      </div>
+    </Tile>
   )
 }
 
-function SwitchCard() {
-  const [wifi, setWifi] = useState(true)
-  const [push, setPush] = useState(false)
-  const [eco, setEco] = useState(true)
+function BadgesTile({ i }: { i: number }) {
   return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Switch</Card.Title>
-        <Card.Description>Three sizes · five variants · loading state.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <div className="flex flex-col gap-3">
-          <Switch size="sm" checked={wifi} onCheckedChange={setWifi}>
-            In-flight Wi-Fi
-          </Switch>
-          <Switch size="sm" variant="success" checked={eco} onCheckedChange={setEco}>
-            Eco fares only
-          </Switch>
-          <Switch size="sm" variant="info" checked={push} onCheckedChange={setPush}>
-            Push notifications
-          </Switch>
-          <Switch size="sm" variant="warning" disabled>
-            Premium add-ons
-          </Switch>
-        </div>
-      </Card.Content>
-    </Card>
+    <Tile i={i} className="col-span-2">
+      <TileHeader title="Badges" desc="Status pills · counts · soft & solid appearance." />
+      <div className="mt-auto flex flex-wrap items-center gap-2">
+        <Badge variant="success" appearance="soft" startIcon={<Check size={12} />}>Confirmed</Badge>
+        <Badge variant="warning" appearance="soft" startIcon={<Flash size={12} />}>Limited</Badge>
+        <Badge variant="error" appearance="soft">Sold out</Badge>
+        <Badge variant="info" appearance="soft" startIcon={<InfoCircle size={12} />}>New</Badge>
+        <Badge variant="default" appearance="outline">Beta</Badge>
+        <Badge variant="error" count={12} />
+        <Badge status="online" />
+        <Badge status="away" />
+        <Badge status="busy" />
+      </div>
+    </Tile>
   )
 }
 
-function TabsCard() {
+function TabsTile({ i }: { i: number }) {
   return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Tabs</Card.Title>
-        <Card.Description>Animated indicator · roving focus · swipeable.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <Tabs defaultValue="onward">
-          <Tabs.List>
-            <Tabs.Trigger value="onward">Onward</Tabs.Trigger>
-            <Tabs.Trigger value="return">Return</Tabs.Trigger>
-            <Tabs.Trigger value="multi">Multi-city</Tabs.Trigger>
-            <Tabs.Indicator />
-          </Tabs.List>
-          <Tabs.Content value="onward" className="pt-3">
-            <Text variant="body-sm" color="secondary">
-              DEL → GOX · Sat, 14 Jun · from <strong className="text-content-strong">₹4,820</strong>
-            </Text>
-          </Tabs.Content>
-          <Tabs.Content value="return" className="pt-3">
-            <Text variant="body-sm" color="secondary">
-              Add a return to see round-trip fares.
-            </Text>
-          </Tabs.Content>
-          <Tabs.Content value="multi" className="pt-3">
-            <Text variant="body-sm" color="secondary">
-              Stitch up to six legs into a single itinerary.
-            </Text>
-          </Tabs.Content>
-        </Tabs>
-      </Card.Content>
-    </Card>
+    <Tile i={i} className="col-span-2">
+      <TileHeader title="Tabs" desc="Animated indicator · roving focus · swipeable." />
+      <Tabs defaultValue="onward">
+        <Tabs.List>
+          <Tabs.Trigger value="onward">Onward</Tabs.Trigger>
+          <Tabs.Trigger value="return">Return</Tabs.Trigger>
+          <Tabs.Trigger value="multi">Multi-city</Tabs.Trigger>
+          <Tabs.Indicator />
+        </Tabs.List>
+        <Tabs.Content value="onward" className="pt-3">
+          <Text variant="body-sm" color="secondary">
+            DEL → GOX · Sat, 14 Jun · from <strong className="text-content-strong">₹4,820</strong>
+          </Text>
+        </Tabs.Content>
+        <Tabs.Content value="return" className="pt-3">
+          <Text variant="body-sm" color="secondary">
+            Add a return to see round-trip fares.
+          </Text>
+        </Tabs.Content>
+        <Tabs.Content value="multi" className="pt-3">
+          <Text variant="body-sm" color="secondary">
+            Stitch up to six legs into a single itinerary.
+          </Text>
+        </Tabs.Content>
+      </Tabs>
+    </Tile>
   )
 }
+
+function FormTile({ i }: { i: number }) {
+  const [email, setEmail] = useState('')
+  const [agree, setAgree] = useState(true)
+  const [notify, setNotify] = useState(false)
+  return (
+    <Tile i={i} className="col-span-2 lg:col-span-3">
+      <TileHeader title="Inputs & checkboxes" desc="Floating labels, helper text, group state." />
+      <Input
+        size="sm"
+        label="Email"
+        placeholder="you@swift.com"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        startAdornment={<Mail size={14} />}
+        helperText="We'll only mail you about deals."
+      />
+      <div className="flex flex-col gap-2">
+        <Checkbox
+          size="sm"
+          checked={agree}
+          onCheckedChange={(next) => setAgree(next === true)}
+        >
+          I accept the terms
+        </Checkbox>
+        <Checkbox
+          size="sm"
+          checked={notify}
+          onCheckedChange={(next) => setNotify(next === true)}
+        >
+          Email me about price drops
+        </Checkbox>
+      </div>
+    </Tile>
+  )
+}
+
+function TypographyTile({ i }: { i: number }) {
+  return (
+    <Tile i={i} className="col-span-2 md:col-span-4 lg:col-span-3">
+      <TileHeader title="Typography" desc="Headings, paragraphs, body sizes — one Text component." />
+      <div className="mt-auto flex flex-col gap-2">
+        <Text variant="heading-lg" fontWeight="bold">Built for travel.</Text>
+        <Text variant="para-md" color="secondary">
+          Type scale tuned for dense product surfaces. Mix headings, body, and mono in one place.
+        </Text>
+        <Text variant="body-sm" fontFamily="mono" color="muted">
+          tokens → tailwind → components
+        </Text>
+      </div>
+    </Tile>
+  )
+}
+
+/** Input + Chip group working together (old SearchCard). */
+function SearchTile({ i }: { i: number }) {
+  const [q, setQ] = useState('')
+  return (
+    <Tile i={i} className="col-span-2">
+      <TileHeader title="Where next?" desc="Input + Chip group, working together." />
+      <Input
+        size="sm"
+        placeholder="Goa, Manali, Pondicherry…"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        startAdornment={<Search size={14} />}
+      />
+      <div className="mt-auto flex flex-wrap gap-1.5">
+        {['Goa', 'Manali', 'Pondicherry', 'Jaipur', 'Coorg'].map((city) => (
+          <Chip
+            key={city}
+            size="sm"
+            variant="default"
+            appearance="soft"
+            startIcon={<Location size={12} />}
+            showCheckOnSelected={false}
+            onSelectedChange={() => setQ(city)}
+          >
+            {city}
+          </Chip>
+        ))}
+      </div>
+    </Tile>
+  )
+}
+
+/* ── Toast playground (full API drive-through, below the grid) ────── */
 
 const TOAST_POSITIONS = [
   'top-left',
@@ -731,382 +1328,7 @@ function ToastPlayground() {
   )
 }
 
-function FormCard() {
-  const [email, setEmail] = useState('')
-  const [agree, setAgree] = useState(true)
-  const [notify, setNotify] = useState(false)
-  return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Inputs & checkboxes</Card.Title>
-        <Card.Description>Floating labels, helper text, group state.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <div className="flex flex-col gap-4">
-          <Input
-            size="sm"
-            label="Email"
-            placeholder="you@swift.com"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            startAdornment={<Mail size={14} />}
-            helperText="We'll only mail you about deals."
-          />
-          <div className="flex flex-col gap-2">
-            <Checkbox
-              size="sm"
-              checked={agree}
-              onCheckedChange={(next) => setAgree(next === true)}
-            >
-              I accept the terms
-            </Checkbox>
-            <Checkbox
-              size="sm"
-              checked={notify}
-              onCheckedChange={(next) => setNotify(next === true)}
-            >
-              Email me about price drops
-            </Checkbox>
-          </div>
-        </div>
-      </Card.Content>
-    </Card>
-  )
-}
-
-function FaqCard() {
-  return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>FAQ</Card.Title>
-        <Card.Description>Accordion · single · collapsible.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <Accordion type="single" collapsible defaultValue="what">
-          {FAQ.map(({ value, q, a }) => (
-            <Accordion.Item key={value} value={value}>
-              <Accordion.Header>
-                <Accordion.Trigger>
-                  <span className="text-left text-sm font-medium text-content-strong">{q}</span>
-                  <ExpandMore
-                    size={16}
-                    className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
-                  />
-                </Accordion.Trigger>
-              </Accordion.Header>
-              <Accordion.Content>
-                <Text variant="body-sm" color="secondary">
-                  {a}
-                </Text>
-              </Accordion.Content>
-            </Accordion.Item>
-          ))}
-        </Accordion>
-      </Card.Content>
-    </Card>
-  )
-}
-
-function TripCard() {
-  return (
-    <Card variant="elevated" className="h-full">
-      <Card.Header divider>
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <Card.Title>Delhi → Goa</Card.Title>
-            <Card.Description>Sat, 14 Jun · Non-stop · 2h 30m</Card.Description>
-          </div>
-          <Badge variant="success" appearance="soft" startIcon={<Check size={12} />}>
-            Confirmed
-          </Badge>
-        </div>
-      </Card.Header>
-      <Card.Content>
-        <div className="grid grid-cols-3 items-center gap-3 text-center">
-          <div>
-            <Text variant="heading-sm" fontWeight="semibold">06:20</Text>
-            <Text variant="body-xs" color="muted" className="block">DEL · T1</Text>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <Flight size={18} className="text-content-brand" />
-            <div className="h-px w-full bg-stroke" />
-            <Text variant="body-xs" color="muted">2h 30m</Text>
-          </div>
-          <div>
-            <Text variant="heading-sm" fontWeight="semibold">08:50</Text>
-            <Text variant="body-xs" color="muted" className="block">GOX</Text>
-          </div>
-        </div>
-      </Card.Content>
-      <Card.Footer divider muted>
-        <div className="flex w-full items-center justify-between">
-          <Text variant="body-sm" fontWeight="semibold" color="primary">
-            ₹4,820
-          </Text>
-          <Button size="sm">
-            View
-            <Button.RightIcon><ArrowRight size={14} /></Button.RightIcon>
-          </Button>
-        </div>
-      </Card.Footer>
-    </Card>
-  )
-}
-
-function TypographyCard() {
-  return (
-    <Card variant="filled" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Typography</Card.Title>
-        <Card.Description>Headings, paragraphs, body sizes — one Text component.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <div className="flex flex-col gap-2">
-          <Text variant="heading-lg" fontWeight="bold">Built for travel.</Text>
-          <Text variant="para-md" color="secondary">
-            Type scale tuned for dense product surfaces. Mix headings, body, and mono in one place.
-          </Text>
-          <Text variant="body-sm" fontFamily="mono" color="muted">
-            tokens → tailwind → components
-          </Text>
-        </div>
-      </Card.Content>
-    </Card>
-  )
-}
-
-function WhatsNew() {
-  const [alerts, setAlerts] = useState(true)
-  const [savings, setSavings] = useState(false)
-  return (
-    <section className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-col">
-          <SectionLabel>Just shipped</SectionLabel>
-          <Text variant="body-sm" color="secondary">
-            The two newest primitives — wired live, click between them.
-          </Text>
-        </div>
-        <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
-          new
-        </Badge>
-      </div>
-
-      <Card variant="outlined">
-        <Card.Content>
-          <Tabs defaultValue="tabs">
-            <Tabs.List>
-              <Tabs.Trigger value="tabs">Tabs</Tabs.Trigger>
-              <Tabs.Trigger value="switch">Switch</Tabs.Trigger>
-              <Tabs.Indicator />
-            </Tabs.List>
-            <Tabs.Content value="tabs" className="pt-5">
-              <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
-                <div className="flex flex-col gap-2">
-                  <Text variant="heading-sm" fontWeight="semibold" color="primary">
-                    Compound Tabs · automatic & manual activation.
-                  </Text>
-                  <Text variant="body-sm" color="secondary">
-                    Animated indicator, horizontal-swipe gestures, optional lazy mounts. Roving
-                    focus, arrow keys, Home/End — all wired. Yes, this section is using it.
-                  </Text>
-                  <div className="mt-1 flex flex-wrap gap-1.5">
-                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
-                      indicator
-                    </Chip>
-                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
-                      lazyMount
-                    </Chip>
-                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
-                      RTL
-                    </Chip>
-                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
-                      swipeable
-                    </Chip>
-                  </div>
-                </div>
-                <Tabs defaultValue="overview" className="min-w-60 rounded-lg border border-stroke bg-surface-elevated p-3">
-                  <Tabs.List>
-                    <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
-                    <Tabs.Trigger value="pricing">Pricing</Tabs.Trigger>
-                    <Tabs.Trigger value="reviews">Reviews</Tabs.Trigger>
-                    <Tabs.Indicator />
-                  </Tabs.List>
-                  <Tabs.Content value="overview" className="pt-3">
-                    <Text variant="body-xs" color="secondary">
-                      Nested Tabs render inside their parent. State is independent.
-                    </Text>
-                  </Tabs.Content>
-                  <Tabs.Content value="pricing" className="pt-3">
-                    <Text variant="body-xs" color="secondary">
-                      ₹4,820 onwards · taxes & fees included.
-                    </Text>
-                  </Tabs.Content>
-                  <Tabs.Content value="reviews" className="pt-3">
-                    <Text variant="body-xs" color="secondary">
-                      4.6 ★ from 2,418 travellers.
-                    </Text>
-                  </Tabs.Content>
-                </Tabs>
-              </div>
-            </Tabs.Content>
-            <Tabs.Content value="switch" className="pt-5">
-              <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
-                <div className="flex flex-col gap-2">
-                  <Text variant="heading-sm" fontWeight="semibold" color="primary">
-                    Switch · accessible toggle, three sizes, five variants.
-                  </Text>
-                  <Text variant="body-sm" color="secondary">
-                    Native <code>input[type=checkbox][role=switch]</code> under the hood — labels
-                    click-toggle, Space activates, form submission works. Loading state included.
-                  </Text>
-                  <div className="mt-1 flex flex-wrap gap-1.5">
-                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
-                      sm · md · lg
-                    </Chip>
-                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
-                      success / warning / info
-                    </Chip>
-                    <Chip size="sm" variant="default" appearance="soft" showCheckOnSelected={false}>
-                      loading
-                    </Chip>
-                  </div>
-                </div>
-                <div className="flex min-w-60 flex-col gap-3 rounded-lg border border-stroke bg-surface-elevated p-3">
-                  <Switch
-                    size="sm"
-                    checked={alerts}
-                    onCheckedChange={setAlerts}
-                    description="Pings you when fares drop."
-                  >
-                    Price alerts
-                  </Switch>
-                  <Switch
-                    size="sm"
-                    variant="success"
-                    checked={savings}
-                    onCheckedChange={setSavings}
-                  >
-                    Auto-apply savings
-                  </Switch>
-                  <Switch size="sm" variant="warning" disabled defaultChecked>
-                    Sync (disabled)
-                  </Switch>
-                </div>
-              </div>
-            </Tabs.Content>
-          </Tabs>
-        </Card.Content>
-      </Card>
-    </section>
-  )
-}
-
-function ComponentPlayground() {
-  return (
-    <section className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-col">
-          <SectionLabel>Component playground</SectionLabel>
-          <Text variant="body-sm" color="secondary">
-            Every Swift component, live and themable. Click around — state is real.
-          </Text>
-        </div>
-        <Link
-          to="/components"
-          className="group inline-flex items-center gap-1 text-sm font-semibold text-content-brand hover:underline"
-        >
-          Open the docs
-          <ArrowRight size={14} className="group-hover-nudge" />
-        </Link>
-      </div>
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-        <ButtonsCard />
-        <AvatarsCard />
-        <BadgesCard />
-        <ChipsCard />
-        <TabsCard />
-        <SwitchCard />
-        <FormCard />
-        <FaqCard />
-        <TripCard />
-        <TypographyCard />
-        <ThemeCardInline />
-        <SearchCard />
-      </div>
-    </section>
-  )
-}
-
-function ThemeCardInline() {
-  const { theme, toggle } = useTheme()
-  const Icon = theme === 'light' ? Night : Afternoon
-  return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Themes</Card.Title>
-        <Card.Description>Same tokens, different surfaces.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <div className="flex flex-col gap-3">
-          <div className="flex h-7 overflow-hidden rounded-md border border-stroke">
-            {SWATCHES.map((bg) => (
-              <div key={bg} className={`flex-1 ${bg}`} />
-            ))}
-          </div>
-          <div className="flex items-center justify-between">
-            <Text variant="body-sm" color="secondary">
-              Current: <strong className="text-content-strong capitalize">{theme}</strong>
-            </Text>
-            <Button size="sm" variant="secondary" onClick={toggle}>
-              <Button.LeftIcon><Icon size={14} /></Button.LeftIcon>
-              Switch
-            </Button>
-          </div>
-        </div>
-      </Card.Content>
-    </Card>
-  )
-}
-
-function SearchCard() {
-  const [q, setQ] = useState('')
-  return (
-    <Card variant="outlined" className="h-full">
-      <Card.Header divider>
-        <Card.Title>Where next?</Card.Title>
-        <Card.Description>Input + Chip group, working together.</Card.Description>
-      </Card.Header>
-      <Card.Content>
-        <div className="flex flex-col gap-3">
-          <Input
-            size="sm"
-            placeholder="Goa, Manali, Pondicherry…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            startAdornment={<Search size={14} />}
-          />
-          <div className="flex flex-wrap gap-1.5">
-            {['Goa', 'Manali', 'Pondicherry', 'Jaipur', 'Coorg'].map((city) => (
-              <Chip
-                key={city}
-                size="sm"
-                variant="default"
-                appearance="soft"
-                startIcon={<Location size={12} />}
-                showCheckOnSelected={false}
-                onSelectedChange={() => setQ(city)}
-              >
-                {city}
-              </Chip>
-            ))}
-          </div>
-        </div>
-      </Card.Content>
-    </Card>
-  )
-}
+/* ── Icon marquee ───────────────────────────────────────────────── */
 
 function IconTile({ Icon, color }: { Icon: IconComponent; color: string }) {
   return (
@@ -1155,10 +1377,11 @@ function MarqueeRow({
   )
 }
 
-function IconWall() {
+/** Full-width marquee band (old IconWall, tile-ified). */
+function MarqueeTile({ i }: { i: number }) {
   const mid = Math.ceil(ICON_WALL.length / 2)
   return (
-    <section className="flex flex-col gap-4">
+    <Tile i={i} className="col-span-2 md:col-span-4 lg:col-span-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col">
           <SectionLabel>310 icons · ready to grab</SectionLabel>
@@ -1178,18 +1401,20 @@ function IconWall() {
         <MarqueeRow icons={ICON_WALL.slice(0, mid)} duration="44s" />
         <MarqueeRow icons={ICON_WALL.slice(mid)} duration="56s" reverse />
       </div>
-    </section>
+    </Tile>
   )
 }
+
+/* ── Route ──────────────────────────────────────────────────────── */
 
 function HomeRoute() {
   const { theme, setTheme } = useTheme()
 
   return (
     <div className="h-full w-full overflow-y-auto bg-surface">
-      <div className="mx-auto flex max-w-6xl flex-col gap-16 px-8 py-16">
-        <header className="relative isolate flex flex-col items-center gap-3 overflow-hidden rounded-3xl px-6 py-14 text-center">
-          {/* Aurora backdrop — token-tinted gradients, slow drift via motion.css. */}
+      <div className="mx-auto flex max-w-6xl flex-col gap-14 px-8 py-10">
+        {/* Compact hero — aurora backdrop + staggered entrance. */}
+        <header className="relative isolate flex flex-col items-center gap-3 overflow-hidden rounded-3xl px-6 py-10 text-center">
           <div aria-hidden="true" className="hero-aurora aurora pointer-events-none absolute inset-0 -z-10" />
           <div className="anim-fade-up" style={stagger(0)}>
             <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
@@ -1202,9 +1427,9 @@ function HomeRoute() {
             </Text>
           </div>
           <div className="anim-fade-up" style={stagger(2)}>
-            <Text variant="para-md" color="secondary" className="mx-auto max-w-xl">
-              A small, themed set of building blocks. Browse the icon library, explore components,
-              or inspect the tokens that power them.
+            <Text variant="para-md" color="secondary" className="mx-auto max-w-2xl">
+              A small, themed set of building blocks — browse the icon library, explore
+              components, or inspect the tokens that power them.
             </Text>
           </div>
           <div className="anim-fade-up mt-2 flex flex-wrap items-center justify-center gap-2" style={stagger(3)}>
@@ -1223,14 +1448,107 @@ function HomeRoute() {
           </div>
         </header>
 
-        <StatsStrip />
+        {/* ── The bento grid ──────────────────────────────────────────
+            Bands stack with the same gap-3 as the grid itself so the
+            whole thing reads as one bento. Column math per band at
+            lg (6 cols) / md (4) / mobile (2):
+
+            Band A  lg row 1: Buttons(2×2) Trip(2×2) Theme(1) Icons(1)   = 6
+                    lg row 2: …Buttons…    …Trip…    Comp(1)  Toast(1)   = 6
+                    md: Buttons(2×2)+Trip(2×2) fill rows 1–2, four 1×1s
+                        fill row 3; mobile: 2-wide tiles stack, 1×1s pair.
+            Band B  lg: Install(3) Playground CTA(2) Variants(1)         = 6
+                    md: Install(4) / CTA(3)+Variants(1); mobile: stack.
+            Band C  lg row 1: WhatsNew(2×2) P1(1) P2(1) Switch+Chips(2)  = 6
+                    lg row 2: …WhatsNew…   P3(1) P4(1) Search(2)         = 6
+                    md: WhatsNew(2×2)+P1+P2 / Switch+Chips(2) / P3+P4+
+                        Search(2); mobile: principles pair up, rest stack.
+            Band D  lg: Marquee(6); md: (4); mobile: (2) — full width.
+            Band E  lg row 1: Avatars(2) Badges(2) Tabs(2)               = 6
+                    lg row 2: Form(3) Typography(3)                      = 6
+                    md: 2+2 / 2+2 / Typography(4); mobile: stack.      */}
+        <section className="flex flex-col gap-4">
+          <div className="anim-fade-up flex flex-col" style={stagger(4)}>
+            <SectionLabel>Overview</SectionLabel>
+            <Text variant="body-sm" color="secondary">
+              Two packages — <code>@swift/components</code> and{' '}
+              <code>@swift/icons</code> — built on one token layer.
+            </Text>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {/* Band A — hero demos + stat tiles. */}
+            <BentoBand>
+              <ButtonsTile i={0} />
+              <Tile i={1} bare className="col-span-2 row-span-2">
+                <TripCard />
+              </Tile>
+              <ThemeTile i={2} />
+              <StatLinkTile
+                i={3}
+                to="/icons"
+                icon={Star}
+                accent="text-content-highlight"
+                value="310"
+                label="Icons"
+                blurb="tree-shakeable SVGs"
+              />
+              <StatLinkTile
+                i={4}
+                to="/components"
+                icon={Settings}
+                accent="text-content-brand"
+                value="23"
+                label="Components"
+                blurb="typed & themable"
+              />
+              <ToastTile i={5} />
+            </BentoBand>
+
+            {/* Band B — get started + jump in. */}
+            <BentoBand>
+              <InstallTile i={0} />
+              <PlaygroundCtaTile i={1} />
+              <Tile i={2} className="col-span-2 md:col-span-1">
+                <StatBody
+                  icon={Tag}
+                  accent="text-content-success"
+                  value="60+"
+                  label="Variants"
+                  blurb="across the system"
+                />
+              </Tile>
+            </BentoBand>
+
+            {/* Band C — just shipped + principles + live controls. */}
+            <BentoBand>
+              <WhatsNewTile i={0} />
+              <PrincipleTile i={1} {...PRINCIPLES[0]} />
+              <PrincipleTile i={2} {...PRINCIPLES[1]} />
+              <SwitchChipsTile i={3} />
+              <PrincipleTile i={4} {...PRINCIPLES[2]} />
+              <PrincipleTile i={5} {...PRINCIPLES[3]} />
+              <SearchTile i={6} />
+            </BentoBand>
+
+            {/* Band D — icon marquee, full width. */}
+            <BentoBand>
+              <MarqueeTile i={0} />
+            </BentoBand>
+
+            {/* Band E — more to explore. */}
+            <BentoBand>
+              <AvatarsTile i={0} />
+              <BadgesTile i={1} />
+              <TabsTile i={2} />
+              <FormTile i={3} />
+              <TypographyTile i={4} />
+            </BentoBand>
+          </div>
+        </section>
 
         <Reveal>
-          <WhatsNew />
-        </Reveal>
-
-        <Reveal>
-          <ToastPlayground />
+          <SetupSection />
         </Reveal>
 
         <Reveal>
@@ -1261,11 +1579,40 @@ function HomeRoute() {
         </Reveal>
 
         <Reveal>
-          <ComponentPlayground />
+          <ToastPlayground />
         </Reveal>
 
         <Reveal>
-          <IconWall />
+          <section className="flex flex-col gap-4">
+            <div className="flex flex-col">
+              <SectionLabel>FAQ</SectionLabel>
+              <Text variant="body-sm" color="secondary">
+                Accordion · single · collapsible.
+              </Text>
+            </div>
+            <div className="rounded-xl border border-stroke bg-surface-elevated px-5 py-2">
+              <Accordion type="single" collapsible defaultValue="what">
+                {FAQ.map(({ value, q, a }) => (
+                  <Accordion.Item key={value} value={value}>
+                    <Accordion.Header>
+                      <Accordion.Trigger>
+                        <span className="text-left text-sm font-medium text-content-strong">{q}</span>
+                        <ExpandMore
+                          size={16}
+                          className="text-content-muted transition-transform group-data-[state=open]/accordion-item:rotate-180"
+                        />
+                      </Accordion.Trigger>
+                    </Accordion.Header>
+                    <Accordion.Content>
+                      <Text variant="body-sm" color="secondary">
+                        {a}
+                      </Text>
+                    </Accordion.Content>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+            </div>
+          </section>
         </Reveal>
 
         <Reveal>
