@@ -21,6 +21,7 @@ export default defineConfig({
         Alert: resolve(__dirname, 'src/Alert/index.ts'),
         Avatar: resolve(__dirname, 'src/Avatar/index.ts'),
         Badge: resolve(__dirname, 'src/Badge/index.ts'),
+        Box: resolve(__dirname, 'src/Box/index.ts'),
         Button: resolve(__dirname, 'src/Button/index.ts'),
         Card: resolve(__dirname, 'src/Card/index.ts'),
         Carousel: resolve(__dirname, 'src/Carousel/index.ts'),

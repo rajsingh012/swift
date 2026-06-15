@@ -40,6 +40,11 @@
       "import": "./dist/Badge.js",
       "require": "./dist/Badge.cjs"
     },
+    "./Box": {
+      "types": "./dist/src/Box/index.d.ts",
+      "import": "./dist/Box.js",
+      "require": "./dist/Box.cjs"
+    },
     "./Button": {
       "types": "./dist/src/Button/index.d.ts",
       "import": "./dist/Button.js",

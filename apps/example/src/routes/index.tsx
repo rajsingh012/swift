@@ -1517,7 +1517,7 @@ function HomeRoute() {
           </div>
           <div className="anim-fade-up" style={stagger(1)}>
             <Text variant="heading-xl" fontWeight="bold">
-              Icons, components, and tokens — all in one place.
+              icons, components, and tokens — all in one place.
             </Text>
           </div>
           <div className="anim-fade-up" style={stagger(2)}>
