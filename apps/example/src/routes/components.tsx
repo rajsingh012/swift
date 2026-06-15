@@ -26,6 +26,7 @@ import {
   AlertPanel,
   AvatarPanel,
   BadgePanel,
+  BoxPanel,
   ButtonPanel,
   CardPanel,
   CarouselPanel,
@@ -55,6 +56,7 @@ type ComponentName =
   | 'Alert'
   | 'Avatar'
   | 'Badge'
+  | 'Box'
   | 'Button'
   | 'Card'
   | 'Carousel'
@@ -82,6 +84,7 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Alert', icon: Flag },
   { name: 'Avatar', icon: Person },
   { name: 'Badge', icon: Tag },
+  { name: 'Box', icon: GridSmall },
   { name: 'Button', icon: Check },
   { name: 'Card', icon: CreditCard },
   { name: 'Carousel', icon: ArrowRightLong },
@@ -108,6 +111,7 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Alert: AlertPanel,
   Avatar: AvatarPanel,
   Badge: BadgePanel,
+  Box: BoxPanel,
   Button: ButtonPanel,
   Card: CardPanel,
   Carousel: CarouselPanel,

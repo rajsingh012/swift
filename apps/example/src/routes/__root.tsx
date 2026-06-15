@@ -4,6 +4,7 @@ import { Sheet } from '@swift/components/Sheet'
 import { Afternoon } from '@swift/icons/Afternoon'
 import { Close } from '@swift/icons/Close'
 import { Filter } from '@swift/icons/Filter'
+import { GridSmall } from '@swift/icons/GridSmall'
 import { Night } from '@swift/icons/Night'
 import { Search } from '@swift/icons/Search'
 import { Settings } from '@swift/icons/Settings'
@@ -17,7 +18,7 @@ import '../App.css'
 type IconComponent = ComponentType<{ size?: number; className?: string }>
 
 type NavRoute = {
-  to: '/icons' | '/components' | '/foundations'
+  to: '/icons' | '/components' | '/foundations' | '/css'
   label: string
   icon: IconComponent
   iconColorClass: string
@@ -27,6 +28,7 @@ const NAV_ROUTES: ReadonlyArray<NavRoute> = [
   { to: '/icons', label: 'Icons', icon: Star, iconColorClass: 'text-content-highlight' },
   { to: '/components', label: 'Components', icon: Settings, iconColorClass: 'text-content-brand' },
   { to: '/foundations', label: 'Foundations', icon: Filter, iconColorClass: 'text-content-new' },
+  { to: '/css', label: 'CSS', icon: GridSmall, iconColorClass: 'text-content-success' },
 ]
 
 export const Route = createRootRoute({

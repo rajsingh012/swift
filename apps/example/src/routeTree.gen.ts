@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IconsRouteImport } from './routes/icons'
 import { Route as FoundationsRouteImport } from './routes/foundations'
+import { Route as CssRouteImport } from './routes/css'
 import { Route as ComponentsRouteImport } from './routes/components'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const IconsRoute = IconsRouteImport.update({
 const FoundationsRoute = FoundationsRouteImport.update({
   id: '/foundations',
   path: '/foundations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CssRoute = CssRouteImport.update({
+  id: '/css',
+  path: '/css',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComponentsRoute = ComponentsRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/components': typeof ComponentsRoute
+  '/css': typeof CssRoute
   '/foundations': typeof FoundationsRoute
   '/icons': typeof IconsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/components': typeof ComponentsRoute
+  '/css': typeof CssRoute
   '/foundations': typeof FoundationsRoute
   '/icons': typeof IconsRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/components': typeof ComponentsRoute
+  '/css': typeof CssRoute
   '/foundations': typeof FoundationsRoute
   '/icons': typeof IconsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/components' | '/foundations' | '/icons'
+  fullPaths: '/' | '/components' | '/css' | '/foundations' | '/icons'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/components' | '/foundations' | '/icons'
-  id: '__root__' | '/' | '/components' | '/foundations' | '/icons'
+  to: '/' | '/components' | '/css' | '/foundations' | '/icons'
+  id: '__root__' | '/' | '/components' | '/css' | '/foundations' | '/icons'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComponentsRoute: typeof ComponentsRoute
+  CssRoute: typeof CssRoute
   FoundationsRoute: typeof FoundationsRoute
   IconsRoute: typeof IconsRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/foundations'
       fullPath: '/foundations'
       preLoaderRoute: typeof FoundationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/css': {
+      id: '/css'
+      path: '/css'
+      fullPath: '/css'
+      preLoaderRoute: typeof CssRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/components': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComponentsRoute: ComponentsRoute,
+  CssRoute: CssRoute,
   FoundationsRoute: FoundationsRoute,
   IconsRoute: IconsRoute,
 }
