@@ -139,6 +139,23 @@ const INTERESTS: ReadonlyArray<{ value: string; label: string; icon: IconCompone
   { value: 'cabs', label: 'Cabs', icon: Bus },
 ]
 
+/** Semantic surface swatches for the Foundations preview. */
+const SWATCHES = [
+  'bg-surface-brand',
+  'bg-surface-highlight',
+  'bg-surface-success',
+  'bg-surface-warning',
+  'bg-surface-critical',
+  'bg-surface-new',
+] as const
+
+/** Icons shown in the Icons preview tile. */
+const ICON_WALL: ReadonlyArray<IconComponent> = [Flight, Hotel, Train, Bus, Star, Heart, Person, Flash]
+
+/** Map an accent text-colour class to its muted surface tint, e.g.
+ *  `text-content-brand` → `bg-surface-brand-muted`. */
+const tintFor = (accent: string) => `${accent.replace('text-content-', 'bg-surface-')}-muted`
+
 const SETUP_SNIPPET = `pnpm add @swift/components @swift/icons
 
 // main.tsx — import the stylesheet once
@@ -316,7 +333,7 @@ function StatItem({ icon: Icon, value, suffix, label, accent }: {
   const n = useCountUp(value)
   return (
     <div className="flex items-center gap-3 px-5 py-4">
-      <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface-muted ${accent}`}>
+      <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tintFor(accent)} ${accent}`}>
         <Icon size={18} />
       </span>
       <div className="flex flex-col">
@@ -331,28 +348,94 @@ function StatItem({ icon: Icon, value, suffix, label, accent }: {
   )
 }
 
+/** A live mini-preview of what each tab contains — real components. */
+function ExplorePreview({ to }: { to: SectionPath }) {
+  if (to === '/components') {
+    return (
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm">Book</Button>
+        <Badge variant="success" appearance="soft" startIcon={<Check size={12} />}>New</Badge>
+        <Switch size="sm" defaultChecked aria-label="preview switch" />
+      </div>
+    )
+  }
+  if (to === '/icons') {
+    return (
+      <div className="grid grid-cols-4 gap-1.5">
+        {ICON_WALL.map((Icon, idx) => (
+          <span key={idx} className="flex size-8 items-center justify-center rounded-lg bg-surface text-content-secondary">
+            <Icon size={15} />
+          </span>
+        ))}
+      </div>
+    )
+  }
+  if (to === '/css') {
+    return (
+      <div className="flex items-center gap-2.5">
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            background:
+              'conic-gradient(from 0deg, var(--color-brand-500), var(--color-success-500), var(--color-warning-500), var(--color-brand-500))',
+          }}
+        />
+        <div
+          style={{
+            width: 52,
+            height: 40,
+            borderRadius: 8,
+            background: 'linear-gradient(135deg, var(--color-brand-400), var(--color-new-500))',
+          }}
+        />
+        <div className="size-10 rounded-lg border border-stroke bg-surface-elevated shadow-level2" />
+      </div>
+    )
+  }
+  // foundations
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex h-5 overflow-hidden rounded-md border border-stroke">
+        {SWATCHES.map((c) => (
+          <span key={c} className={`flex-1 ${c}`} />
+        ))}
+      </div>
+      <div className="flex gap-1.5">
+        {['rounded-sm', 'rounded-md', 'rounded-lg', 'rounded-full'].map((r) => (
+          <span key={r} className={`size-6 border border-stroke-brand bg-surface-brand-muted ${r}`} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function SectionCard({ i, to, label, icon: Icon, accent, meta, blurb }: {
   i: number; to: SectionPath; label: string; icon: IconComponent; accent: string; meta: string; blurb: string
 }) {
   return (
-    <Link
-      to={to}
+    <div
       className="group hover-lift anim-fade-up flex flex-col gap-3 rounded-2xl border border-stroke bg-surface-elevated p-5 hover:border-stroke-brand"
       style={stagger(i)}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface-muted transition-transform duration-200 group-hover:scale-105 ${accent}`}>
+        <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 ${tintFor(accent)} ${accent}`}>
           <Icon size={20} />
         </span>
         <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">{meta}</Text>
       </div>
+      {/* Live preview of the destination */}
+      <div className="flex min-h-16 items-center rounded-xl border border-stroke-muted bg-surface-muted p-3">
+        <ExplorePreview to={to} />
+      </div>
       <Text variant="body-lg" fontWeight="semibold" color="primary">{label}</Text>
       <Text variant="body-sm" color="secondary">{blurb}</Text>
-      <span className="mt-auto inline-flex items-center gap-1 pt-1 text-sm font-semibold text-content-brand">
+      <Link to={to} className="mt-auto inline-flex w-fit items-center gap-1 pt-1 text-sm font-semibold text-content-brand hover:underline">
         Open
         <ArrowRight size={14} className="group-hover-nudge" />
-      </span>
-    </Link>
+      </Link>
+    </div>
   )
 }
 
@@ -395,13 +478,18 @@ function HomeFooter() {
  *  the background so the page reads as stacked full-bleed sections. */
 function Band({
   tone = 'surface',
+  id,
   children,
 }: {
   tone?: 'surface' | 'muted'
+  id?: string
   children: ReactNode
 }) {
   return (
-    <section className={tone === 'muted' ? 'w-full bg-surface-muted' : 'w-full bg-surface'}>
+    <section
+      id={id}
+      className={tone === 'muted' ? 'w-full scroll-mt-4 bg-surface-muted' : 'w-full scroll-mt-4 bg-surface'}
+    >
       <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:px-8 lg:py-20">{children}</div>
     </section>
   )
@@ -458,17 +546,24 @@ function HomeRoute() {
           </div>
         </div>
 
-        {/* Scroll cue */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-6 hidden justify-center sm:flex">
-          <span className="flex flex-col items-center gap-1 text-content-muted">
-            <Text variant="body-xs" color="muted" className="tracking-wide uppercase">Scroll</Text>
-            <ExpandMore size={18} className="animate-bounce" />
-          </span>
+        {/* Scroll cue — jumps to the first section below the hero */}
+        <div className="absolute inset-x-0 bottom-6 hidden justify-center sm:flex">
+          <button
+            type="button"
+            onClick={() =>
+              document.getElementById('home-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }
+            aria-label="Scroll to content"
+            className="group flex cursor-pointer flex-col items-center gap-1 rounded-lg px-3 py-1.5 text-content-muted transition-colors hover:text-content"
+          >
+            <Text variant="body-xs" color="inherit" className="tracking-wide uppercase">Scroll</Text>
+            <ExpandMore size={18} className="animate-bounce transition-transform group-hover:translate-y-0.5" />
+          </button>
         </div>
       </section>
 
       {/* ── Stats ──────────────────────────────────────────────────── */}
-      <Band tone="muted">
+      <Band tone="muted" id="home-content">
         <div className="grid grid-cols-2 divide-y divide-stroke overflow-hidden rounded-2xl border border-stroke bg-surface-elevated sm:grid-cols-4 sm:divide-x sm:divide-y-0">
           {STATS.map((s) => (
             <StatItem key={s.label} {...s} />
@@ -487,12 +582,18 @@ function HomeRoute() {
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {PRINCIPLES.map(({ icon: Icon, accent, title, blurb }, i) => (
-            <div key={title} className="anim-fade-up flex flex-col gap-2 rounded-2xl border border-stroke bg-surface-elevated p-5" style={stagger(i)}>
-              <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-muted ${accent}`}>
-                <Icon size={18} />
-              </span>
-              <Text variant="body-md" fontWeight="semibold" color="primary">{title}</Text>
-              <Text variant="body-xs" color="secondary">{blurb}</Text>
+            <div key={title} className="anim-fade-up" style={stagger(i)}>
+              <Card variant="elevated" className="hover-lift h-full">
+                <Card.Content>
+                  <div className="flex flex-col gap-2">
+                    <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tintFor(accent)} ${accent}`}>
+                      <Icon size={20} />
+                    </span>
+                    <Text variant="body-md" fontWeight="semibold" color="primary">{title}</Text>
+                    <Text variant="body-xs" color="secondary">{blurb}</Text>
+                  </div>
+                </Card.Content>
+              </Card>
             </div>
           ))}
         </div>
