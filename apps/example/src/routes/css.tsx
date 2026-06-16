@@ -213,7 +213,7 @@ const panelMap: Record<TopicName, ComponentType> = {
   'Writing Modes': WritingModesPanel,
 }
 
-const DEFAULT_SELECTED: TopicName = 'Box Model'
+const DEFAULT_SELECTED: TopicName = 'Animations'
 
 const isTopicName = (v: unknown): v is TopicName =>
   typeof v === 'string' && Object.prototype.hasOwnProperty.call(panelMap, v)
