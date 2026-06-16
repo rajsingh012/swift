@@ -13,6 +13,11 @@ const componentsSrc = resolve(__dirname, '../../packages/components/src')
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [tanstackRouter(), react(), tailwindcss()],
+  // This is a docs/example app — the routes eagerly import every component
+  // and CSS-lesson panel, so the single bundle is large by design. Raise the
+  // advisory limit so the (non-fatal) chunk-size notice doesn't read as an
+  // error. For a leaner bundle, route panels could be React.lazy-loaded.
+  build: { chunkSizeWarningLimit: 2000 },
   resolve: {
     alias: [
       // Bare specifier first so `@swift/components` (no subpath) resolves
