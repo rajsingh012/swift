@@ -40,7 +40,7 @@ export default function optimizeSvg(input) {
       { name: 'removeDimensions' },
       { name: 'removeElementsByAttr' },
       { name: 'removeStyleElement' },
-      { name: 'removeScriptElement' },
+      { name: 'removeScripts' },
       { name: 'removeEmptyContainers' },
     ],
   })

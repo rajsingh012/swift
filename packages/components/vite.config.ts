@@ -49,6 +49,10 @@ export default defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
+      // Declaration emit (vite:dts) is inherently slow — it type-checks the
+      // whole package. Silence rolldown's informational plugin-timing check
+      // so it doesn't read as a problem on every build.
+      checks: { pluginTimings: false },
       external: [
         'react',
         'react-dom',
