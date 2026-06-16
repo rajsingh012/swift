@@ -2,7 +2,7 @@ import { useMemo, useState, type CSSProperties } from 'react'
 import { SegmentedControl } from '@swift/components/SegmentedControl'
 import { Slider } from '@swift/components/Slider'
 import { Text } from '@swift/components/Text'
-import { CodeBlock, SectionHeader } from './shared'
+import { CodeBlock, SectionHeader } from '../shared'
 
 /**
  * Interactive box-model lesson — the classic `box-sizing: content-box`

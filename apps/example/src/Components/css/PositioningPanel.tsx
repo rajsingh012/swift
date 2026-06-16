@@ -8,7 +8,7 @@ import { SegmentedControl } from '@swift/components/SegmentedControl'
 import { Slider } from '@swift/components/Slider'
 import { Text } from '@swift/components/Text'
 import { Check } from '@swift/icons/Check'
-import { CodeBlock, SectionHeader } from './shared'
+import { CodeBlock, SectionHeader } from '../shared'
 
 /**
  * Interactive CSS `position` lesson — static / relative / absolute live
