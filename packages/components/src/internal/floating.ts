@@ -401,11 +401,20 @@ export function useFloating(
 
       // Trigger fully outside the viewport → hide the floating (so a pinned
       // tooltip doesn't cling to the edge once its trigger scrolls away).
+      // A fully-degenerate rect (all zeros — e.g. an unmeasurable element in
+      // jsdom, or a not-yet-laid-out node) is "unmeasurable", not "off-screen",
+      // so we don't hide on it — otherwise the floating would never appear.
+      const isDegenerate =
+        tRect.width === 0 &&
+        tRect.height === 0 &&
+        tRect.top === 0 &&
+        tRect.left === 0
       const triggerHidden =
-        tRect.bottom <= 0 ||
-        tRect.top >= viewport.height ||
-        tRect.right <= 0 ||
-        tRect.left >= viewport.width
+        !isDegenerate &&
+        (tRect.bottom <= 0 ||
+          tRect.top >= viewport.height ||
+          tRect.right <= 0 ||
+          tRect.left >= viewport.width)
 
       const result = computePosition(
         { x: tRect.x, y: tRect.y, width: tRect.width, height: tRect.height },

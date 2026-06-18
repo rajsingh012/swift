@@ -1,0 +1,101 @@
+/**
+ * Popover — an elevated floating panel with an optional arrow. The engine
+ * (internal/floating.ts) writes `--popover-arrow-x/y` and the `data-side` /
+ * `data-align` attributes; CSS turns those into arrow position, transform
+ * origin, and the entrance/exit animation. Sits at the modal stratum.
+ */
+
+.swift-popover-content {
+  --popover-bg: var(--color-surface-elevated);
+  --popover-color: var(--color-content);
+  --popover-border: var(--color-stroke);
+  --popover-radius: var(--radius-lg);
+  --popover-shadow: var(--shadow-level4);
+  --popover-padding: 1rem;
+  --popover-max-width: 20rem;
+  --popover-arrow-size: 10px;
+  --popover-animation-duration: var(--motion-duration-fast, 150ms);
+  --popover-ease: var(--motion-ease-snappy);
+  --popover-z-index: var(--z-modal, 50);
+  --popover-arrow-x: 0px;
+  --popover-arrow-y: 0px;
+
+  z-index: var(--popover-z-index);
+  max-width: var(--popover-max-width);
+  padding: var(--popover-padding);
+  border-radius: var(--popover-radius);
+  background: var(--popover-bg);
+  color: var(--popover-color);
+  border: 1px solid var(--popover-border);
+  box-shadow: var(--popover-shadow);
+  overflow-wrap: break-word;
+}
+
+/* ── Arrow ─────────────────────────────────────────────────────────
+ * A rotated square sharing the surface colour, straddling the content edge.
+ * Physical offsets (already RTL-resolved by the engine). */
+
+.swift-popover-arrow {
+  position: absolute;
+  width: var(--popover-arrow-size);
+  height: var(--popover-arrow-size);
+  background: var(--popover-bg);
+}
+
+.swift-popover-content[data-side="top"] .swift-popover-arrow {
+  bottom: 0;
+  left: var(--popover-arrow-x);
+  transform: translateY(50%) rotate(45deg);
+  border-right: 1px solid var(--popover-border);
+  border-bottom: 1px solid var(--popover-border);
+}
+.swift-popover-content[data-side="bottom"] .swift-popover-arrow {
+  top: 0;
+  left: var(--popover-arrow-x);
+  transform: translateY(-50%) rotate(45deg);
+  border-left: 1px solid var(--popover-border);
+  border-top: 1px solid var(--popover-border);
+}
+.swift-popover-content[data-side="left"] .swift-popover-arrow {
+  right: 0;
+  top: var(--popover-arrow-y);
+  transform: translateX(50%) rotate(45deg);
+  border-top: 1px solid var(--popover-border);
+  border-right: 1px solid var(--popover-border);
+}
+.swift-popover-content[data-side="right"] .swift-popover-arrow {
+  left: 0;
+  top: var(--popover-arrow-y);
+  transform: translateX(-50%) rotate(45deg);
+  border-bottom: 1px solid var(--popover-border);
+  border-left: 1px solid var(--popover-border);
+}
+
+/* ── Animation ─────────────────────────────────────────────────── */
+
+.swift-popover-content[data-side="top"] { transform-origin: bottom center; }
+.swift-popover-content[data-side="bottom"] { transform-origin: top center; }
+.swift-popover-content[data-side="left"] { transform-origin: center right; }
+.swift-popover-content[data-side="right"] { transform-origin: center left; }
+
+.swift-popover-content[data-state="open"] {
+  animation: swift-popover-in var(--popover-animation-duration) var(--popover-ease) both;
+}
+.swift-popover-content[data-state="closed"] {
+  animation: swift-popover-out var(--popover-animation-duration) var(--popover-ease) both;
+}
+
+@keyframes swift-popover-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes swift-popover-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-popover-content {
+    animation-duration: 1ms !important;
+  }
+}

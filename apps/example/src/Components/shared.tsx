@@ -125,6 +125,67 @@ export function BrowserCompat({
   )
 }
 
+export type PropRow = {
+  name: string
+  type: string
+  defaultValue?: string
+  description: ReactNode
+}
+
+/**
+ * Shared props table used by component panels. Renders a responsive
+ * three-column grid (Prop / Type / Default) inside the standard
+ * elevated-surface card. Pass an optional `title` to override the
+ * default "Props" section header (e.g. "Props · DropdownMenu.Item").
+ */
+export function PropsTable({
+  title = 'Props',
+  rows,
+}: {
+  title?: string
+  rows: ReadonlyArray<PropRow>
+}) {
+  return (
+    <section>
+      <SectionHeader>{title}</SectionHeader>
+      <div className="overflow-x-auto overscroll-x-contain touch-pan-x rounded-xl border border-stroke bg-surface-elevated">
+        <div className="hidden grid-cols-[220px_1fr_140px] gap-6 border-b border-stroke bg-surface-muted px-6 py-3 md:grid">
+          <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
+            Prop
+          </Text>
+          <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
+            Type
+          </Text>
+          <Text variant="body-xs" fontWeight="bold" color="secondary" className="tracking-wider uppercase">
+            Default
+          </Text>
+        </div>
+        {rows.map(({ name, type, defaultValue, description }) => (
+          <div
+            key={name}
+            className="grid gap-2 border-b border-stroke-muted px-6 py-5 last:border-0 md:grid-cols-[220px_1fr_140px] md:items-start md:gap-6"
+          >
+            <Text variant="body-sm" fontFamily="mono" fontWeight="semibold" color="primary">
+              {name}
+            </Text>
+            <div className="flex min-w-0 flex-col gap-1.5">
+              <Text variant="body-xs" fontFamily="mono" color="secondary" className="wrap-break-word">
+                {type}
+              </Text>
+              <Text variant="body-sm" color="secondary">
+                {description}
+              </Text>
+            </div>
+            <Text variant="body-xs" fontFamily="mono" color={defaultValue ? 'inherit' : 'muted'}>
+              {defaultValue ?? '—'}
+            </Text>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export function CodeBlock({ code }: { code: string }) {
   // The <pre> itself is the only scroll container. `overscroll-contain`
   // (both axes) prevents the scroll from ever chaining to the parent —

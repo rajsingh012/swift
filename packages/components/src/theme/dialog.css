@@ -1,0 +1,66 @@
+/**
+ * Dialog — centered modal surface + scrim, with scale/fade enter/exit
+ * animations. Plain CSS so the data-state exit animation can play before
+ * `usePresence` unmounts the node.
+ */
+
+.swift-dialog-content {
+  --dialog-bg: var(--color-surface-elevated);
+  --dialog-radius: var(--radius-lg);
+  --dialog-shadow: var(--shadow-level5);
+  --dialog-animation-duration: var(--motion-duration-normal, 200ms);
+  --dialog-ease: var(--motion-ease-standard);
+
+  background: var(--dialog-bg);
+  border-radius: var(--dialog-radius);
+  box-shadow: var(--dialog-shadow);
+  max-height: 100%;
+}
+
+.swift-dialog-content[data-size="full"] {
+  border-radius: var(--dialog-radius);
+}
+
+.swift-dialog-overlay {
+  background: var(--color-surface-overlay);
+}
+
+/* ── Enter / exit ─────────────────────────────────────────────────── */
+
+.swift-dialog-content[data-state="open"] {
+  animation: swift-dialog-in var(--dialog-animation-duration) var(--dialog-ease) both;
+}
+.swift-dialog-content[data-state="closed"] {
+  animation: swift-dialog-out var(--dialog-animation-duration) var(--dialog-ease) both;
+}
+
+.swift-dialog-overlay[data-state="open"] {
+  animation: swift-dialog-fade-in var(--dialog-animation-duration, 200ms) ease both;
+}
+.swift-dialog-overlay[data-state="closed"] {
+  animation: swift-dialog-fade-out var(--dialog-animation-duration, 200ms) ease both;
+}
+
+@keyframes swift-dialog-in {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes swift-dialog-out {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(0.96) translateY(8px); }
+}
+@keyframes swift-dialog-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes swift-dialog-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-dialog-content,
+  .swift-dialog-overlay {
+    animation-duration: 1ms !important;
+  }
+}

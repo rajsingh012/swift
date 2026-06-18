@@ -1,0 +1,40 @@
+/**
+ * Progress — track colour + the determinate width transition and the
+ * indeterminate slide animation. Indicator/track colours come through
+ * `--progress-*` custom properties so a consumer can retheme one bar inline.
+ */
+
+.swift-progress-track {
+  --progress-track-bg: var(--color-surface-muted);
+}
+
+/* Smooth the fill as `value` changes. */
+.swift-progress-indicator[data-state="determinate"] {
+  transition: width var(--motion-duration-normal, 200ms) var(--motion-ease-standard, ease);
+}
+
+/* Indeterminate: a short bar sweeping back and forth across the track. */
+.swift-progress-indicator[data-state="indeterminate"] {
+  width: 40%;
+  animation: swift-progress-indeterminate 1.4s var(--motion-ease-standard, ease) infinite;
+}
+
+@keyframes swift-progress-indeterminate {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(300%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-progress-indicator[data-state="determinate"] {
+    transition: none;
+  }
+  .swift-progress-indicator[data-state="indeterminate"] {
+    /* Replace the slide with a gentle opacity pulse in place. */
+    width: 100%;
+    animation: swift-progress-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes swift-progress-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+}

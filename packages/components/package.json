@@ -45,6 +45,11 @@
       "import": "./dist/Box.js",
       "require": "./dist/Box.cjs"
     },
+    "./Breadcrumb": {
+      "types": "./dist/src/Breadcrumb/index.d.ts",
+      "import": "./dist/Breadcrumb.js",
+      "require": "./dist/Breadcrumb.cjs"
+    },
     "./Button": {
       "types": "./dist/src/Button/index.d.ts",
       "import": "./dist/Button.js",
@@ -70,10 +75,30 @@
       "import": "./dist/Chip.js",
       "require": "./dist/Chip.cjs"
     },
+    "./Collapsible": {
+      "types": "./dist/src/Collapsible/index.d.ts",
+      "import": "./dist/Collapsible.js",
+      "require": "./dist/Collapsible.cjs"
+    },
     "./DatePicker": {
       "types": "./dist/src/DatePicker/index.d.ts",
       "import": "./dist/DatePicker.js",
       "require": "./dist/DatePicker.cjs"
+    },
+    "./Dialog": {
+      "types": "./dist/src/Dialog/index.d.ts",
+      "import": "./dist/Dialog.js",
+      "require": "./dist/Dialog.cjs"
+    },
+    "./Divider": {
+      "types": "./dist/src/Divider/index.d.ts",
+      "import": "./dist/Divider.js",
+      "require": "./dist/Divider.cjs"
+    },
+    "./DropdownMenu": {
+      "types": "./dist/src/DropdownMenu/index.d.ts",
+      "import": "./dist/DropdownMenu.js",
+      "require": "./dist/DropdownMenu.cjs"
     },
     "./Input": {
       "types": "./dist/src/Input/index.d.ts",
@@ -85,6 +110,21 @@
       "import": "./dist/ListItem.js",
       "require": "./dist/ListItem.cjs"
     },
+    "./Pagination": {
+      "types": "./dist/src/Pagination/index.d.ts",
+      "import": "./dist/Pagination.js",
+      "require": "./dist/Pagination.cjs"
+    },
+    "./Popover": {
+      "types": "./dist/src/Popover/index.d.ts",
+      "import": "./dist/Popover.js",
+      "require": "./dist/Popover.cjs"
+    },
+    "./Progress": {
+      "types": "./dist/src/Progress/index.d.ts",
+      "import": "./dist/Progress.js",
+      "require": "./dist/Progress.cjs"
+    },
     "./Radio": {
       "types": "./dist/src/Radio/index.d.ts",
       "import": "./dist/Radio.js",
@@ -95,15 +135,30 @@
       "import": "./dist/SegmentedControl.js",
       "require": "./dist/SegmentedControl.cjs"
     },
+    "./Select": {
+      "types": "./dist/src/Select/index.d.ts",
+      "import": "./dist/Select.js",
+      "require": "./dist/Select.cjs"
+    },
     "./Sheet": {
       "types": "./dist/src/Sheet/index.d.ts",
       "import": "./dist/Sheet.js",
       "require": "./dist/Sheet.cjs"
     },
+    "./Skeleton": {
+      "types": "./dist/src/Skeleton/index.d.ts",
+      "import": "./dist/Skeleton.js",
+      "require": "./dist/Skeleton.cjs"
+    },
     "./Slider": {
       "types": "./dist/src/Slider/index.d.ts",
       "import": "./dist/Slider.js",
       "require": "./dist/Slider.cjs"
+    },
+    "./Spinner": {
+      "types": "./dist/src/Spinner/index.d.ts",
+      "import": "./dist/Spinner.js",
+      "require": "./dist/Spinner.cjs"
     },
     "./Switch": {
       "types": "./dist/src/Switch/index.d.ts",
@@ -120,6 +175,11 @@
       "import": "./dist/Text.js",
       "require": "./dist/Text.cjs"
     },
+    "./Textarea": {
+      "types": "./dist/src/Textarea/index.d.ts",
+      "import": "./dist/Textarea.js",
+      "require": "./dist/Textarea.cjs"
+    },
     "./Toast": {
       "types": "./dist/src/Toast/index.d.ts",
       "import": "./dist/Toast.js",
@@ -129,6 +189,11 @@
       "types": "./dist/src/TimePicker/index.d.ts",
       "import": "./dist/TimePicker.js",
       "require": "./dist/TimePicker.cjs"
+    },
+    "./Toggle": {
+      "types": "./dist/src/Toggle/index.d.ts",
+      "import": "./dist/Toggle.js",
+      "require": "./dist/Toggle.cjs"
     },
     "./Tooltip": {
       "types": "./dist/src/Tooltip/index.d.ts",
