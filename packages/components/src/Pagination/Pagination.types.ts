@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react'
+import type { RenderProp } from '../internal/props'
 
 export type PaginationSize = 'sm' | 'md' | 'lg'
 export type PaginationVariant = 'solid' | 'outline' | 'ghost'
@@ -7,6 +8,42 @@ export type PaginationVariant = 'solid' | 'outline' | 'ghost'
 export type PaginationItem =
   | { type: 'page'; page: number }
   | { type: 'ellipsis'; key: string }
+
+/** Which prev/next/first/last control a `renderControl` call is for. */
+export type PaginationControl = 'prev' | 'next' | 'first' | 'last'
+
+/**
+ * State handed to `renderItem` for one slot in the page list — either a
+ * page button or an ellipsis gap. Enough to draw and wire up the slot
+ * without any extra props.
+ */
+export type PaginationItemRenderProps = {
+  /** `'page'` for a numbered button, `'ellipsis'` for a collapsed gap. */
+  type: 'page' | 'ellipsis'
+  /** The 1-indexed page number. Present only when `type === 'page'`. */
+  page?: number
+  /** Whether this page is the current one. `false` for ellipsis. */
+  selected: boolean
+  /** Whether the whole pagination is disabled. */
+  disabled: boolean
+  /** Navigate to this item's page. No-op for ellipsis. */
+  goTo: () => void
+}
+
+/**
+ * State handed to `renderControl` for one of the prev/next/first/last
+ * navigation buttons.
+ */
+export type PaginationControlRenderProps = {
+  /** Which control this is. */
+  control: PaginationControl
+  /** The page this control jumps to. */
+  page: number
+  /** Whether this control is unavailable (e.g. `prev` on the first page). */
+  disabled: boolean
+  /** Navigate to this control's target page. */
+  goTo: () => void
+}
 
 export interface PaginationClasses {
   root?: string
@@ -56,6 +93,34 @@ export interface PaginationOwnProps {
   nextIcon?: ReactNode
   firstIcon?: ReactNode
   lastIcon?: ReactNode
+
+  /**
+   * Render-prop for each page/ellipsis slot: build your own item UI from
+   * its state (the library-wide `render*` convention). Called once per
+   * slot with `{ type, page, selected, disabled, goTo }`; pass a node to
+   * reuse one UI for every slot, or a function for state-aware items.
+   * When provided, it supersedes the default page-button / ellipsis
+   * rendering. You render the interactive element — the wrapping `<li>`
+   * is still provided. Prefer this over `classes.item` when restyling
+   * isn't enough.
+   */
+  renderItem?: RenderProp<PaginationItemRenderProps>
+  /**
+   * Render-prop for the prev/next/first/last controls: build your own
+   * control UI from `{ control, page, disabled, goTo }`. When provided it
+   * supersedes the default chevron buttons (and the `*Icon` props), but
+   * still respects `showPrevNext` / `showFirstLast` for which controls
+   * appear. The wrapping `<li>` is provided.
+   */
+  renderControl?: RenderProp<PaginationControlRenderProps>
+
+  /**
+   * Compound children. When provided, they are rendered inside the `<nav>`
+   * landmark instead of the auto-generated page list — compose with
+   * `Pagination.List`, `Pagination.Item`, `Pagination.Previous`, etc. When
+   * omitted, the component auto-renders the full control from `count`/`page`.
+   */
+  children?: ReactNode
 }
 
 export type PaginationProps = PaginationOwnProps &

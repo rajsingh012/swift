@@ -101,4 +101,6 @@ const BoxRoot = forwardRef<HTMLElement, BoxRenderProps>(function Box(
 
 BoxRoot.displayName = 'Box'
 
-export const Box = BoxRoot as unknown as BoxComponent
+export const Box = Object.assign(BoxRoot as unknown as BoxComponent, {
+  Root: BoxRoot,
+}) as BoxComponent & { Root: typeof BoxRoot }

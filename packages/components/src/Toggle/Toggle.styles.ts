@@ -21,6 +21,16 @@ export const sizeClasses: Record<ToggleSize, string> = {
 }
 
 /**
+ * Icon slot sizing for the `Toggle.Icon` part. Mirrors the `[&_svg]` scale
+ * baked into `sizeClasses` so a wrapped icon matches an unwrapped one.
+ */
+export const iconSlotSizeClasses: Record<ToggleSize, string> = {
+  sm: 'inline-flex shrink-0 items-center justify-center [&>svg]:size-4',
+  md: 'inline-flex shrink-0 items-center justify-center [&>svg]:size-4',
+  lg: 'inline-flex shrink-0 items-center justify-center [&>svg]:size-5',
+}
+
+/**
  * Per-variant resting + pressed chrome. Pressed state uses a solid brand
  * fill with on-brand text so "selected" is unmistakable at a glance (the
  * earlier brand-muted tint was too subtle to read as active). Keyed off both

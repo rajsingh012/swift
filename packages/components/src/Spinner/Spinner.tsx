@@ -22,7 +22,7 @@ import type { SpinnerProps } from './Spinner.types'
  * otherwise from `label` (default "Loading"). The SVG itself is
  * `aria-hidden`.
  */
-export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinner(
+const SpinnerRoot = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinner(
   props,
   ref,
 ) {
@@ -76,4 +76,6 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinne
     </span>
   )
 })
-Spinner.displayName = 'Spinner'
+SpinnerRoot.displayName = 'Spinner'
+
+export const Spinner = Object.assign(SpinnerRoot, { Root: SpinnerRoot })

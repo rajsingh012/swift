@@ -9,13 +9,19 @@ import {
 import { useControllableState } from '../internal/state'
 import { mergeRefs } from '../internal/refs'
 import { DEFAULT_SIZE, DEFAULT_VARIANT } from './Toggle.constants'
-import { useToggleGroup } from './Toggle.context'
+import {
+  ToggleItemContext,
+  useToggleGroup,
+  type ToggleItemContextValue,
+} from './Toggle.context'
 import {
   baseClasses,
   cx,
   sizeClasses,
   variantClasses,
 } from './Toggle.styles'
+import { ToggleLabel } from './ToggleLabel'
+import { ToggleIcon } from './ToggleIcon'
 import type { ToggleProps } from './Toggle.types'
 
 /**
@@ -28,7 +34,7 @@ import type { ToggleProps } from './Toggle.types'
  * `pressed`/`defaultPressed`/`onPressedChange`. Inside a group, the group owns
  * the pressed state and the toggle reads it by `value`.
  */
-export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle(
+const ToggleRoot = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle(
   props,
   ref,
 ) {
@@ -125,28 +131,41 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
     }
   }
 
+  const itemCtx = useMemo<ToggleItemContextValue>(
+    () => ({ size, variant, pressed, disabled, inRoot: true }),
+    [size, variant, pressed, disabled],
+  )
+
   return (
-    <button
-      ref={mergedRef}
-      type={type ?? 'button'}
-      aria-pressed={pressed}
-      data-state={pressed ? 'on' : 'off'}
-      data-disabled={disabled ? '' : undefined}
-      data-orientation={group?.orientation}
-      disabled={disabled}
-      className={cx(
-        baseClasses,
-        sizeClasses[size],
-        variantClasses[variant],
-        className,
-        group?.itemClass,
-      )}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      {...rest}
-    >
-      {children}
-    </button>
+    <ToggleItemContext.Provider value={itemCtx}>
+      <button
+        ref={mergedRef}
+        type={type ?? 'button'}
+        aria-pressed={pressed}
+        data-state={pressed ? 'on' : 'off'}
+        data-disabled={disabled ? '' : undefined}
+        data-orientation={group?.orientation}
+        disabled={disabled}
+        className={cx(
+          baseClasses,
+          sizeClasses[size],
+          variantClasses[variant],
+          className,
+          group?.itemClass,
+        )}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        {...rest}
+      >
+        {children}
+      </button>
+    </ToggleItemContext.Provider>
   )
 })
-Toggle.displayName = 'Toggle'
+ToggleRoot.displayName = 'Toggle'
+
+export const Toggle = Object.assign(ToggleRoot, {
+  Root: ToggleRoot,
+  Label: ToggleLabel,
+  Icon: ToggleIcon,
+})

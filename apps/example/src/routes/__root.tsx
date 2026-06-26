@@ -75,9 +75,10 @@ function RootLayout() {
                 </button>
                 <Link
                   to="/"
-                  className="text-base font-semibold tracking-tight text-content-strong transition-opacity duration-200 hover:opacity-80"
+                  className="group flex shrink-0 items-center gap-2 text-content-strong transition-opacity duration-200 hover:opacity-80"
                 >
-                  <span className="brand-gradient-text">Swift</span>
+                  <span className="size-2.5 rounded-full bg-[var(--kudos-accent)] transition-transform duration-200 group-hover:scale-125" />
+                  <span className="text-lg font-extrabold uppercase tracking-tight">Swift</span>
                 </Link>
                 <nav className="hidden items-center gap-1 lg:flex">
                   {NAV_ROUTES.map(({ to, label, icon, iconColorClass }) => (
@@ -134,9 +135,9 @@ function RootLayout() {
                           key={to}
                           to={to}
                           onClick={() => setNavOpen(false)}
-                          activeProps={{ className: 'bg-surface-brand-muted text-content-brand' }}
+                          activeProps={{ className: 'bg-[var(--kudos-accent)] text-[var(--kudos-accent-ink)] [&_svg]:text-[var(--kudos-accent-ink)]' }}
                           activeOptions={{ exact: true }}
-                          className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-content transition-colors hover:bg-surface-muted hover:text-content-strong"
+                          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-semibold text-content transition-colors hover:bg-surface-muted hover:text-content-strong"
                         >
                           <Icon size={16} className={`${iconColorClass} shrink-0`} />
                           <span>{label}</span>
@@ -191,10 +192,10 @@ function NavItem({
     <Link
       to={to}
       activeProps={{
-        className: 'bg-surface-brand-muted text-content-brand shadow-level1',
+        className: 'bg-[var(--kudos-accent)] text-[var(--kudos-accent-ink)] [&_svg]:text-[var(--kudos-accent-ink)]',
       }}
       activeOptions={{ exact: true }}
-      className="flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium text-content transition-[background-color,color,box-shadow] duration-200 hover:bg-surface-muted hover:text-content-strong"
+      className="flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-semibold text-content transition-[background-color,color,box-shadow] duration-200 hover:bg-surface-muted hover:text-content-strong"
     >
       {Icon ? <Icon size={16} className={`${iconColorClass ?? ''} shrink-0`} /> : null}
       <span>{children}</span>

@@ -93,6 +93,171 @@
     infinite;
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   KUDOS LAYER  (inspired by kudos.framer.media)
+
+   A bold, monochromatic editorial look: near-black/near-white display
+   bands, oversized type, a single NEON-MINT accent, looping marquee
+   wordmarks, count-up stats, pill buttons, and scroll-reveal motion.
+
+   Theme-aware: the accent is fixed (it's a brand neon), but the
+   "ink" band + its text flip between light and dark so both themes
+   read as the same high-contrast editorial style. Every animation is
+   covered by the prefers-reduced-motion block at the bottom.
+   ════════════════════════════════════════════════════════════════════ */
+
+@theme static {
+  /* Neon-mint accent (Kudos #00ffc8). Fixed across themes — it's a brand
+     color, not a semantic surface. `-ink` is the legible text color to sit
+     on top of the neon (near-black in both themes). */
+  --kudos-accent: #00ffc8;
+  --kudos-accent-strong: #00e6b4;
+  --kudos-accent-ink: #05221c;
+}
+
+/* The "ink" editorial band — near-black in light mode, near-black-but-
+   lifted in dark mode, always with light text. This is the Kudos hero /
+   CTA backdrop. Resolves from the fixed ink palette so it's identical-ish
+   in both themes (the look is intentionally dark in both). */
+.kudos-ink {
+  --kudos-on-ink: #f5f5f5;
+  --kudos-on-ink-muted: color-mix(in oklab, #f5f5f5 62%, transparent);
+  background-color: var(--color-ink-900);
+  color: var(--kudos-on-ink);
+}
+
+/* A subtle radial neon wash for ink bands (sits behind content). */
+.kudos-ink-glow {
+  background-image: radial-gradient(
+      60% 80% at 50% 0%,
+      color-mix(in oklab, var(--kudos-accent) 14%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      40% 60% at 85% 110%,
+      color-mix(in oklab, var(--kudos-accent) 10%, transparent),
+      transparent 65%
+    );
+}
+
+/* ── Accent helpers ─────────────────────────────────────────────── */
+.kudos-accent-text {
+  color: var(--kudos-accent);
+}
+.kudos-accent-bg {
+  background-color: var(--kudos-accent);
+  color: var(--kudos-accent-ink);
+}
+
+/* Neon pill button — solid mint with a soft glow that intensifies on hover. */
+.kudos-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  background-color: var(--kudos-accent);
+  color: var(--kudos-accent-ink);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--kudos-accent) 60%, transparent);
+  transition:
+    box-shadow var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    transform var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    background-color var(--motion-duration-fast, 150ms) ease-out;
+}
+.kudos-pill:hover {
+  background-color: var(--kudos-accent-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px -6px color-mix(in oklab, var(--kudos-accent) 70%, transparent);
+}
+
+/* Outline pill — for secondary actions on either band. Inherits currentColor
+   so it works on both ink and surface backgrounds. */
+.kudos-pill-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: 1px solid color-mix(in oklab, currentColor 35%, transparent);
+  transition:
+    border-color var(--motion-duration-normal, 200ms) ease-out,
+    background-color var(--motion-duration-normal, 200ms) ease-out,
+    transform var(--motion-duration-normal, 200ms) ease-out;
+}
+.kudos-pill-outline:hover {
+  border-color: var(--kudos-accent);
+  color: var(--kudos-accent);
+  transform: translateY(-2px);
+}
+
+/* ── Oversized display type ─────────────────────────────────────────
+   Tight leading + negative tracking, the Kudos editorial headline. */
+.kudos-display {
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-size: clamp(2.75rem, 8vw, 6.5rem);
+  text-wrap: balance;
+}
+.kudos-display-sm {
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  text-wrap: balance;
+}
+
+/* Eyebrow label — wide-tracked uppercase micro text. */
+.kudos-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* ── Scroll reveal ──────────────────────────────────────────────────
+   Pair with the useReveal hook: element starts hidden + shifted, and
+   gets `data-revealed` when it scrolls into view. Stagger via inline
+   `--reveal-i`. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity var(--motion-duration-slow, 320ms)
+      var(--motion-ease-emphasized, ease-out),
+    transform var(--motion-duration-slow, 320ms)
+      var(--motion-ease-emphasized, ease-out);
+  transition-delay: calc(var(--reveal-i, 0) * 80ms);
+}
+[data-reveal][data-revealed='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Big outline wordmark used in the marquee (Kudos repeats "KUDOS"). */
+.kudos-marquee-word {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-size: clamp(3rem, 12vw, 9rem);
+  -webkit-text-stroke: 2px color-mix(in oklab, currentColor 70%, transparent);
+  color: transparent;
+  padding-inline: 0.25em;
+  white-space: nowrap;
+  transition: -webkit-text-stroke-color var(--motion-duration-normal, 200ms)
+    ease-out;
+}
+
+/* Every other word picks up the neon accent so the band reads with rhythm
+   and is clearly visible on the dark hero. */
+.kudos-marquee-word:nth-child(even) {
+  -webkit-text-stroke-color: var(--kudos-accent);
+}
+
 /* ── Reduced motion ─────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -103,5 +268,21 @@
 
   .footer-heart {
     animation: none;
+  }
+
+  .kudos-pill,
+  .kudos-pill-outline {
+    transition: none;
+  }
+  .kudos-pill:hover,
+  .kudos-pill-outline:hover {
+    transform: none;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    transition-delay: 0ms;
   }
 }

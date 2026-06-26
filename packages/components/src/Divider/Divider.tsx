@@ -29,7 +29,7 @@ import type { DividerProps } from './Divider.types'
  * (`role="none"`) when it's purely visual. A labelled divider exposes the
  * label text as its accessible name.
  */
-export const Divider = forwardRef<HTMLDivElement, DividerProps>(function Divider(
+const DividerRoot = forwardRef<HTMLDivElement, DividerProps>(function Divider(
   props,
   ref,
 ) {
@@ -101,4 +101,6 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(function Divider
     />
   )
 })
-Divider.displayName = 'Divider'
+DividerRoot.displayName = 'Divider'
+
+export const Divider = Object.assign(DividerRoot, { Root: DividerRoot })

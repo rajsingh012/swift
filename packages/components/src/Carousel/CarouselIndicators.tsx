@@ -1,7 +1,8 @@
-import { forwardRef } from 'react'
+import { forwardRef, Fragment } from 'react'
 import { useCarousel } from './Carousel.context'
 import { CarouselIndicator } from './CarouselIndicator'
 import { cx, indicatorsClasses } from './Carousel.styles'
+import { resolveRenderProp } from '../internal/props'
 import type { CarouselIndicatorsProps } from './Carousel.types'
 
 /**
@@ -11,16 +12,23 @@ import type { CarouselIndicatorsProps } from './Carousel.types'
  * `slidesPerView=3` over 6 items, there are 4 indicators (each one
  * shows a different window of 3 slides).
  *
- * Pass a render-prop child for full customisation:
- *   <Carousel.Indicators>
- *     {({ count, selected, goTo }) => …}
- *   </Carousel.Indicators>
+ * Two levels of customisation, both following library conventions:
+ *   - `renderIndicator` (render-prop) restyles each dot from its state,
+ *     keeping the default count + container:
+ *       <Carousel.Indicators
+ *         renderIndicator={({ index, selected, goTo }) => …}
+ *       />
+ *   - `children` (node or render function) replaces the whole content,
+ *     for when you also want to change the layout:
+ *       <Carousel.Indicators>
+ *         {({ count, selected, goTo }) => …}
+ *       </Carousel.Indicators>
  */
 export const CarouselIndicators = forwardRef<
   HTMLDivElement,
   CarouselIndicatorsProps
 >(function CarouselIndicators(props, ref) {
-  const { className, children, ...rest } = props
+  const { className, children, renderIndicator, ...rest } = props
   const { selectedIndex, itemCount, slidesPerView, scrollTo, classes } =
     useCarousel('Carousel.Indicators')
 
@@ -33,6 +41,16 @@ export const CarouselIndicators = forwardRef<
     content = children({ count, selected: selectedIndex, goTo: scrollTo })
   } else if (children !== undefined) {
     content = children
+  } else if (renderIndicator !== undefined) {
+    content = Array.from({ length: count }, (_, i) => (
+      <Fragment key={i}>
+        {resolveRenderProp(renderIndicator, {
+          index: i,
+          selected: i === selectedIndex,
+          goTo: () => scrollTo(i),
+        })}
+      </Fragment>
+    ))
   } else {
     content = Array.from({ length: count }, (_, i) => (
       <CarouselIndicator key={i} index={i} />

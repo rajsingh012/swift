@@ -2,6 +2,7 @@ import type {
   ComponentPropsWithoutRef,
   ComponentPropsWithRef,
   ElementType,
+  HTMLAttributes,
   ReactNode,
 } from 'react'
 
@@ -62,3 +63,18 @@ export type ButtonProps<E extends ElementType = 'button'> = PolymorphicProps<
 export type ButtonComponent = <E extends ElementType = 'button'>(
   props: ButtonProps<E>,
 ) => ReactNode
+
+/* ── Compound part props ──────────────────────────────────────────────────
+ * The parts render <span>s and accept every native span attribute. They
+ * optionally take `size` to override the value cascaded from the Button root.
+ */
+
+export type ButtonLabelProps = HTMLAttributes<HTMLSpanElement>
+
+export interface ButtonIconProps extends HTMLAttributes<HTMLSpanElement> {
+  /** Override the icon size cascaded from the enclosing `<Button>`. */
+  size?: ButtonSize
+}
+
+export type ButtonLeftIconProps = ButtonIconProps
+export type ButtonRightIconProps = ButtonIconProps

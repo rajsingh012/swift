@@ -6,6 +6,7 @@ export type {
   CarouselDirection,
   CarouselEffect,
   CarouselIndicatorProps,
+  CarouselIndicatorRenderProps,
   CarouselIndicatorsProps,
   CarouselIndicatorsRenderProps,
   CarouselItemProps,

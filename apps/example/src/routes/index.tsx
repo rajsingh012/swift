@@ -2,7 +2,6 @@ import {
   useEffect,
   useState,
   type ComponentType,
-  type CSSProperties,
   type ReactNode,
 } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -21,7 +20,6 @@ import { ArrowRight } from '@swift/icons/ArrowRight'
 import { Bus } from '@swift/icons/Bus'
 import { Check } from '@swift/icons/Check'
 import { CheckCircle } from '@swift/icons/CheckCircle'
-import { ExpandMore } from '@swift/icons/ExpandMore'
 import { Flash } from '@swift/icons/Flash'
 import { Flight } from '@swift/icons/Flight'
 import { GridSmall } from '@swift/icons/GridSmall'
@@ -35,6 +33,7 @@ import { Star } from '@swift/icons/Star'
 import { Train } from '@swift/icons/Train'
 import { TrendUp } from '@swift/icons/TrendUp'
 import { CodeBlock } from '../Components/shared'
+import { Reveal } from '../lib/Reveal'
 import { useTheme } from '../lib/Theme'
 
 export const Route = createFileRoute('/')({
@@ -43,9 +42,6 @@ export const Route = createFileRoute('/')({
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>
 type SectionPath = '/icons' | '/components' | '/foundations' | '/css'
-
-/** Inline custom property consumed by motion.css stagger. */
-const stagger = (i: number): CSSProperties => ({ '--stagger-i': i }) as CSSProperties
 
 function prefersReducedMotion(): boolean {
   return (
@@ -57,7 +53,7 @@ function prefersReducedMotion(): boolean {
 /** rAF count-up from 0 → target on mount. Renders the target immediately
  *  for reduced-motion users (set in the initializer, so the effect never
  *  calls setState synchronously). */
-function useCountUp(target: number, durationMs = 1000): number {
+function useCountUp(target: number, durationMs = 1400): number {
   const [value, setValue] = useState(() => (prefersReducedMotion() ? target : 0))
   useEffect(() => {
     if (prefersReducedMotion()) return
@@ -118,18 +114,18 @@ const SECTIONS: ReadonlyArray<{
   },
 ]
 
-const STATS: ReadonlyArray<{ icon: IconComponent; value: number; suffix: string; label: string; accent: string }> = [
-  { icon: Settings, value: 24, suffix: '', label: 'Components', accent: 'text-content-brand' },
-  { icon: Star, value: 310, suffix: '', label: 'Icons', accent: 'text-content-highlight' },
-  { icon: GridSmall, value: 39, suffix: '', label: 'CSS lessons', accent: 'text-content-success' },
-  { icon: Afternoon, value: 2, suffix: '', label: 'Themes', accent: 'text-content-new' },
+const STATS: ReadonlyArray<{ value: number; suffix: string; label: string; note: string }> = [
+  { value: 24, suffix: '', label: 'Components', note: 'Typed, themed, composable' },
+  { value: 310, suffix: '+', label: 'Icons', note: 'Tree-shakeable SVG set' },
+  { value: 39, suffix: '', label: 'CSS lessons', note: 'Interactive playgrounds' },
+  { value: 2, suffix: '', label: 'Themes', note: 'Light & dark, one token layer' },
 ]
 
-const PRINCIPLES: ReadonlyArray<{ icon: IconComponent; accent: string; title: string; blurb: string }> = [
-  { icon: Flash, accent: 'text-content-warning', title: 'Zero dependencies', blurb: 'Every primitive is hand-rolled. React is the only thing in your bundle.' },
-  { icon: Afternoon, accent: 'text-content-new', title: 'Token-driven theming', blurb: 'Light and dark resolve from one semantic token layer — no per-component logic.' },
-  { icon: CheckCircle, accent: 'text-content-success', title: 'Accessible by default', blurb: 'Keyboard nav, ARIA wiring, focus rings, RTL, and reduced-motion support.' },
-  { icon: TrendUp, accent: 'text-content-brand', title: 'Tree-shakeable', blurb: 'Per-component and per-icon entry points — you ship only what you import.' },
+const PRINCIPLES: ReadonlyArray<{ icon: IconComponent; title: string; blurb: string }> = [
+  { icon: Flash, title: 'Zero dependencies', blurb: 'Every primitive is hand-rolled. React is the only thing in your bundle.' },
+  { icon: Afternoon, title: 'Token-driven theming', blurb: 'Light and dark resolve from one semantic token layer — no per-component logic.' },
+  { icon: CheckCircle, title: 'Accessible by default', blurb: 'Keyboard nav, ARIA wiring, focus rings, RTL, and reduced-motion support.' },
+  { icon: TrendUp, title: 'Tree-shakeable', blurb: 'Per-component and per-icon entry points — you ship only what you import.' },
 ]
 
 const INTERESTS: ReadonlyArray<{ value: string; label: string; icon: IconComponent }> = [
@@ -139,22 +135,8 @@ const INTERESTS: ReadonlyArray<{ value: string; label: string; icon: IconCompone
   { value: 'cabs', label: 'Cabs', icon: Bus },
 ]
 
-/** Semantic surface swatches for the Foundations preview. */
-const SWATCHES = [
-  'bg-surface-brand',
-  'bg-surface-highlight',
-  'bg-surface-success',
-  'bg-surface-warning',
-  'bg-surface-critical',
-  'bg-surface-new',
-] as const
-
 /** Icons shown in the Icons preview tile. */
 const ICON_WALL: ReadonlyArray<IconComponent> = [Flight, Hotel, Train, Bus, Star, Heart, Person, Flash]
-
-/** Map an accent text-colour class to its muted surface tint, e.g.
- *  `text-content-brand` → `bg-surface-brand-muted`. */
-const tintFor = (accent: string) => `${accent.replace('text-content-', 'bg-surface-')}-muted`
 
 const SETUP_SNIPPET = `pnpm add @swift/components @swift/icons
 
@@ -172,19 +154,33 @@ import { Flight } from '@swift/icons/Flight'
 
 /* ── Small shared bits ──────────────────────────────────────────────── */
 
-function SectionLabel({ children }: { children: ReactNode }) {
-  return (
-    <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-[0.18em] uppercase">
-      {children}
-    </Text>
-  )
-}
-
 function FieldLabel({ children }: { children: ReactNode }) {
   return (
     <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">
       {children}
     </Text>
+  )
+}
+
+/** Looping wordmark marquee — the Kudos "KUDOS KUDOS KUDOS" band, reused
+ *  here as "SWIFT". Outlined display type drifting horizontally. */
+function WordmarkMarquee({ word = 'SWIFT', count = 8 }: { word?: string; count?: number }) {
+  const words = Array.from({ length: count })
+  return (
+    <div className="marquee select-none py-6" aria-hidden>
+      <div className="marquee-track items-center gap-8">
+        {words.map((_, i) => (
+          <span key={`a-${i}`} className="kudos-marquee-word">
+            {word}
+          </span>
+        ))}
+        {words.map((_, i) => (
+          <span key={`b-${i}`} className="kudos-marquee-word">
+            {word}
+          </span>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -206,7 +202,7 @@ function PreviewApp() {
     setInterests((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]))
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-stroke bg-surface-elevated text-content shadow-level3">
+    <div className="overflow-hidden rounded-2xl border border-stroke bg-surface-elevated text-content shadow-level4">
       {/* Faux browser chrome with a light/dark toggle */}
       <div className="flex items-center gap-1.5 border-b border-stroke bg-surface-muted px-3 py-2.5">
         <span className="size-2.5 rounded-full bg-surface-critical" />
@@ -327,23 +323,18 @@ function PreviewApp() {
 
 /* ── Sections ───────────────────────────────────────────────────────── */
 
-function StatItem({ icon: Icon, value, suffix, label, accent }: {
-  icon: IconComponent; value: number; suffix: string; label: string; accent: string
+/** A single big count-up stat, Kudos style: huge number, mint accent, note. */
+function StatBlock({ value, suffix, label, note }: {
+  value: number; suffix: string; label: string; note: string
 }) {
   const n = useCountUp(value)
   return (
-    <div className="flex items-center gap-3 px-5 py-4">
-      <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tintFor(accent)} ${accent}`}>
-        <Icon size={18} />
-      </span>
-      <div className="flex flex-col">
-        <Text variant="heading-sm" fontWeight="bold" color="primary" className="tabular-nums">
-          {n}{suffix}
-        </Text>
-        <Text variant="body-xs" color="muted" className="tracking-wide uppercase">
-          {label}
-        </Text>
-      </div>
+    <div className="flex flex-col gap-1 border-t border-white/10 pt-5">
+      <Text variant="heading-xl" fontWeight="bold" color="inherit" className="kudos-accent-text tabular-nums leading-none">
+        {n}{suffix}
+      </Text>
+      <Text variant="body-md" fontWeight="semibold" color="inherit">{label}</Text>
+      <Text variant="body-sm" color="inherit" className="opacity-70">{note}</Text>
     </div>
   )
 }
@@ -398,7 +389,7 @@ function ExplorePreview({ to }: { to: SectionPath }) {
   return (
     <div className="flex w-full flex-col gap-2">
       <div className="flex h-5 overflow-hidden rounded-md border border-stroke">
-        {SWATCHES.map((c) => (
+        {['bg-surface-brand', 'bg-surface-highlight', 'bg-surface-success', 'bg-surface-warning', 'bg-surface-critical', 'bg-surface-new'].map((c) => (
           <span key={c} className={`flex-1 ${c}`} />
         ))}
       </div>
@@ -411,61 +402,68 @@ function ExplorePreview({ to }: { to: SectionPath }) {
   )
 }
 
-function SectionCard({ i, to, label, icon: Icon, accent, meta, blurb }: {
-  i: number; to: SectionPath; label: string; icon: IconComponent; accent: string; meta: string; blurb: string
+/** Large editorial row: index number + label on the left, live preview +
+ *  "open" link on the right. The whole row is a link target. Kudos uses
+ *  these big bordered list rows that highlight on hover. */
+function SectionRow({ n, to, label, meta, blurb }: {
+  n: number; to: SectionPath; label: string; meta: string; blurb: string
 }) {
   return (
-    <div
-      className="group hover-lift anim-fade-up flex flex-col gap-3 rounded-2xl border border-stroke bg-surface-elevated p-5 hover:border-stroke-brand"
-      style={stagger(i)}
+    <Link
+      to={to}
+      className="group grid items-center gap-4 border-t border-stroke py-7 transition-colors hover:bg-surface-muted sm:grid-cols-[auto_1fr_auto] sm:gap-8 sm:px-2"
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 ${tintFor(accent)} ${accent}`}>
-          <Icon size={20} />
+      <Text variant="body-sm" fontFamily="mono" color="muted" className="kudos-accent-text">
+        {String(n).padStart(2, '0')}
+      </Text>
+      <div className="flex min-w-0 flex-col gap-1">
+        <div className="flex items-baseline gap-3">
+          <Text variant="heading-lg" fontWeight="bold" className="transition-transform duration-200 group-hover:translate-x-1">
+            {label}
+          </Text>
+          <Text variant="body-xs" color="muted" className="uppercase tracking-wide">{meta}</Text>
+        </div>
+        <Text variant="body-sm" color="secondary" className="max-w-md">{blurb}</Text>
+      </div>
+      <div className="flex items-center gap-4 sm:justify-end">
+        <div className="hidden rounded-xl border border-stroke-muted bg-surface-muted p-3 md:block">
+          <ExplorePreview to={to} />
+        </div>
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-stroke text-content transition-colors duration-200 group-hover:border-transparent group-hover:bg-[var(--kudos-accent)] group-hover:text-[var(--kudos-accent-ink)]">
+          <ArrowRight size={18} className="group-hover-nudge" />
         </span>
-        <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">{meta}</Text>
       </div>
-      {/* Live preview of the destination */}
-      <div className="flex min-h-16 items-center rounded-xl border border-stroke-muted bg-surface-muted p-3">
-        <ExplorePreview to={to} />
-      </div>
-      <Text variant="body-lg" fontWeight="semibold" color="primary">{label}</Text>
-      <Text variant="body-sm" color="secondary">{blurb}</Text>
-      <Link to={to} className="mt-auto inline-flex w-fit items-center gap-1 pt-1 text-sm font-semibold text-content-brand hover:underline">
-        Open
-        <ArrowRight size={14} className="group-hover-nudge" />
-      </Link>
-    </div>
+    </Link>
   )
 }
 
 function HomeFooter() {
   return (
-    <footer className="border-t border-stroke bg-surface-muted">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-8 py-8">
-        <div className="flex flex-wrap items-start justify-between gap-6">
-          <div className="flex max-w-xs flex-col gap-2">
-            <Text variant="body-lg" fontWeight="bold">
-              <span className="brand-gradient-text">Swift</span>
-            </Text>
-            <Text variant="body-sm" color="secondary">
-              Icons, components, tokens, and CSS lessons — typed, themed, zero dependencies.
-            </Text>
+    <footer className="kudos-ink border-t border-white/10">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-16 sm:px-8">
+        <div className="flex flex-col gap-6">
+          <Text className="kudos-display-sm" color="inherit">
+            Build product UIs, <span className="kudos-accent-text">swiftly</span>.
+          </Text>
+          <div>
+            <Link to="/components" className="kudos-pill">
+              Explore components
+              <ArrowRight size={16} />
+            </Link>
           </div>
-          <nav aria-label="Footer" className="flex flex-col gap-2">
-            <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">Explore</Text>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6">
+          <Text variant="body-xs" color="inherit" className="opacity-60">© {new Date().getFullYear()} Swift Design System</Text>
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
             {SECTIONS.map(({ to, label }) => (
-              <Link key={to} to={to} className="text-sm text-content transition-colors hover:text-content-brand">
+              <Link key={to} to={to} className="text-sm opacity-70 transition-opacity hover:opacity-100">
                 {label}
               </Link>
             ))}
           </nav>
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stroke pt-5">
-          <Text variant="body-xs" color="muted">© {new Date().getFullYear()} Swift Design System</Text>
-          <Text variant="body-xs" color="muted" className="inline-flex items-center gap-1.5">
-            Designed &amp; developed with
-            <Heart size={12} title="love" className="text-content-critical" />
+          <Text variant="body-xs" color="inherit" className="inline-flex items-center gap-1.5 opacity-60">
+            Made with
+            <Heart size={12} title="love" className="kudos-accent-text" />
             by the Swift team
           </Text>
         </div>
@@ -474,170 +472,178 @@ function HomeFooter() {
   )
 }
 
-/** Full-width band with an inner max-width container. `tone` alternates
- *  the background so the page reads as stacked full-bleed sections. */
-function Band({
-  tone = 'surface',
-  id,
-  children,
-}: {
-  tone?: 'surface' | 'muted'
-  id?: string
-  children: ReactNode
-}) {
-  return (
-    <section
-      id={id}
-      className={tone === 'muted' ? 'w-full scroll-mt-4 bg-surface-muted' : 'w-full scroll-mt-4 bg-surface'}
-    >
-      <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:px-8 lg:py-20">{children}</div>
-    </section>
-  )
-}
-
 function HomeRoute() {
   return (
     <div className="h-full w-full overflow-y-auto bg-surface">
-      {/* ── Hero — full screen, edge-to-edge ─────────────────────────── */}
-      <section className="relative isolate flex min-h-full items-center overflow-hidden">
-        <div aria-hidden className="hero-aurora aurora pointer-events-none absolute inset-0 -z-10" />
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-20 sm:px-8 lg:grid-cols-2">
+      {/* ── Hero — dark editorial band ───────────────────────────────── */}
+      <section className="kudos-ink kudos-ink-glow relative isolate overflow-hidden">
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-20 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
           {/* Pitch */}
-          <div className="flex flex-col items-start gap-5 text-left">
-            <div className="anim-fade-up" style={stagger(0)}>
-              <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
+          <div className="flex flex-col items-start gap-6 text-left">
+            <Reveal index={0}>
+              <span className="kudos-eyebrow inline-flex items-center gap-2 opacity-80">
+                <span className="size-2 rounded-full bg-[var(--kudos-accent)]" />
                 Swift Design System
-              </Badge>
-            </div>
-            <Text variant="heading-xl" fontWeight="bold" className="anim-fade-up" style={stagger(1)}>
-              Build product UIs,{' '}
-              <span className="brand-gradient-text">swiftly</span>.
-            </Text>
-            <Text variant="para-lg" color="secondary" className="anim-fade-up max-w-md" style={stagger(2)}>
-              Icons, components, and tokens — typed, themed, and tree-shakeable. The preview
-              beside this is live; flip it light/dark to watch the tokens re-theme.
-            </Text>
-            <div className="anim-fade-up flex flex-wrap items-center gap-2" style={stagger(3)}>
-              <Button as={Link} to="/components" size="lg">
-                <Button.LeftIcon><Settings size={16} /></Button.LeftIcon>
-                Explore components
-              </Button>
-              <Button as={Link} to="/icons" variant="secondary" size="lg">
-                <Button.LeftIcon><Star size={16} /></Button.LeftIcon>
-                Browse icons
-              </Button>
-              <Button as={Link} to="/css" variant="ghost" size="lg">
-                <Button.LeftIcon><GridSmall size={16} /></Button.LeftIcon>
-                CSS lessons
-              </Button>
-            </div>
-            <div className="anim-fade-up flex flex-wrap gap-1.5 pt-1" style={stagger(4)}>
-              {['Zero dependencies', 'Light & dark', 'Typed end-to-end'].map((t) => (
-                <span key={t} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-medium text-content-secondary">
-                  {t}
-                </span>
-              ))}
-            </div>
+              </span>
+            </Reveal>
+            <Reveal index={1} as="h1">
+              <span className="kudos-display block" style={{ color: 'var(--kudos-on-ink)' }}>
+                Build product UIs,{' '}
+                <span className="kudos-accent-text">swiftly</span>.
+              </span>
+            </Reveal>
+            <Reveal index={2}>
+              <Text variant="para-lg" color="inherit" className="max-w-md opacity-75">
+                Icons, components, and tokens — typed, themed, and tree-shakeable.
+                The preview beside this is live; flip it light/dark to watch the
+                tokens re-theme.
+              </Text>
+            </Reveal>
+            <Reveal index={3}>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link to="/components" className="kudos-pill">
+                  <Settings size={16} />
+                  Explore components
+                </Link>
+                <Link to="/icons" className="kudos-pill-outline" style={{ color: 'var(--kudos-on-ink)' }}>
+                  <Star size={16} />
+                  Browse icons
+                </Link>
+              </div>
+            </Reveal>
+            <Reveal index={4}>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {['Zero dependencies', 'Light & dark', 'Typed end-to-end'].map((t) => (
+                  <span key={t} className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium opacity-80">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </Reveal>
           </div>
 
           {/* Live preview */}
-          <div className="anim-fade-up w-full max-w-sm justify-self-center lg:justify-self-end" style={stagger(2)}>
+          <Reveal index={2} className="w-full max-w-sm justify-self-center lg:justify-self-end">
             <PreviewApp />
-          </div>
+          </Reveal>
         </div>
 
-        {/* Scroll cue — jumps to the first section below the hero */}
-        <div className="absolute inset-x-0 bottom-6 hidden justify-center sm:flex">
-          <button
-            type="button"
-            onClick={() =>
-              document.getElementById('home-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }
-            aria-label="Scroll to content"
-            className="group flex cursor-pointer flex-col items-center gap-1 rounded-lg px-3 py-1.5 text-content-muted transition-colors hover:text-content"
-          >
-            <Text variant="body-xs" color="inherit" className="tracking-wide uppercase">Scroll</Text>
-            <ExpandMore size={18} className="animate-bounce transition-transform group-hover:translate-y-0.5" />
-          </button>
+        {/* Wordmark marquee at the bottom of the hero band */}
+        <div className="border-t border-white/10" style={{ color: 'var(--kudos-on-ink)' }}>
+          <WordmarkMarquee word="SWIFT" />
         </div>
       </section>
 
-      {/* ── Stats ──────────────────────────────────────────────────── */}
-      <Band tone="muted" id="home-content">
-        <div className="grid grid-cols-2 divide-y divide-stroke overflow-hidden rounded-2xl border border-stroke bg-surface-elevated sm:grid-cols-4 sm:divide-x sm:divide-y-0">
-          {STATS.map((s) => (
-            <StatItem key={s.label} {...s} />
-          ))}
+      {/* ── Stats — dark band, big count-up numbers ──────────────────── */}
+      <section className="kudos-ink border-t border-white/10">
+        <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:px-8 lg:py-20">
+          <Reveal>
+            <span className="kudos-eyebrow opacity-70">By the numbers</span>
+          </Reveal>
+          <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4">
+            {STATS.map((s, i) => (
+              <Reveal key={s.label} index={i}>
+                <StatBlock {...s} />
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </Band>
+      </section>
 
       {/* ── Why Swift ──────────────────────────────────────────────── */}
-      <Band>
-        <div className="mb-8 flex flex-col items-center gap-1 text-center">
-          <SectionLabel>Why Swift</SectionLabel>
-          <Text variant="heading-md" fontWeight="bold">Built to ship fast and stay consistent.</Text>
-          <Text variant="para-md" color="secondary" className="max-w-xl">
-            One token layer, accessible out of the box, and nothing you don&rsquo;t import.
-          </Text>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {PRINCIPLES.map(({ icon: Icon, accent, title, blurb }, i) => (
-            <div key={title} className="anim-fade-up" style={stagger(i)}>
-              <Card variant="elevated" className="hover-lift h-full">
-                <Card.Content>
-                  <div className="flex flex-col gap-2">
-                    <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tintFor(accent)} ${accent}`}>
+      <section className="bg-surface">
+        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 lg:py-24">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+            <div className="flex flex-col gap-3">
+              <Reveal>
+                <span className="kudos-eyebrow text-content-muted">Why Swift</span>
+              </Reveal>
+              <Reveal index={1}>
+                <Text className="kudos-display-sm">
+                  Built to ship fast and stay consistent.
+                </Text>
+              </Reveal>
+              <Reveal index={2}>
+                <Text variant="para-md" color="secondary" className="max-w-md">
+                  One token layer, accessible out of the box, and nothing you
+                  don&rsquo;t import.
+                </Text>
+              </Reveal>
+            </div>
+            <div className="grid gap-px overflow-hidden rounded-2xl border border-stroke bg-stroke sm:grid-cols-2">
+              {PRINCIPLES.map(({ icon: Icon, title, blurb }, i) => (
+                <Reveal key={title} index={i} className="bg-surface-elevated">
+                  <div className="flex h-full flex-col gap-3 p-6">
+                    <span className="flex size-11 items-center justify-center rounded-full bg-surface-muted text-content kudos-accent-text">
                       <Icon size={20} />
                     </span>
-                    <Text variant="body-md" fontWeight="semibold" color="primary">{title}</Text>
-                    <Text variant="body-xs" color="secondary">{blurb}</Text>
+                    <Text variant="body-lg" fontWeight="semibold" color="primary">{title}</Text>
+                    <Text variant="body-sm" color="secondary">{blurb}</Text>
                   </div>
-                </Card.Content>
-              </Card>
+                </Reveal>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </Band>
+      </section>
 
-      {/* ── Explore (tabs) ─────────────────────────────────────────── */}
-      <Band tone="muted">
-        <div className="mb-8 flex flex-col items-center gap-1 text-center">
-          <SectionLabel>Explore</SectionLabel>
-          <Text variant="heading-md" fontWeight="bold">Everything in its own tab.</Text>
-          <Text variant="para-md" color="secondary" className="max-w-xl">
-            Pick a destination — components, icons, the CSS lessons, or the design tokens.
-          </Text>
+      {/* ── Explore — big editorial rows ───────────────────────────── */}
+      <section className="bg-surface-muted">
+        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 lg:py-24">
+          <div className="mb-8 flex flex-col gap-2">
+            <Reveal>
+              <span className="kudos-eyebrow text-content-muted">Explore</span>
+            </Reveal>
+            <Reveal index={1}>
+              <Text className="kudos-display-sm">Everything in its own tab.</Text>
+            </Reveal>
+          </div>
+          <div className="border-b border-stroke">
+            {SECTIONS.map((s, i) => (
+              <Reveal key={s.to} index={i}>
+                <SectionRow n={i + 1} to={s.to} label={s.label} meta={s.meta} blurb={s.blurb} />
+              </Reveal>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {SECTIONS.map((s, i) => (
-            <SectionCard key={s.to} i={i} {...s} />
-          ))}
-        </div>
-      </Band>
+      </section>
 
       {/* ── Get started ────────────────────────────────────────────── */}
-      <Band>
-        <div className="grid items-center gap-8 lg:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <SectionLabel>Get started</SectionLabel>
-            <Text variant="heading-md" fontWeight="bold">Two packages, one import.</Text>
-            <Text variant="para-md" color="secondary" className="max-w-md">
-              Add the packages, import the stylesheet once, and compose — themed and
-              tree-shakeable out of the box. Zero runtime dependencies; React is the only peer.
-            </Text>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Button as={Link} to="/components">
-                Open the docs
-                <Button.RightIcon><ArrowRight size={14} /></Button.RightIcon>
-              </Button>
-              <Button as={Link} to="/foundations" variant="secondary">Design tokens</Button>
+      <section className="bg-surface">
+        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 lg:py-24">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div className="flex flex-col gap-4">
+              <Reveal>
+                <span className="kudos-eyebrow text-content-muted">Get started</span>
+              </Reveal>
+              <Reveal index={1}>
+                <Text className="kudos-display-sm">Two packages, one import.</Text>
+              </Reveal>
+              <Reveal index={2}>
+                <Text variant="para-md" color="secondary" className="max-w-md">
+                  Add the packages, import the stylesheet once, and compose —
+                  themed and tree-shakeable out of the box. Zero runtime
+                  dependencies; React is the only peer.
+                </Text>
+              </Reveal>
+              <Reveal index={3}>
+                <div className="mt-2 flex flex-wrap gap-3">
+                  <Link to="/components" className="kudos-pill">
+                    Open the docs
+                    <ArrowRight size={16} />
+                  </Link>
+                  <Link to="/foundations" className="kudos-pill-outline text-content">
+                    Design tokens
+                  </Link>
+                </div>
+              </Reveal>
             </div>
-          </div>
-          <div className="rounded-2xl border border-stroke bg-surface-elevated p-5 shadow-level1">
-            <CodeBlock code={SETUP_SNIPPET} />
+            <Reveal index={2} className="rounded-2xl border border-stroke bg-surface-elevated p-5 shadow-level2">
+              <CodeBlock code={SETUP_SNIPPET} />
+            </Reveal>
           </div>
         </div>
-      </Band>
+      </section>
 
       <HomeFooter />
     </div>

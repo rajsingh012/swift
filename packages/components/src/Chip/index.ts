@@ -13,3 +13,8 @@ export type {
   ChipGroupOwnProps,
   ChipGroupClasses,
 } from './Chip.types'
+export type { ChipContextValue } from './Chip.context'
+export type { ChipLabelProps } from './ChipLabel'
+export type { ChipLeftIconProps } from './ChipLeftIcon'
+export type { ChipRightIconProps } from './ChipRightIcon'
+export type { ChipRemoveProps } from './ChipRemove'

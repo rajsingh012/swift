@@ -14,7 +14,7 @@ const DEFAULT_WINDOW = 50
  *
  *   <YearPicker defaultValue={2024} onValueChange={(y) => …} />
  */
-export const YearPicker = forwardRef<HTMLDivElement, YearPickerProps>(
+const YearPickerRoot = forwardRef<HTMLDivElement, YearPickerProps>(
   function YearPicker(props, ref) {
     const {
       value: valueProp,
@@ -131,4 +131,8 @@ export const YearPicker = forwardRef<HTMLDivElement, YearPickerProps>(
     )
   },
 )
-YearPicker.displayName = 'YearPicker'
+YearPickerRoot.displayName = 'YearPicker'
+
+export const YearPicker = Object.assign(YearPickerRoot, {
+  Root: YearPickerRoot,
+})

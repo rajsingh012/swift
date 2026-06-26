@@ -10,3 +10,4 @@ export type {
   BadgeOwnProps,
   BadgeClasses,
 } from './Badge.types'
+export type { BadgeContextValue } from './Badge.context'
