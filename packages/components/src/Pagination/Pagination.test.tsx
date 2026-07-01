@@ -89,3 +89,80 @@ describe('Pagination', () => {
     expect(await axe(container)).toHaveNoViolations()
   })
 })
+
+describe('Pagination (compound API)', () => {
+  it('renders composed parts and marks the active page', () => {
+    render(
+      <Pagination.Root count={20} defaultPage={2}>
+        <Pagination.List>
+          <Pagination.Previous />
+          <Pagination.Item page={1} />
+          <Pagination.Item page={2} />
+          <Pagination.Ellipsis />
+          <Pagination.Item page={20} />
+          <Pagination.Next />
+        </Pagination.List>
+      </Pagination.Root>,
+    )
+    expect(
+      screen.getByRole('button', { name: 'Go to page 2' }),
+    ).toHaveAttribute('aria-current', 'page')
+    expect(
+      screen.getByRole('button', { name: 'Go to page 1' }),
+    ).not.toHaveAttribute('aria-current')
+  })
+
+  it('navigates via a composed Pagination.Item', async () => {
+    const user = userEvent.setup()
+    const onPageChange = vi.fn()
+    render(
+      <Pagination.Root count={20} defaultPage={1} onPageChange={onPageChange}>
+        <Pagination.List>
+          <Pagination.Item page={1} />
+          <Pagination.Item page={5} />
+        </Pagination.List>
+      </Pagination.Root>,
+    )
+    await user.click(screen.getByRole('button', { name: 'Go to page 5' }))
+    expect(onPageChange).toHaveBeenCalledWith(5)
+  })
+
+  it('disables Previous on the first page and Next on the last', () => {
+    render(
+      <Pagination.Root count={3} defaultPage={1}>
+        <Pagination.List>
+          <Pagination.Previous />
+          <Pagination.Next />
+        </Pagination.List>
+      </Pagination.Root>,
+    )
+    expect(
+      screen.getByRole('button', { name: 'Go to previous page' }),
+    ).toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: 'Go to next page' }),
+    ).not.toBeDisabled()
+  })
+
+  it('throws when a part is used outside Pagination.Root', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    expect(() => render(<Pagination.Item page={1} />)).toThrow(
+      /must be used inside <Pagination.Root>/,
+    )
+    spy.mockRestore()
+  })
+
+  it('compound composition has no axe violations', async () => {
+    const { container } = render(
+      <Pagination.Root count={20} defaultPage={2}>
+        <Pagination.List>
+          <Pagination.Previous />
+          <Pagination.Item page={1} />
+          <Pagination.Item page={2} />
+          <Pagination.Next />
+        </Pagination.List>
+      </Pagination.Root>,
+    )
+    expect(await axe(container)).toHaveNoViolations()
+  })
+})

@@ -93,6 +93,345 @@
     infinite;
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   KUDOS LAYER  (inspired by kudos.framer.media)
+
+   A bold, monochromatic editorial look: near-black/near-white display
+   bands, oversized type, a single NEON-MINT accent, looping marquee
+   wordmarks, count-up stats, pill buttons, and scroll-reveal motion.
+
+   Theme-aware: the accent is fixed (it's a brand neon), but the
+   "ink" band + its text flip between light and dark so both themes
+   read as the same high-contrast editorial style. Every animation is
+   covered by the prefers-reduced-motion block at the bottom.
+   ════════════════════════════════════════════════════════════════════ */
+
+@theme static {
+  /* Neon-mint accent (Kudos #00ffc8). Fixed across themes — it's a brand
+     color, not a semantic surface. `-ink` is the legible text color to sit
+     on top of the neon (near-black in both themes). */
+  --kudos-accent: #00ffc8;
+  --kudos-accent-strong: #00e6b4;
+  --kudos-accent-ink: #05221c;
+}
+
+/* The "ink" editorial band — near-black in light mode, near-black-but-
+   lifted in dark mode, always with light text. This is the Kudos hero /
+   CTA backdrop. Resolves from the fixed ink palette so it's identical-ish
+   in both themes (the look is intentionally dark in both). */
+.kudos-ink {
+  --kudos-on-ink: #f5f5f5;
+  --kudos-on-ink-muted: color-mix(in oklab, #f5f5f5 62%, transparent);
+  background-color: var(--color-ink-900);
+  color: var(--kudos-on-ink);
+}
+
+/* A subtle radial neon wash for ink bands (sits behind content). */
+.kudos-ink-glow {
+  background-image: radial-gradient(
+      60% 80% at 50% 0%,
+      color-mix(in oklab, var(--kudos-accent) 14%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      40% 60% at 85% 110%,
+      color-mix(in oklab, var(--kudos-accent) 10%, transparent),
+      transparent 65%
+    );
+}
+
+/* ── Accent helpers ─────────────────────────────────────────────── */
+.kudos-accent-text {
+  color: var(--kudos-accent);
+}
+.kudos-accent-bg {
+  background-color: var(--kudos-accent);
+  color: var(--kudos-accent-ink);
+}
+
+/* Neon pill button — solid mint with a soft glow that intensifies on hover. */
+.kudos-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  background-color: var(--kudos-accent);
+  color: var(--kudos-accent-ink);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--kudos-accent) 60%, transparent);
+  transition:
+    box-shadow var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    transform var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    background-color var(--motion-duration-fast, 150ms) ease-out;
+}
+.kudos-pill:hover {
+  background-color: var(--kudos-accent-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px -6px color-mix(in oklab, var(--kudos-accent) 70%, transparent);
+}
+
+/* Outline pill — for secondary actions on either band. Inherits currentColor
+   so it works on both ink and surface backgrounds. */
+.kudos-pill-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: 1px solid color-mix(in oklab, currentColor 35%, transparent);
+  transition:
+    border-color var(--motion-duration-normal, 200ms) ease-out,
+    background-color var(--motion-duration-normal, 200ms) ease-out,
+    transform var(--motion-duration-normal, 200ms) ease-out;
+}
+.kudos-pill-outline:hover {
+  border-color: var(--kudos-accent);
+  color: var(--kudos-accent);
+  transform: translateY(-2px);
+}
+
+/* ── Oversized display type ─────────────────────────────────────────
+   Tight leading + negative tracking, the Kudos editorial headline. */
+.kudos-display {
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-size: clamp(2.75rem, 8vw, 6.5rem);
+  text-wrap: balance;
+}
+.kudos-display-sm {
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  text-wrap: balance;
+}
+
+/* Eyebrow label — wide-tracked uppercase micro text. */
+.kudos-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* ── Scroll reveal ──────────────────────────────────────────────────
+   Pair with the useReveal hook: element starts hidden + shifted, and
+   gets `data-revealed` when it scrolls into view. Stagger via inline
+   `--reveal-i`. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity var(--motion-duration-slow, 320ms)
+      var(--motion-ease-emphasized, ease-out),
+    transform var(--motion-duration-slow, 320ms)
+      var(--motion-ease-emphasized, ease-out);
+  transition-delay: calc(var(--reveal-i, 0) * 80ms);
+}
+[data-reveal][data-revealed='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Big outline wordmark used in the marquee (Kudos repeats "KUDOS"). */
+.kudos-marquee-word {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-size: clamp(3rem, 12vw, 9rem);
+  -webkit-text-stroke: 2px color-mix(in oklab, currentColor 70%, transparent);
+  color: transparent;
+  padding-inline: 0.25em;
+  white-space: nowrap;
+  transition: -webkit-text-stroke-color var(--motion-duration-normal, 200ms)
+    ease-out;
+}
+
+/* Every other word picks up the neon accent so the band reads with rhythm
+   and is clearly visible on the dark hero. */
+.kudos-marquee-word:nth-child(even) {
+  -webkit-text-stroke-color: var(--kudos-accent);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   HOME (minimal) LAYER
+
+   A clean, light, token-driven homepage look that replaces the Kudos
+   editorial treatment on the landing route. Restrained type, generous
+   whitespace, the design-system brand accent, and hairline borders.
+   Fully theme-aware (everything resolves from semantic tokens) and all
+   motion is covered by the reduced-motion block below.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Oversized-but-calm display headline: tight leading, slight negative
+   tracking, fluid size. No fixed colors — inherits from semantic tokens. */
+.home-display {
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-size: clamp(2.75rem, 6.5vw, 5rem);
+  text-wrap: balance;
+}
+.home-display-sm {
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  text-wrap: balance;
+}
+
+/* Wide-tracked uppercase micro label. */
+.home-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ── SaaS landing treatment ─────────────────────────────────────────
+   A modern product-landing look (Linear / Vercel / Stripe docs): a
+   soft gradient hero wash, an announcement pill, a "product frame" that
+   showcases the live preview, and lifting feature cards. All colors
+   resolve from semantic tokens so both themes read correctly. */
+
+/* Ambient gradient wash behind the hero — a soft brand halo top-center
+   plus a faint secondary bloom, fading into the page surface. */
+.home-hero {
+  background:
+    radial-gradient(
+      60% 55% at 50% -10%,
+      color-mix(in oklab, var(--color-surface-brand, #3b82f6) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 40% at 85% 10%,
+      color-mix(in oklab, var(--color-surface-highlight, #8b5cf6) 14%, transparent),
+      transparent 70%
+    ),
+    var(--color-surface, #fff);
+}
+
+/* Subtle dotted grid overlay for depth (sits under content via ::before). */
+.home-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--color-content, #000) 8%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+  mask-image: radial-gradient(70% 60% at 50% 0%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 0%, #000 30%, transparent 75%);
+}
+
+/* Announcement pill — small rounded chip with a leading accent dot. */
+.home-announce {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.85rem 0.35rem 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid var(--color-stroke, rgb(0 0 0 / 0.1));
+  background-color: var(--color-surface-elevated, #fff);
+  color: var(--color-content-secondary, #444);
+  box-shadow: var(--shadow-level1, 0 1px 2px rgb(0 0 0 / 0.06));
+}
+
+/* Product frame — the "app screenshot" container that showcases the live
+   preview. Gradient hairline border + generous shadow so it floats. */
+.home-frame {
+  border-radius: 1.25rem;
+  padding: 0.5rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--color-surface-brand, #3b82f6) 30%, transparent),
+    color-mix(in oklab, var(--color-surface-highlight, #8b5cf6) 22%, transparent) 55%,
+    var(--color-stroke, rgb(0 0 0 / 0.1))
+  );
+  box-shadow: var(--shadow-level4, 0 24px 60px -18px rgb(0 0 0 / 0.35));
+}
+
+/* Lifting feature card — rounded, elevated, brightens + rises on hover. */
+.home-card {
+  border-radius: 1rem;
+  border: 1px solid var(--color-stroke, rgb(0 0 0 / 0.08));
+  background-color: var(--color-surface-elevated, #fff);
+  box-shadow: var(--shadow-level1, 0 1px 3px rgb(0 0 0 / 0.06));
+  transition:
+    transform var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    box-shadow var(--motion-duration-normal, 200ms) ease-out,
+    border-color var(--motion-duration-normal, 200ms) ease-out;
+}
+.home-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-level3, 0 16px 40px -14px rgb(0 0 0 / 0.28));
+  border-color: var(--color-stroke-brand, var(--color-brand-400));
+}
+
+/* Icon chip inside a feature card — soft brand-tinted rounded square. */
+.home-icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-surface-brand-muted, color-mix(in oklab, var(--color-surface-brand, #3b82f6) 14%, transparent));
+  color: var(--color-content-brand, var(--color-brand-600));
+}
+
+/* Solid brand CTA — resolves from semantic tokens so it re-themes. */
+.home-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.7rem 1.4rem;
+  font-weight: 600;
+  background-color: var(--color-surface-brand, var(--color-brand-500));
+  color: var(--color-content-on-brand, #fff);
+  transition:
+    background-color var(--motion-duration-fast, 150ms) ease-out,
+    transform var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    box-shadow var(--motion-duration-normal, 200ms) ease-out;
+}
+.home-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-level2, 0 6px 20px -8px rgb(0 0 0 / 0.25));
+}
+
+/* Hairline outline CTA — inherits currentColor, works on any surface. */
+.home-cta-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.7rem 1.4rem;
+  font-weight: 600;
+  border: 1px solid var(--color-stroke, color-mix(in oklab, currentColor 20%, transparent));
+  color: var(--color-content, currentColor);
+  transition:
+    border-color var(--motion-duration-normal, 200ms) ease-out,
+    background-color var(--motion-duration-normal, 200ms) ease-out,
+    transform var(--motion-duration-normal, 200ms) ease-out;
+}
+.home-cta-outline:hover {
+  border-color: var(--color-stroke-brand, var(--color-brand-500));
+  color: var(--color-content-brand, var(--color-brand-600));
+  transform: translateY(-1px);
+}
+
 /* ── Reduced motion ─────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -101,7 +440,34 @@
     animation-delay: 0ms !important;
   }
 
+  .home-cta,
+  .home-cta-outline,
+  .home-card {
+    transition: none;
+  }
+  .home-cta:hover,
+  .home-cta-outline:hover,
+  .home-card:hover {
+    transform: none;
+  }
+
   .footer-heart {
     animation: none;
+  }
+
+  .kudos-pill,
+  .kudos-pill-outline {
+    transition: none;
+  }
+  .kudos-pill:hover,
+  .kudos-pill-outline:hover {
+    transform: none;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    transition-delay: 0ms;
   }
 }

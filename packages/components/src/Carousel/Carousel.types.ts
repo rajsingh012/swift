@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react'
+import type { RenderProp } from '../internal/props'
 
 export type CarouselOrientation = 'horizontal' // vertical deferred to v2
 export type CarouselDirection = 'ltr' | 'rtl'
@@ -124,10 +125,32 @@ export type CarouselIndicatorsRenderProps = {
   goTo: (index: number) => void
 }
 
+/**
+ * State handed to a per-indicator `renderIndicator` callback — enough to
+ * draw a single dot and make it interactive without any extra props.
+ */
+export type CarouselIndicatorRenderProps = {
+  /** Zero-based snap index this indicator targets. */
+  index: number
+  /** Whether this indicator's snap is the current one. */
+  selected: boolean
+  /** Scroll to this indicator's snap. */
+  goTo: () => void
+}
+
 export interface CarouselIndicatorsProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Children override — pass a render function to fully customise the dots. */
   children?: ReactNode | ((info: CarouselIndicatorsRenderProps) => ReactNode)
+  /**
+   * Per-indicator render-prop: build your own dot UI from each
+   * indicator's state. Called once per snap. The library-wide `render*`
+   * convention — pass a node to use the same custom UI for every dot, or
+   * a function `({ index, selected, goTo }) => ReactNode` for state-aware
+   * dots. Prefer this over `children` when you only want to restyle the
+   * dots (not the surrounding container/layout).
+   */
+  renderIndicator?: RenderProp<CarouselIndicatorRenderProps>
 }
 
 export interface CarouselIndicatorProps

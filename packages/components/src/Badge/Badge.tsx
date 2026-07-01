@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  useMemo,
   type ElementType,
   type HTMLAttributes,
   type KeyboardEvent,
@@ -7,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { Button } from '../Button'
+import { BadgeContext, useBadgeContext, type BadgeContextValue } from './Badge.context'
 import {
   DEFAULT_APPEARANCE,
   DEFAULT_MAX_COUNT,
@@ -97,17 +99,20 @@ interface BadgeDotProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const BadgeDot = forwardRef<HTMLSpanElement, BadgeDotProps>(function BadgeDot(
-  { className, variant = DEFAULT_VARIANT, size = DEFAULT_SIZE, ...rest },
+  { className, variant, size, ...rest },
   ref,
 ) {
+  const ctx = useBadgeContext('Badge.Dot')
+  const resolvedVariant = variant ?? ctx.variant
+  const resolvedSize = size ?? ctx.size
   return (
     <span
       ref={ref}
       aria-hidden
       className={cx(
         'inline-block shrink-0 rounded-full',
-        decorativeDotSizeClasses[size],
-        dotColourClasses[variant],
+        decorativeDotSizeClasses[resolvedSize],
+        dotColourClasses[resolvedVariant],
         className,
       )}
       {...rest}
@@ -119,14 +124,16 @@ BadgeDot.displayName = 'Badge.Dot'
 const BadgeIcon = forwardRef<
   HTMLSpanElement,
   HTMLAttributes<HTMLSpanElement> & { size?: BadgeSize }
->(function BadgeIcon({ className, children, size = DEFAULT_SIZE, ...rest }, ref) {
+>(function BadgeIcon({ className, children, size, ...rest }, ref) {
+  const ctx = useBadgeContext('Badge.Icon')
+  const resolvedSize = size ?? ctx.size
   return (
     <span
       ref={ref}
       aria-hidden
       className={cx(
         'inline-flex shrink-0 items-center justify-center',
-        iconSizeClasses[size],
+        iconSizeClasses[resolvedSize],
         className,
       )}
       {...rest}
@@ -255,7 +262,13 @@ const BadgeRoot = forwardRef<HTMLElement, BadgeRenderProps>(function Badge(
     'aria-label': accessibleLabel,
   }
 
+  const ctx = useMemo<BadgeContextValue>(
+    () => ({ size, variant, inRoot: true }),
+    [size, variant],
+  )
+
   return (
+    <BadgeContext.Provider value={ctx}>
     <Component
       ref={ref}
       className={rootClassName}
@@ -339,14 +352,17 @@ const BadgeRoot = forwardRef<HTMLElement, BadgeRenderProps>(function Badge(
         </>
       )}
     </Component>
+    </BadgeContext.Provider>
   )
 })
 
 export const Badge = Object.assign(BadgeRoot as unknown as BadgeComponent, {
+  Root: BadgeRoot,
   Dot: BadgeDot,
   Icon: BadgeIcon,
   Label: BadgeLabel,
 }) as BadgeComponent & {
+  Root: typeof BadgeRoot
   Dot: typeof BadgeDot
   Icon: typeof BadgeIcon
   Label: typeof BadgeLabel

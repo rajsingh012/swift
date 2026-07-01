@@ -40,6 +40,14 @@ export interface ProgressOwnProps {
   format?: (value: number, percent: number) => string
 
   classes?: ProgressClasses
+
+  /**
+   * Compound children. When provided, they are rendered inside the root
+   * instead of the auto-generated header + track — compose with
+   * `Progress.Label`, `Progress.Track`, `Progress.Value`. When omitted, the
+   * component auto-renders from `value`/`label`/`showValue`.
+   */
+  children?: ReactNode
 }
 
 export type ProgressProps = ProgressOwnProps &

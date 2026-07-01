@@ -20,9 +20,14 @@ Every component follows the same patterns, so once you know these, you know most
 
 5. **Styling escape hatches.** `className` on every part, plus a `classes` object on roots for slot-level overrides (`classes={{ root, label, icon, ... }}`).
 
-6. **Form integration.** Inputs/Checkbox/Radio/Switch use real native `<input>` elements (overlaid, opacity 0). Slider/SegmentedControl/DatePicker/TimePicker/YearPicker emit **hidden inputs** when you pass `name` (DatePicker range mode emits `name.start` + `name.end`; Slider emits one per thumb).
+6. **Render props — two distinct kinds.** When a part has more visual variations than props can reasonably cover, the library hands you state instead of adding props. Don't confuse the two mechanisms:
 
-7. **Required props.** The library keeps required props minimal. The full list:
+   - **`render*` callbacks build a slot's UI from state.** A named prop like `renderIndicator={({ index, selected, goTo }) => …}` is called with the component's internal state for that slot, and you return whatever you want to render. Pass a plain node instead of a function to reuse one custom UI everywhere. This is how you avoid prop bloat — rather than `indicatorColor`, `indicatorShape`, `activeIndicatorIcon`, … you get `selected`/`goTo` and draw the dot yourself. Reference implementation: `Carousel.Indicators` `renderIndicator` (see `CarouselIndicatorRenderProps`). Some older parts expose the same idea as a **function child** (`Carousel.Indicators` `children`, `Accordion.Trigger` `children` as `({ open }) => …`) — same concept, applied to the whole slot. Internally these resolve via `internal/props.ts → resolveRenderProp(prop, state)` (type `RenderProp<State>`); use it instead of hand-rolling `typeof x === 'function'` checks.
+   - **`render` replaces the host element.** The bare `render` prop on `Text`, `Box`, `Badge`, `Button`, and `Accordion.Trigger` is the *element-swap* escape hatch (the `asChild`-as-a-function form): it receives the computed DOM props (`className`, handlers, refs) and you return the element to render in place of the default, with props merged via `mergeRenderProps`. It does **not** pass component state — keep it separate from `render*` content callbacks.
+
+7. **Form integration.** Inputs/Checkbox/Radio/Switch use real native `<input>` elements (overlaid, opacity 0). Slider/SegmentedControl/DatePicker/TimePicker/YearPicker emit **hidden inputs** when you pass `name` (DatePicker range mode emits `name.start` + `name.end`; Slider emits one per thumb).
+
+8. **Required props.** The library keeps required props minimal. The full list:
 
 | Component part | Required prop | Why |
 |---|---|---|
@@ -182,6 +187,7 @@ Everything else has a sensible default (defaults are listed per component below)
 - Autoplay pauses on drag, focus, hover (if `pauseOnHover`), and hidden document; needs more than one item.
 - `fade` variant disables drag/scroll entirely (opacity transitions in a CSS grid stack).
 - Item add/remove is auto-detected (MutationObserver) and layout re-measured (ResizeObserver, paused during drag).
+- `Carousel.Indicators` follows the render-prop convention (see #6 above): `renderIndicator={({ index, selected, goTo }) => …}` restyles each dot from its state; a function `children` (`{ count, selected, goTo }`) replaces the whole dots layout.
 
 ```jsx
 <Carousel loop slidesPerView={3} gap={16} autoplay>
@@ -287,6 +293,32 @@ Everything else has a sensible default (defaults are listed per component below)
 - Clickable comfortable/spacious rows enforce a min touch-target height (skipped in vertical orientation).
 - Per-row `divider` is suppressed when the parent `<List dividers>` is on.
 - Use `as="a"` or `asChild` with a link when you need real navigation semantics.
+
+---
+
+## Pagination
+
+**Parts:** single `<nav>` landmark wrapping a `<ul>` of page buttons (no compound sub-parts).
+
+**Key props:** `count` (**required**, total pages), `page`/`defaultPage` (default `1`)/`onPageChange`, `siblingCount` (default `1`), `boundaryCount` (default `1`), `size` (default `'md'`), `variant: 'solid'|'outline'|'ghost'`, `disabled`, `showPrevNext` (default `true`), `showFirstLast` (default `false`), `getItemAriaLabel`, `prevIcon`/`nextIcon`/`firstIcon`/`lastIcon`, `classes`.
+
+**Behavior**
+- Collision-aware ellipsis gaps; range computed by `getPaginationRange(count, current, siblingCount, boundaryCount)` (exported). Active page is clamped into `[1, count]`.
+- Controlled/uncontrolled via `page`/`defaultPage`/`onPageChange`; active button gets `aria-current="page"`.
+- Render-prop customization (convention #6): `renderItem={({ type, page, selected, disabled, goTo }) => …}` replaces each page/ellipsis slot's UI; `renderControl={({ control, page, disabled, goTo }) => …}` replaces the prev/next/first/last buttons (superseding the `*Icon` props). Both keep the wrapping `<li>` and respect `showPrevNext`/`showFirstLast`. The `*Icon` props remain for light glyph swaps.
+
+```jsx
+<Pagination
+  count={20}
+  defaultPage={1}
+  onPageChange={setPage}
+  renderItem={({ type, page, selected, goTo }) =>
+    type === 'page' ? (
+      <button aria-current={selected} onClick={goTo}>{page}</button>
+    ) : <span>…</span>
+  }
+/>
+```
 
 ---
 

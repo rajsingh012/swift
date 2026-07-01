@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  useMemo,
   type ElementType,
   type HTMLAttributes,
   type KeyboardEvent,
@@ -12,7 +13,15 @@ import {
   DEFAULT_SIZE,
   DEFAULT_VARIANT,
 } from './Chip.constants'
-import { useOptionalChipGroup } from './Chip.context'
+import {
+  ChipContext,
+  useOptionalChipGroup,
+  type ChipContextValue,
+} from './Chip.context'
+import { ChipLabel } from './ChipLabel'
+import { ChipLeftIcon } from './ChipLeftIcon'
+import { ChipRightIcon } from './ChipRightIcon'
+import { ChipRemove } from './ChipRemove'
 import {
   appearanceVariantClasses,
   avatarSizeClasses,
@@ -213,7 +222,13 @@ const ChipRoot = forwardRef<HTMLElement, ChipRenderProps>(function Chip(
   const showCheck = selected && showCheckOnSelected
   const hasLeadingSlot = loading || showCheck || avatar || startIcon
 
+  const ctx = useMemo<ChipContextValue>(
+    () => ({ size, variant, selected, disabled: isInteractionBlocked, inRoot: true }),
+    [size, variant, selected, isInteractionBlocked],
+  )
+
   return (
+    <ChipContext.Provider value={ctx}>
     <Component
       ref={ref}
       className={rootClassName}
@@ -312,7 +327,20 @@ const ChipRoot = forwardRef<HTMLElement, ChipRenderProps>(function Chip(
         </button>
       ) : null}
     </Component>
+    </ChipContext.Provider>
   )
 })
 
-export const Chip = ChipRoot as unknown as ChipComponent
+export const Chip = Object.assign(ChipRoot as unknown as ChipComponent, {
+  Root: ChipRoot,
+  Label: ChipLabel,
+  LeftIcon: ChipLeftIcon,
+  RightIcon: ChipRightIcon,
+  Remove: ChipRemove,
+}) as ChipComponent & {
+  Root: typeof ChipRoot
+  Label: typeof ChipLabel
+  LeftIcon: typeof ChipLeftIcon
+  RightIcon: typeof ChipRightIcon
+  Remove: typeof ChipRemove
+}

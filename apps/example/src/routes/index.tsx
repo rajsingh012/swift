@@ -2,7 +2,6 @@ import {
   useEffect,
   useState,
   type ComponentType,
-  type CSSProperties,
   type ReactNode,
 } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -21,7 +20,6 @@ import { ArrowRight } from '@swift/icons/ArrowRight'
 import { Bus } from '@swift/icons/Bus'
 import { Check } from '@swift/icons/Check'
 import { CheckCircle } from '@swift/icons/CheckCircle'
-import { ExpandMore } from '@swift/icons/ExpandMore'
 import { Flash } from '@swift/icons/Flash'
 import { Flight } from '@swift/icons/Flight'
 import { GridSmall } from '@swift/icons/GridSmall'
@@ -35,6 +33,7 @@ import { Star } from '@swift/icons/Star'
 import { Train } from '@swift/icons/Train'
 import { TrendUp } from '@swift/icons/TrendUp'
 import { CodeBlock } from '../Components/shared'
+import { Reveal } from '../lib/Reveal'
 import { useTheme } from '../lib/Theme'
 
 export const Route = createFileRoute('/')({
@@ -43,9 +42,6 @@ export const Route = createFileRoute('/')({
 
 type IconComponent = ComponentType<{ size?: number; className?: string }>
 type SectionPath = '/icons' | '/components' | '/foundations' | '/css'
-
-/** Inline custom property consumed by motion.css stagger. */
-const stagger = (i: number): CSSProperties => ({ '--stagger-i': i }) as CSSProperties
 
 function prefersReducedMotion(): boolean {
   return (
@@ -57,7 +53,7 @@ function prefersReducedMotion(): boolean {
 /** rAF count-up from 0 → target on mount. Renders the target immediately
  *  for reduced-motion users (set in the initializer, so the effect never
  *  calls setState synchronously). */
-function useCountUp(target: number, durationMs = 1000): number {
+function useCountUp(target: number, durationMs = 1400): number {
   const [value, setValue] = useState(() => (prefersReducedMotion() ? target : 0))
   useEffect(() => {
     if (prefersReducedMotion()) return
@@ -118,18 +114,18 @@ const SECTIONS: ReadonlyArray<{
   },
 ]
 
-const STATS: ReadonlyArray<{ icon: IconComponent; value: number; suffix: string; label: string; accent: string }> = [
-  { icon: Settings, value: 24, suffix: '', label: 'Components', accent: 'text-content-brand' },
-  { icon: Star, value: 310, suffix: '', label: 'Icons', accent: 'text-content-highlight' },
-  { icon: GridSmall, value: 39, suffix: '', label: 'CSS lessons', accent: 'text-content-success' },
-  { icon: Afternoon, value: 2, suffix: '', label: 'Themes', accent: 'text-content-new' },
+const STATS: ReadonlyArray<{ value: number; suffix: string; label: string; note: string }> = [
+  { value: 24, suffix: '', label: 'Components', note: 'Typed, themed, composable' },
+  { value: 310, suffix: '+', label: 'Icons', note: 'Tree-shakeable SVG set' },
+  { value: 39, suffix: '', label: 'CSS lessons', note: 'Interactive playgrounds' },
+  { value: 2, suffix: '', label: 'Themes', note: 'Light & dark, one token layer' },
 ]
 
-const PRINCIPLES: ReadonlyArray<{ icon: IconComponent; accent: string; title: string; blurb: string }> = [
-  { icon: Flash, accent: 'text-content-warning', title: 'Zero dependencies', blurb: 'Every primitive is hand-rolled. React is the only thing in your bundle.' },
-  { icon: Afternoon, accent: 'text-content-new', title: 'Token-driven theming', blurb: 'Light and dark resolve from one semantic token layer — no per-component logic.' },
-  { icon: CheckCircle, accent: 'text-content-success', title: 'Accessible by default', blurb: 'Keyboard nav, ARIA wiring, focus rings, RTL, and reduced-motion support.' },
-  { icon: TrendUp, accent: 'text-content-brand', title: 'Tree-shakeable', blurb: 'Per-component and per-icon entry points — you ship only what you import.' },
+const PRINCIPLES: ReadonlyArray<{ icon: IconComponent; title: string; blurb: string }> = [
+  { icon: Flash, title: 'Zero dependencies', blurb: 'Every primitive is hand-rolled. React is the only thing in your bundle.' },
+  { icon: Afternoon, title: 'Token-driven theming', blurb: 'Light and dark resolve from one semantic token layer — no per-component logic.' },
+  { icon: CheckCircle, title: 'Accessible by default', blurb: 'Keyboard nav, ARIA wiring, focus rings, RTL, and reduced-motion support.' },
+  { icon: TrendUp, title: 'Tree-shakeable', blurb: 'Per-component and per-icon entry points — you ship only what you import.' },
 ]
 
 const INTERESTS: ReadonlyArray<{ value: string; label: string; icon: IconComponent }> = [
@@ -139,22 +135,8 @@ const INTERESTS: ReadonlyArray<{ value: string; label: string; icon: IconCompone
   { value: 'cabs', label: 'Cabs', icon: Bus },
 ]
 
-/** Semantic surface swatches for the Foundations preview. */
-const SWATCHES = [
-  'bg-surface-brand',
-  'bg-surface-highlight',
-  'bg-surface-success',
-  'bg-surface-warning',
-  'bg-surface-critical',
-  'bg-surface-new',
-] as const
-
 /** Icons shown in the Icons preview tile. */
 const ICON_WALL: ReadonlyArray<IconComponent> = [Flight, Hotel, Train, Bus, Star, Heart, Person, Flash]
-
-/** Map an accent text-colour class to its muted surface tint, e.g.
- *  `text-content-brand` → `bg-surface-brand-muted`. */
-const tintFor = (accent: string) => `${accent.replace('text-content-', 'bg-surface-')}-muted`
 
 const SETUP_SNIPPET = `pnpm add @swift/components @swift/icons
 
@@ -171,14 +153,6 @@ import { Flight } from '@swift/icons/Flight'
 </Button>`
 
 /* ── Small shared bits ──────────────────────────────────────────────── */
-
-function SectionLabel({ children }: { children: ReactNode }) {
-  return (
-    <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-[0.18em] uppercase">
-      {children}
-    </Text>
-  )
-}
 
 function FieldLabel({ children }: { children: ReactNode }) {
   return (
@@ -206,7 +180,7 @@ function PreviewApp() {
     setInterests((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]))
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-stroke bg-surface-elevated text-content shadow-level3">
+    <div className="overflow-hidden rounded-2xl border border-stroke bg-surface-elevated text-content shadow-level4">
       {/* Faux browser chrome with a light/dark toggle */}
       <div className="flex items-center gap-1.5 border-b border-stroke bg-surface-muted px-3 py-2.5">
         <span className="size-2.5 rounded-full bg-surface-critical" />
@@ -327,23 +301,18 @@ function PreviewApp() {
 
 /* ── Sections ───────────────────────────────────────────────────────── */
 
-function StatItem({ icon: Icon, value, suffix, label, accent }: {
-  icon: IconComponent; value: number; suffix: string; label: string; accent: string
+/** A single count-up stat: big number in the brand accent, label + note. */
+function StatBlock({ value, suffix, label, note }: {
+  value: number; suffix: string; label: string; note: string
 }) {
   const n = useCountUp(value)
   return (
-    <div className="flex items-center gap-3 px-5 py-4">
-      <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tintFor(accent)} ${accent}`}>
-        <Icon size={18} />
-      </span>
-      <div className="flex flex-col">
-        <Text variant="heading-sm" fontWeight="bold" color="primary" className="tabular-nums">
-          {n}{suffix}
-        </Text>
-        <Text variant="body-xs" color="muted" className="tracking-wide uppercase">
-          {label}
-        </Text>
-      </div>
+    <div className="flex flex-col gap-1 border-t border-stroke pt-5">
+      <Text variant="heading-xl" fontWeight="bold" color="inherit" className="tabular-nums leading-none text-content-brand">
+        {n}{suffix}
+      </Text>
+      <Text variant="body-md" fontWeight="semibold" color="primary">{label}</Text>
+      <Text variant="body-sm" color="muted">{note}</Text>
     </div>
   )
 }
@@ -398,7 +367,7 @@ function ExplorePreview({ to }: { to: SectionPath }) {
   return (
     <div className="flex w-full flex-col gap-2">
       <div className="flex h-5 overflow-hidden rounded-md border border-stroke">
-        {SWATCHES.map((c) => (
+        {['bg-surface-brand', 'bg-surface-highlight', 'bg-surface-success', 'bg-surface-warning', 'bg-surface-critical', 'bg-surface-new'].map((c) => (
           <span key={c} className={`flex-1 ${c}`} />
         ))}
       </div>
@@ -411,61 +380,59 @@ function ExplorePreview({ to }: { to: SectionPath }) {
   )
 }
 
-function SectionCard({ i, to, label, icon: Icon, accent, meta, blurb }: {
-  i: number; to: SectionPath; label: string; icon: IconComponent; accent: string; meta: string; blurb: string
+/** Explore feature card: icon + label + meta header, blurb, a live preview
+ *  tile, and a footer "Open" affordance. The whole card is a link that
+ *  lifts on hover. */
+function ExploreCard({ to, label, meta, blurb, icon: Icon }: {
+  to: SectionPath; label: string; meta: string; blurb: string; icon: IconComponent
 }) {
   return (
-    <div
-      className="group hover-lift anim-fade-up flex flex-col gap-3 rounded-2xl border border-stroke bg-surface-elevated p-5 hover:border-stroke-brand"
-      style={stagger(i)}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 ${tintFor(accent)} ${accent}`}>
+    <Link to={to} className="home-card group flex h-full flex-col gap-4 p-6">
+      <div className="flex items-center gap-3">
+        <span className="home-icon-chip">
           <Icon size={20} />
         </span>
-        <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">{meta}</Text>
+        <div className="flex flex-col">
+          <Text variant="body-lg" fontWeight="semibold" color="primary">{label}</Text>
+          <Text variant="body-xs" color="muted" className="uppercase tracking-wide">{meta}</Text>
+        </div>
+        <span className="ml-auto flex size-9 shrink-0 items-center justify-center rounded-full border border-stroke text-content-muted transition-colors duration-200 group-hover:border-transparent group-hover:bg-surface-brand group-hover:text-content-on-brand">
+          <ArrowRight size={16} className="group-hover-nudge" />
+        </span>
       </div>
-      {/* Live preview of the destination */}
-      <div className="flex min-h-16 items-center rounded-xl border border-stroke-muted bg-surface-muted p-3">
+      <Text variant="body-sm" color="secondary">{blurb}</Text>
+      <div className="mt-auto rounded-xl border border-stroke-muted bg-surface-muted p-4">
         <ExplorePreview to={to} />
       </div>
-      <Text variant="body-lg" fontWeight="semibold" color="primary">{label}</Text>
-      <Text variant="body-sm" color="secondary">{blurb}</Text>
-      <Link to={to} className="mt-auto inline-flex w-fit items-center gap-1 pt-1 text-sm font-semibold text-content-brand hover:underline">
-        Open
-        <ArrowRight size={14} className="group-hover-nudge" />
-      </Link>
-    </div>
+    </Link>
   )
 }
 
 function HomeFooter() {
   return (
-    <footer className="border-t border-stroke bg-surface-muted">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-8 py-8">
-        <div className="flex flex-wrap items-start justify-between gap-6">
-          <div className="flex max-w-xs flex-col gap-2">
-            <Text variant="body-lg" fontWeight="bold">
-              <span className="brand-gradient-text">Swift</span>
-            </Text>
-            <Text variant="body-sm" color="secondary">
-              Icons, components, tokens, and CSS lessons — typed, themed, zero dependencies.
-            </Text>
-          </div>
-          <nav aria-label="Footer" className="flex flex-col gap-2">
-            <Text variant="body-xs" fontWeight="semibold" color="muted" className="tracking-wide uppercase">Explore</Text>
+    <footer className="border-t border-stroke bg-surface">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-16 sm:px-8">
+        <div className="flex flex-col items-start gap-6">
+          <Text className="home-display-sm" color="primary">
+            Build product UIs, <span className="text-content-brand">swiftly</span>.
+          </Text>
+          <Link to="/components" className="home-cta">
+            Explore components
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stroke pt-6">
+          <Text variant="body-xs" color="muted">© {new Date().getFullYear()} Swift Design System</Text>
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
             {SECTIONS.map(({ to, label }) => (
-              <Link key={to} to={to} className="text-sm text-content transition-colors hover:text-content-brand">
+              <Link key={to} to={to} className="text-sm text-content-secondary transition-colors hover:text-content">
                 {label}
               </Link>
             ))}
           </nav>
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stroke pt-5">
-          <Text variant="body-xs" color="muted">© {new Date().getFullYear()} Swift Design System</Text>
           <Text variant="body-xs" color="muted" className="inline-flex items-center gap-1.5">
-            Designed &amp; developed with
-            <Heart size={12} title="love" className="text-content-critical" />
+            Made with
+            <Heart size={12} title="love" className="text-content-brand" />
             by the Swift team
           </Text>
         </div>
@@ -474,170 +441,179 @@ function HomeFooter() {
   )
 }
 
-/** Full-width band with an inner max-width container. `tone` alternates
- *  the background so the page reads as stacked full-bleed sections. */
-function Band({
-  tone = 'surface',
-  id,
-  children,
-}: {
-  tone?: 'surface' | 'muted'
-  id?: string
-  children: ReactNode
-}) {
-  return (
-    <section
-      id={id}
-      className={tone === 'muted' ? 'w-full scroll-mt-4 bg-surface-muted' : 'w-full scroll-mt-4 bg-surface'}
-    >
-      <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:px-8 lg:py-20">{children}</div>
-    </section>
-  )
-}
-
 function HomeRoute() {
   return (
     <div className="h-full w-full overflow-y-auto bg-surface">
-      {/* ── Hero — full screen, edge-to-edge ─────────────────────────── */}
-      <section className="relative isolate flex min-h-full items-center overflow-hidden">
-        <div aria-hidden className="hero-aurora aurora pointer-events-none absolute inset-0 -z-10" />
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-20 sm:px-8 lg:grid-cols-2">
+      {/* ── Hero — side-by-side: pitch left, live preview right ──────── */}
+      <section className="home-hero relative isolate overflow-hidden">
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-16 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-24">
           {/* Pitch */}
-          <div className="flex flex-col items-start gap-5 text-left">
-            <div className="anim-fade-up" style={stagger(0)}>
-              <Badge variant="info" appearance="soft" startIcon={<Flash size={12} />}>
-                Swift Design System
-              </Badge>
-            </div>
-            <Text variant="heading-xl" fontWeight="bold" className="anim-fade-up" style={stagger(1)}>
-              Build product UIs,{' '}
-              <span className="brand-gradient-text">swiftly</span>.
-            </Text>
-            <Text variant="para-lg" color="secondary" className="anim-fade-up max-w-md" style={stagger(2)}>
-              Icons, components, and tokens — typed, themed, and tree-shakeable. The preview
-              beside this is live; flip it light/dark to watch the tokens re-theme.
-            </Text>
-            <div className="anim-fade-up flex flex-wrap items-center gap-2" style={stagger(3)}>
-              <Button as={Link} to="/components" size="lg">
-                <Button.LeftIcon><Settings size={16} /></Button.LeftIcon>
-                Explore components
-              </Button>
-              <Button as={Link} to="/icons" variant="secondary" size="lg">
-                <Button.LeftIcon><Star size={16} /></Button.LeftIcon>
-                Browse icons
-              </Button>
-              <Button as={Link} to="/css" variant="ghost" size="lg">
-                <Button.LeftIcon><GridSmall size={16} /></Button.LeftIcon>
-                CSS lessons
-              </Button>
-            </div>
-            <div className="anim-fade-up flex flex-wrap gap-1.5 pt-1" style={stagger(4)}>
-              {['Zero dependencies', 'Light & dark', 'Typed end-to-end'].map((t) => (
-                <span key={t} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-medium text-content-secondary">
-                  {t}
+          <div className="flex flex-col items-start gap-6 text-left">
+            <Reveal index={0}>
+              <Link to="/components" className="home-announce">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-brand-muted px-2 py-0.5 text-xs font-semibold text-content-brand">
+                  <Flash size={11} />
+                  New
                 </span>
-              ))}
+                Compound APIs
+                <ArrowRight size={13} />
+              </Link>
+            </Reveal>
+            <Reveal index={1} as="h1">
+              <span className="home-display block text-content-strong">
+                Build product UIs,{' '}
+                <span className="text-content-brand">swiftly</span>.
+              </span>
+            </Reveal>
+            <Reveal index={2}>
+              <Text variant="para-lg" color="secondary" className="max-w-lg">
+                A typed, themeable React design system — icons, components, and
+                tokens that tree-shake to nothing you don&rsquo;t use. Flip the
+                preview light/dark to watch the tokens re-theme.
+              </Text>
+            </Reveal>
+            <Reveal index={3}>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link to="/components" className="home-cta">
+                  <Settings size={16} />
+                  Explore components
+                </Link>
+                <Link to="/icons" className="home-cta-outline">
+                  <Star size={16} />
+                  Browse icons
+                </Link>
+              </div>
+            </Reveal>
+            <Reveal index={4}>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {['Zero dependencies', 'Light & dark', 'Typed end-to-end'].map((t) => (
+                  <span key={t} className="rounded-full border border-stroke px-3 py-1 text-xs font-medium text-content-secondary">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Live preview showcased in a floating product frame */}
+          <Reveal index={3} className="w-full max-w-md justify-self-center lg:justify-self-end">
+            <div className="home-frame">
+              <PreviewApp />
             </div>
-          </div>
-
-          {/* Live preview */}
-          <div className="anim-fade-up w-full max-w-sm justify-self-center lg:justify-self-end" style={stagger(2)}>
-            <PreviewApp />
-          </div>
-        </div>
-
-        {/* Scroll cue — jumps to the first section below the hero */}
-        <div className="absolute inset-x-0 bottom-6 hidden justify-center sm:flex">
-          <button
-            type="button"
-            onClick={() =>
-              document.getElementById('home-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }
-            aria-label="Scroll to content"
-            className="group flex cursor-pointer flex-col items-center gap-1 rounded-lg px-3 py-1.5 text-content-muted transition-colors hover:text-content"
-          >
-            <Text variant="body-xs" color="inherit" className="tracking-wide uppercase">Scroll</Text>
-            <ExpandMore size={18} className="animate-bounce transition-transform group-hover:translate-y-0.5" />
-          </button>
+          </Reveal>
         </div>
       </section>
 
-      {/* ── Stats ──────────────────────────────────────────────────── */}
-      <Band tone="muted" id="home-content">
-        <div className="grid grid-cols-2 divide-y divide-stroke overflow-hidden rounded-2xl border border-stroke bg-surface-elevated sm:grid-cols-4 sm:divide-x sm:divide-y-0">
-          {STATS.map((s) => (
-            <StatItem key={s.label} {...s} />
-          ))}
+      {/* ── Stats — light band, big count-up numbers ─────────────────── */}
+      <section className="border-t border-stroke bg-surface-muted">
+        <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:px-8 lg:py-20">
+          <Reveal>
+            <span className="home-eyebrow text-content-brand">By the numbers</span>
+          </Reveal>
+          <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4">
+            {STATS.map((s, i) => (
+              <Reveal key={s.label} index={i}>
+                <StatBlock {...s} />
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </Band>
+      </section>
 
-      {/* ── Why Swift ──────────────────────────────────────────────── */}
-      <Band>
-        <div className="mb-8 flex flex-col items-center gap-1 text-center">
-          <SectionLabel>Why Swift</SectionLabel>
-          <Text variant="heading-md" fontWeight="bold">Built to ship fast and stay consistent.</Text>
-          <Text variant="para-md" color="secondary" className="max-w-xl">
-            One token layer, accessible out of the box, and nothing you don&rsquo;t import.
-          </Text>
+      {/* ── Why Swift — centered heading + feature-card grid ─────────── */}
+      <section className="bg-surface">
+        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 lg:py-24">
+          <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
+            <Reveal>
+              <span className="home-eyebrow text-content-brand">Why Swift</span>
+            </Reveal>
+            <Reveal index={1}>
+              <Text className="home-display-sm" color="primary">
+                Built to ship fast and stay consistent.
+              </Text>
+            </Reveal>
+            <Reveal index={2}>
+              <Text variant="para-md" color="secondary">
+                One token layer, accessible out of the box, and nothing you
+                don&rsquo;t import.
+              </Text>
+            </Reveal>
+          </div>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {PRINCIPLES.map(({ icon: Icon, title, blurb }, i) => (
+              <Reveal key={title} index={i}>
+                <div className="home-card flex h-full flex-col gap-3 p-6">
+                  <span className="home-icon-chip">
+                    <Icon size={20} />
+                  </span>
+                  <Text variant="body-lg" fontWeight="semibold" color="primary">{title}</Text>
+                  <Text variant="body-sm" color="secondary">{blurb}</Text>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {PRINCIPLES.map(({ icon: Icon, accent, title, blurb }, i) => (
-            <div key={title} className="anim-fade-up" style={stagger(i)}>
-              <Card variant="elevated" className="hover-lift h-full">
-                <Card.Content>
-                  <div className="flex flex-col gap-2">
-                    <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tintFor(accent)} ${accent}`}>
-                      <Icon size={20} />
-                    </span>
-                    <Text variant="body-md" fontWeight="semibold" color="primary">{title}</Text>
-                    <Text variant="body-xs" color="secondary">{blurb}</Text>
-                  </div>
-                </Card.Content>
-              </Card>
-            </div>
-          ))}
-        </div>
-      </Band>
+      </section>
 
-      {/* ── Explore (tabs) ─────────────────────────────────────────── */}
-      <Band tone="muted">
-        <div className="mb-8 flex flex-col items-center gap-1 text-center">
-          <SectionLabel>Explore</SectionLabel>
-          <Text variant="heading-md" fontWeight="bold">Everything in its own tab.</Text>
-          <Text variant="para-md" color="secondary" className="max-w-xl">
-            Pick a destination — components, icons, the CSS lessons, or the design tokens.
-          </Text>
+      {/* ── Explore — feature cards with live previews ───────────────── */}
+      <section className="bg-surface-muted">
+        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 lg:py-24">
+          <div className="mx-auto mb-12 flex max-w-2xl flex-col items-center gap-2 text-center">
+            <Reveal>
+              <span className="home-eyebrow text-content-brand">Explore</span>
+            </Reveal>
+            <Reveal index={1}>
+              <Text className="home-display-sm" color="primary">Everything in its own tab.</Text>
+            </Reveal>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {SECTIONS.map((s, i) => (
+              <Reveal key={s.to} index={i}>
+                <ExploreCard to={s.to} label={s.label} meta={s.meta} blurb={s.blurb} icon={s.icon} />
+              </Reveal>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {SECTIONS.map((s, i) => (
-            <SectionCard key={s.to} i={i} {...s} />
-          ))}
-        </div>
-      </Band>
+      </section>
 
       {/* ── Get started ────────────────────────────────────────────── */}
-      <Band>
-        <div className="grid items-center gap-8 lg:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <SectionLabel>Get started</SectionLabel>
-            <Text variant="heading-md" fontWeight="bold">Two packages, one import.</Text>
-            <Text variant="para-md" color="secondary" className="max-w-md">
-              Add the packages, import the stylesheet once, and compose — themed and
-              tree-shakeable out of the box. Zero runtime dependencies; React is the only peer.
-            </Text>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Button as={Link} to="/components">
-                Open the docs
-                <Button.RightIcon><ArrowRight size={14} /></Button.RightIcon>
-              </Button>
-              <Button as={Link} to="/foundations" variant="secondary">Design tokens</Button>
+      <section className="bg-surface">
+        <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 lg:py-24">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div className="flex flex-col gap-4">
+              <Reveal>
+                <span className="home-eyebrow text-content-brand">Get started</span>
+              </Reveal>
+              <Reveal index={1}>
+                <Text className="home-display-sm" color="primary">Two packages, one import.</Text>
+              </Reveal>
+              <Reveal index={2}>
+                <Text variant="para-md" color="secondary" className="max-w-md">
+                  Add the packages, import the stylesheet once, and compose —
+                  themed and tree-shakeable out of the box. Zero runtime
+                  dependencies; React is the only peer.
+                </Text>
+              </Reveal>
+              <Reveal index={3}>
+                <div className="mt-2 flex flex-wrap gap-3">
+                  <Link to="/components" className="home-cta">
+                    Open the docs
+                    <ArrowRight size={16} />
+                  </Link>
+                  <Link to="/foundations" className="home-cta-outline">
+                    Design tokens
+                  </Link>
+                </div>
+              </Reveal>
             </div>
-          </div>
-          <div className="rounded-2xl border border-stroke bg-surface-elevated p-5 shadow-level1">
-            <CodeBlock code={SETUP_SNIPPET} />
+            <Reveal index={2} className="home-frame">
+              <div className="rounded-2xl bg-surface-elevated p-5">
+                <CodeBlock code={SETUP_SNIPPET} />
+              </div>
+            </Reveal>
           </div>
         </div>
-      </Band>
+      </section>
 
       <HomeFooter />
     </div>

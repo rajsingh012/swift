@@ -65,7 +65,7 @@ const defaultVariantMapping: Record<TextVariant, TextElementTag> = {
   'body-xs': 'span',
 }
 
-export const Text = forwardRef<HTMLElement, TextProps>(function Text(
+const TextRoot = forwardRef<HTMLElement, TextProps>(function Text(
   {
     variant = 'body-md',
     fontWeight,
@@ -124,4 +124,6 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   return createElement(tag, ownProps)
 })
 
-Text.displayName = 'Text'
+TextRoot.displayName = 'Text'
+
+export const Text = Object.assign(TextRoot, { Root: TextRoot })

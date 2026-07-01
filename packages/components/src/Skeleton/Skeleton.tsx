@@ -31,7 +31,7 @@ function dim(value: number | string | undefined): string | undefined {
  * loading region in your own `aria-busy`/`role="status"` container so AT
  * announces the loading state once, rather than per-bone.
  */
-export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
+const SkeletonRoot = forwardRef<HTMLDivElement, SkeletonProps>(
   function Skeleton(props, ref) {
     const {
       variant = DEFAULT_VARIANT,
@@ -102,4 +102,6 @@ export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
     )
   },
 )
-Skeleton.displayName = 'Skeleton'
+SkeletonRoot.displayName = 'Skeleton'
+
+export const Skeleton = Object.assign(SkeletonRoot, { Root: SkeletonRoot })

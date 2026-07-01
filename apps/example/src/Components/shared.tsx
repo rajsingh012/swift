@@ -12,10 +12,10 @@ export function SectionHeader({ children }: { children: ReactNode }) {
       className="mb-3 flex items-center gap-2 uppercase tracking-wide"
       variantMapping={{ 'body-xs': 'h2' }}
     >
-      {/* Leading accent dash — decorative, token-colored. */}
+      {/* Leading accent dash — decorative, neon-mint accent. */}
       <span
         aria-hidden
-        className="h-0.5 w-3 shrink-0 rounded-full bg-surface-brand"
+        className="h-0.5 w-3 shrink-0 rounded-full bg-[var(--kudos-accent)]"
       />
       {children}
     </Text>

@@ -59,4 +59,15 @@ export const linkSizeClasses: Record<ButtonSize, string> = {
   lg: 'h-auto px-0 text-lg gap-2',
 }
 
+/**
+ * Icon slot classes for the `Button.LeftIcon` / `Button.RightIcon` parts.
+ * Sized to match the button's typographic scale so glyphs align optically
+ * with the label. `[&>svg]` targets a single child SVG when present.
+ */
+export const iconSlotSizeClasses: Record<ButtonSize, string> = {
+  sm: 'inline-flex shrink-0 items-center justify-center [&>svg]:size-4',
+  md: 'inline-flex shrink-0 items-center justify-center [&>svg]:size-5',
+  lg: 'inline-flex shrink-0 items-center justify-center [&>svg]:size-6',
+}
+
 export { cx } from '../internal/cx'

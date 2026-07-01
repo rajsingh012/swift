@@ -44,7 +44,7 @@ const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : use
  * Built on a real native `<textarea>`, so it participates in forms and works
  * with `value`/`defaultValue` exactly like the browser element.
  */
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+const TextareaRoot = forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(props, ref) {
     const {
       size = DEFAULT_SIZE,
@@ -232,4 +232,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     )
   },
 )
-Textarea.displayName = 'Textarea'
+TextareaRoot.displayName = 'Textarea'
+
+export const Textarea = Object.assign(TextareaRoot, { Root: TextareaRoot })

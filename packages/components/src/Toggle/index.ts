@@ -14,3 +14,6 @@ export type {
   ToggleGroupOrientation,
   ToggleGroupClasses,
 } from './Toggle.types'
+export type { ToggleItemContextValue } from './Toggle.context'
+export type { ToggleLabelProps } from './ToggleLabel'
+export type { ToggleIconProps } from './ToggleIcon'
