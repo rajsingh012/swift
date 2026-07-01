@@ -258,12 +258,197 @@
   -webkit-text-stroke-color: var(--kudos-accent);
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   HOME (minimal) LAYER
+
+   A clean, light, token-driven homepage look that replaces the Kudos
+   editorial treatment on the landing route. Restrained type, generous
+   whitespace, the design-system brand accent, and hairline borders.
+   Fully theme-aware (everything resolves from semantic tokens) and all
+   motion is covered by the reduced-motion block below.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Oversized-but-calm display headline: tight leading, slight negative
+   tracking, fluid size. No fixed colors — inherits from semantic tokens. */
+.home-display {
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-size: clamp(2.75rem, 6.5vw, 5rem);
+  text-wrap: balance;
+}
+.home-display-sm {
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  text-wrap: balance;
+}
+
+/* Wide-tracked uppercase micro label. */
+.home-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ── SaaS landing treatment ─────────────────────────────────────────
+   A modern product-landing look (Linear / Vercel / Stripe docs): a
+   soft gradient hero wash, an announcement pill, a "product frame" that
+   showcases the live preview, and lifting feature cards. All colors
+   resolve from semantic tokens so both themes read correctly. */
+
+/* Ambient gradient wash behind the hero — a soft brand halo top-center
+   plus a faint secondary bloom, fading into the page surface. */
+.home-hero {
+  background:
+    radial-gradient(
+      60% 55% at 50% -10%,
+      color-mix(in oklab, var(--color-surface-brand, #3b82f6) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 40% at 85% 10%,
+      color-mix(in oklab, var(--color-surface-highlight, #8b5cf6) 14%, transparent),
+      transparent 70%
+    ),
+    var(--color-surface, #fff);
+}
+
+/* Subtle dotted grid overlay for depth (sits under content via ::before). */
+.home-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--color-content, #000) 8%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+  mask-image: radial-gradient(70% 60% at 50% 0%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 0%, #000 30%, transparent 75%);
+}
+
+/* Announcement pill — small rounded chip with a leading accent dot. */
+.home-announce {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.85rem 0.35rem 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid var(--color-stroke, rgb(0 0 0 / 0.1));
+  background-color: var(--color-surface-elevated, #fff);
+  color: var(--color-content-secondary, #444);
+  box-shadow: var(--shadow-level1, 0 1px 2px rgb(0 0 0 / 0.06));
+}
+
+/* Product frame — the "app screenshot" container that showcases the live
+   preview. Gradient hairline border + generous shadow so it floats. */
+.home-frame {
+  border-radius: 1.25rem;
+  padding: 0.5rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--color-surface-brand, #3b82f6) 30%, transparent),
+    color-mix(in oklab, var(--color-surface-highlight, #8b5cf6) 22%, transparent) 55%,
+    var(--color-stroke, rgb(0 0 0 / 0.1))
+  );
+  box-shadow: var(--shadow-level4, 0 24px 60px -18px rgb(0 0 0 / 0.35));
+}
+
+/* Lifting feature card — rounded, elevated, brightens + rises on hover. */
+.home-card {
+  border-radius: 1rem;
+  border: 1px solid var(--color-stroke, rgb(0 0 0 / 0.08));
+  background-color: var(--color-surface-elevated, #fff);
+  box-shadow: var(--shadow-level1, 0 1px 3px rgb(0 0 0 / 0.06));
+  transition:
+    transform var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    box-shadow var(--motion-duration-normal, 200ms) ease-out,
+    border-color var(--motion-duration-normal, 200ms) ease-out;
+}
+.home-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-level3, 0 16px 40px -14px rgb(0 0 0 / 0.28));
+  border-color: var(--color-stroke-brand, var(--color-brand-400));
+}
+
+/* Icon chip inside a feature card — soft brand-tinted rounded square. */
+.home-icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-surface-brand-muted, color-mix(in oklab, var(--color-surface-brand, #3b82f6) 14%, transparent));
+  color: var(--color-content-brand, var(--color-brand-600));
+}
+
+/* Solid brand CTA — resolves from semantic tokens so it re-themes. */
+.home-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.7rem 1.4rem;
+  font-weight: 600;
+  background-color: var(--color-surface-brand, var(--color-brand-500));
+  color: var(--color-content-on-brand, #fff);
+  transition:
+    background-color var(--motion-duration-fast, 150ms) ease-out,
+    transform var(--motion-duration-normal, 200ms)
+      var(--motion-ease-standard, ease-out),
+    box-shadow var(--motion-duration-normal, 200ms) ease-out;
+}
+.home-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-level2, 0 6px 20px -8px rgb(0 0 0 / 0.25));
+}
+
+/* Hairline outline CTA — inherits currentColor, works on any surface. */
+.home-cta-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.7rem 1.4rem;
+  font-weight: 600;
+  border: 1px solid var(--color-stroke, color-mix(in oklab, currentColor 20%, transparent));
+  color: var(--color-content, currentColor);
+  transition:
+    border-color var(--motion-duration-normal, 200ms) ease-out,
+    background-color var(--motion-duration-normal, 200ms) ease-out,
+    transform var(--motion-duration-normal, 200ms) ease-out;
+}
+.home-cta-outline:hover {
+  border-color: var(--color-stroke-brand, var(--color-brand-500));
+  color: var(--color-content-brand, var(--color-brand-600));
+  transform: translateY(-1px);
+}
+
 /* ── Reduced motion ─────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   .theme-icon-swap {
     animation-duration: 1ms !important;
     animation-delay: 0ms !important;
+  }
+
+  .home-cta,
+  .home-cta-outline,
+  .home-card {
+    transition: none;
+  }
+  .home-cta:hover,
+  .home-cta-outline:hover,
+  .home-card:hover {
+    transform: none;
   }
 
   .footer-heart {

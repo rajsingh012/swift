@@ -162,28 +162,6 @@ function FieldLabel({ children }: { children: ReactNode }) {
   )
 }
 
-/** Looping wordmark marquee — the Kudos "KUDOS KUDOS KUDOS" band, reused
- *  here as "SWIFT". Outlined display type drifting horizontally. */
-function WordmarkMarquee({ word = 'SWIFT', count = 8 }: { word?: string; count?: number }) {
-  const words = Array.from({ length: count })
-  return (
-    <div className="marquee select-none py-6" aria-hidden>
-      <div className="marquee-track items-center gap-8">
-        {words.map((_, i) => (
-          <span key={`a-${i}`} className="kudos-marquee-word">
-            {word}
-          </span>
-        ))}
-        {words.map((_, i) => (
-          <span key={`b-${i}`} className="kudos-marquee-word">
-            {word}
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 /* ── Live preview: a real composed mini-app that re-themes on the spot ── */
 
 function PreviewApp() {
@@ -323,18 +301,18 @@ function PreviewApp() {
 
 /* ── Sections ───────────────────────────────────────────────────────── */
 
-/** A single big count-up stat, Kudos style: huge number, mint accent, note. */
+/** A single count-up stat: big number in the brand accent, label + note. */
 function StatBlock({ value, suffix, label, note }: {
   value: number; suffix: string; label: string; note: string
 }) {
   const n = useCountUp(value)
   return (
-    <div className="flex flex-col gap-1 border-t border-white/10 pt-5">
-      <Text variant="heading-xl" fontWeight="bold" color="inherit" className="kudos-accent-text tabular-nums leading-none">
+    <div className="flex flex-col gap-1 border-t border-stroke pt-5">
+      <Text variant="heading-xl" fontWeight="bold" color="inherit" className="tabular-nums leading-none text-content-brand">
         {n}{suffix}
       </Text>
-      <Text variant="body-md" fontWeight="semibold" color="inherit">{label}</Text>
-      <Text variant="body-sm" color="inherit" className="opacity-70">{note}</Text>
+      <Text variant="body-md" fontWeight="semibold" color="primary">{label}</Text>
+      <Text variant="body-sm" color="muted">{note}</Text>
     </div>
   )
 }
@@ -402,36 +380,29 @@ function ExplorePreview({ to }: { to: SectionPath }) {
   )
 }
 
-/** Large editorial row: index number + label on the left, live preview +
- *  "open" link on the right. The whole row is a link target. Kudos uses
- *  these big bordered list rows that highlight on hover. */
-function SectionRow({ n, to, label, meta, blurb }: {
-  n: number; to: SectionPath; label: string; meta: string; blurb: string
+/** Explore feature card: icon + label + meta header, blurb, a live preview
+ *  tile, and a footer "Open" affordance. The whole card is a link that
+ *  lifts on hover. */
+function ExploreCard({ to, label, meta, blurb, icon: Icon }: {
+  to: SectionPath; label: string; meta: string; blurb: string; icon: IconComponent
 }) {
   return (
-    <Link
-      to={to}
-      className="group grid items-center gap-4 border-t border-stroke py-7 transition-colors hover:bg-surface-muted sm:grid-cols-[auto_1fr_auto] sm:gap-8 sm:px-2"
-    >
-      <Text variant="body-sm" fontFamily="mono" color="muted" className="kudos-accent-text">
-        {String(n).padStart(2, '0')}
-      </Text>
-      <div className="flex min-w-0 flex-col gap-1">
-        <div className="flex items-baseline gap-3">
-          <Text variant="heading-lg" fontWeight="bold" className="transition-transform duration-200 group-hover:translate-x-1">
-            {label}
-          </Text>
+    <Link to={to} className="home-card group flex h-full flex-col gap-4 p-6">
+      <div className="flex items-center gap-3">
+        <span className="home-icon-chip">
+          <Icon size={20} />
+        </span>
+        <div className="flex flex-col">
+          <Text variant="body-lg" fontWeight="semibold" color="primary">{label}</Text>
           <Text variant="body-xs" color="muted" className="uppercase tracking-wide">{meta}</Text>
         </div>
-        <Text variant="body-sm" color="secondary" className="max-w-md">{blurb}</Text>
-      </div>
-      <div className="flex items-center gap-4 sm:justify-end">
-        <div className="hidden rounded-xl border border-stroke-muted bg-surface-muted p-3 md:block">
-          <ExplorePreview to={to} />
-        </div>
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-stroke text-content transition-colors duration-200 group-hover:border-transparent group-hover:bg-[var(--kudos-accent)] group-hover:text-[var(--kudos-accent-ink)]">
-          <ArrowRight size={18} className="group-hover-nudge" />
+        <span className="ml-auto flex size-9 shrink-0 items-center justify-center rounded-full border border-stroke text-content-muted transition-colors duration-200 group-hover:border-transparent group-hover:bg-surface-brand group-hover:text-content-on-brand">
+          <ArrowRight size={16} className="group-hover-nudge" />
         </span>
+      </div>
+      <Text variant="body-sm" color="secondary">{blurb}</Text>
+      <div className="mt-auto rounded-xl border border-stroke-muted bg-surface-muted p-4">
+        <ExplorePreview to={to} />
       </div>
     </Link>
   )
@@ -439,31 +410,29 @@ function SectionRow({ n, to, label, meta, blurb }: {
 
 function HomeFooter() {
   return (
-    <footer className="kudos-ink border-t border-white/10">
+    <footer className="border-t border-stroke bg-surface">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-16 sm:px-8">
-        <div className="flex flex-col gap-6">
-          <Text className="kudos-display-sm" color="inherit">
-            Build product UIs, <span className="kudos-accent-text">swiftly</span>.
+        <div className="flex flex-col items-start gap-6">
+          <Text className="home-display-sm" color="primary">
+            Build product UIs, <span className="text-content-brand">swiftly</span>.
           </Text>
-          <div>
-            <Link to="/components" className="kudos-pill">
-              Explore components
-              <ArrowRight size={16} />
-            </Link>
-          </div>
+          <Link to="/components" className="home-cta">
+            Explore components
+            <ArrowRight size={16} />
+          </Link>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6">
-          <Text variant="body-xs" color="inherit" className="opacity-60">© {new Date().getFullYear()} Swift Design System</Text>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stroke pt-6">
+          <Text variant="body-xs" color="muted">© {new Date().getFullYear()} Swift Design System</Text>
           <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
             {SECTIONS.map(({ to, label }) => (
-              <Link key={to} to={to} className="text-sm opacity-70 transition-opacity hover:opacity-100">
+              <Link key={to} to={to} className="text-sm text-content-secondary transition-colors hover:text-content">
                 {label}
               </Link>
             ))}
           </nav>
-          <Text variant="body-xs" color="inherit" className="inline-flex items-center gap-1.5 opacity-60">
+          <Text variant="body-xs" color="muted" className="inline-flex items-center gap-1.5">
             Made with
-            <Heart size={12} title="love" className="kudos-accent-text" />
+            <Heart size={12} title="love" className="text-content-brand" />
             by the Swift team
           </Text>
         </div>
@@ -475,37 +444,41 @@ function HomeFooter() {
 function HomeRoute() {
   return (
     <div className="h-full w-full overflow-y-auto bg-surface">
-      {/* ── Hero — dark editorial band ───────────────────────────────── */}
-      <section className="kudos-ink kudos-ink-glow relative isolate overflow-hidden">
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-20 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
+      {/* ── Hero — side-by-side: pitch left, live preview right ──────── */}
+      <section className="home-hero relative isolate overflow-hidden">
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-16 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-24">
           {/* Pitch */}
           <div className="flex flex-col items-start gap-6 text-left">
             <Reveal index={0}>
-              <span className="kudos-eyebrow inline-flex items-center gap-2 opacity-80">
-                <span className="size-2 rounded-full bg-[var(--kudos-accent)]" />
-                Swift Design System
-              </span>
+              <Link to="/components" className="home-announce">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-brand-muted px-2 py-0.5 text-xs font-semibold text-content-brand">
+                  <Flash size={11} />
+                  New
+                </span>
+                Compound APIs
+                <ArrowRight size={13} />
+              </Link>
             </Reveal>
             <Reveal index={1} as="h1">
-              <span className="kudos-display block" style={{ color: 'var(--kudos-on-ink)' }}>
+              <span className="home-display block text-content-strong">
                 Build product UIs,{' '}
-                <span className="kudos-accent-text">swiftly</span>.
+                <span className="text-content-brand">swiftly</span>.
               </span>
             </Reveal>
             <Reveal index={2}>
-              <Text variant="para-lg" color="inherit" className="max-w-md opacity-75">
-                Icons, components, and tokens — typed, themed, and tree-shakeable.
-                The preview beside this is live; flip it light/dark to watch the
-                tokens re-theme.
+              <Text variant="para-lg" color="secondary" className="max-w-lg">
+                A typed, themeable React design system — icons, components, and
+                tokens that tree-shake to nothing you don&rsquo;t use. Flip the
+                preview light/dark to watch the tokens re-theme.
               </Text>
             </Reveal>
             <Reveal index={3}>
               <div className="flex flex-wrap items-center gap-3">
-                <Link to="/components" className="kudos-pill">
+                <Link to="/components" className="home-cta">
                   <Settings size={16} />
                   Explore components
                 </Link>
-                <Link to="/icons" className="kudos-pill-outline" style={{ color: 'var(--kudos-on-ink)' }}>
+                <Link to="/icons" className="home-cta-outline">
                   <Star size={16} />
                   Browse icons
                 </Link>
@@ -514,7 +487,7 @@ function HomeRoute() {
             <Reveal index={4}>
               <div className="flex flex-wrap gap-2 pt-1">
                 {['Zero dependencies', 'Light & dark', 'Typed end-to-end'].map((t) => (
-                  <span key={t} className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium opacity-80">
+                  <span key={t} className="rounded-full border border-stroke px-3 py-1 text-xs font-medium text-content-secondary">
                     {t}
                   </span>
                 ))}
@@ -522,23 +495,20 @@ function HomeRoute() {
             </Reveal>
           </div>
 
-          {/* Live preview */}
-          <Reveal index={2} className="w-full max-w-sm justify-self-center lg:justify-self-end">
-            <PreviewApp />
+          {/* Live preview showcased in a floating product frame */}
+          <Reveal index={3} className="w-full max-w-md justify-self-center lg:justify-self-end">
+            <div className="home-frame">
+              <PreviewApp />
+            </div>
           </Reveal>
-        </div>
-
-        {/* Wordmark marquee at the bottom of the hero band */}
-        <div className="border-t border-white/10" style={{ color: 'var(--kudos-on-ink)' }}>
-          <WordmarkMarquee word="SWIFT" />
         </div>
       </section>
 
-      {/* ── Stats — dark band, big count-up numbers ──────────────────── */}
-      <section className="kudos-ink border-t border-white/10">
+      {/* ── Stats — light band, big count-up numbers ─────────────────── */}
+      <section className="border-t border-stroke bg-surface-muted">
         <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:px-8 lg:py-20">
           <Reveal>
-            <span className="kudos-eyebrow opacity-70">By the numbers</span>
+            <span className="home-eyebrow text-content-brand">By the numbers</span>
           </Reveal>
           <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-4">
             {STATS.map((s, i) => (
@@ -550,58 +520,56 @@ function HomeRoute() {
         </div>
       </section>
 
-      {/* ── Why Swift ──────────────────────────────────────────────── */}
+      {/* ── Why Swift — centered heading + feature-card grid ─────────── */}
       <section className="bg-surface">
         <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 lg:py-24">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-            <div className="flex flex-col gap-3">
-              <Reveal>
-                <span className="kudos-eyebrow text-content-muted">Why Swift</span>
+          <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
+            <Reveal>
+              <span className="home-eyebrow text-content-brand">Why Swift</span>
+            </Reveal>
+            <Reveal index={1}>
+              <Text className="home-display-sm" color="primary">
+                Built to ship fast and stay consistent.
+              </Text>
+            </Reveal>
+            <Reveal index={2}>
+              <Text variant="para-md" color="secondary">
+                One token layer, accessible out of the box, and nothing you
+                don&rsquo;t import.
+              </Text>
+            </Reveal>
+          </div>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {PRINCIPLES.map(({ icon: Icon, title, blurb }, i) => (
+              <Reveal key={title} index={i}>
+                <div className="home-card flex h-full flex-col gap-3 p-6">
+                  <span className="home-icon-chip">
+                    <Icon size={20} />
+                  </span>
+                  <Text variant="body-lg" fontWeight="semibold" color="primary">{title}</Text>
+                  <Text variant="body-sm" color="secondary">{blurb}</Text>
+                </div>
               </Reveal>
-              <Reveal index={1}>
-                <Text className="kudos-display-sm">
-                  Built to ship fast and stay consistent.
-                </Text>
-              </Reveal>
-              <Reveal index={2}>
-                <Text variant="para-md" color="secondary" className="max-w-md">
-                  One token layer, accessible out of the box, and nothing you
-                  don&rsquo;t import.
-                </Text>
-              </Reveal>
-            </div>
-            <div className="grid gap-px overflow-hidden rounded-2xl border border-stroke bg-stroke sm:grid-cols-2">
-              {PRINCIPLES.map(({ icon: Icon, title, blurb }, i) => (
-                <Reveal key={title} index={i} className="bg-surface-elevated">
-                  <div className="flex h-full flex-col gap-3 p-6">
-                    <span className="flex size-11 items-center justify-center rounded-full bg-surface-muted text-content kudos-accent-text">
-                      <Icon size={20} />
-                    </span>
-                    <Text variant="body-lg" fontWeight="semibold" color="primary">{title}</Text>
-                    <Text variant="body-sm" color="secondary">{blurb}</Text>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── Explore — big editorial rows ───────────────────────────── */}
+      {/* ── Explore — feature cards with live previews ───────────────── */}
       <section className="bg-surface-muted">
         <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 lg:py-24">
-          <div className="mb-8 flex flex-col gap-2">
+          <div className="mx-auto mb-12 flex max-w-2xl flex-col items-center gap-2 text-center">
             <Reveal>
-              <span className="kudos-eyebrow text-content-muted">Explore</span>
+              <span className="home-eyebrow text-content-brand">Explore</span>
             </Reveal>
             <Reveal index={1}>
-              <Text className="kudos-display-sm">Everything in its own tab.</Text>
+              <Text className="home-display-sm" color="primary">Everything in its own tab.</Text>
             </Reveal>
           </div>
-          <div className="border-b border-stroke">
+          <div className="grid gap-5 sm:grid-cols-2">
             {SECTIONS.map((s, i) => (
               <Reveal key={s.to} index={i}>
-                <SectionRow n={i + 1} to={s.to} label={s.label} meta={s.meta} blurb={s.blurb} />
+                <ExploreCard to={s.to} label={s.label} meta={s.meta} blurb={s.blurb} icon={s.icon} />
               </Reveal>
             ))}
           </div>
@@ -614,10 +582,10 @@ function HomeRoute() {
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col gap-4">
               <Reveal>
-                <span className="kudos-eyebrow text-content-muted">Get started</span>
+                <span className="home-eyebrow text-content-brand">Get started</span>
               </Reveal>
               <Reveal index={1}>
-                <Text className="kudos-display-sm">Two packages, one import.</Text>
+                <Text className="home-display-sm" color="primary">Two packages, one import.</Text>
               </Reveal>
               <Reveal index={2}>
                 <Text variant="para-md" color="secondary" className="max-w-md">
@@ -628,18 +596,20 @@ function HomeRoute() {
               </Reveal>
               <Reveal index={3}>
                 <div className="mt-2 flex flex-wrap gap-3">
-                  <Link to="/components" className="kudos-pill">
+                  <Link to="/components" className="home-cta">
                     Open the docs
                     <ArrowRight size={16} />
                   </Link>
-                  <Link to="/foundations" className="kudos-pill-outline text-content">
+                  <Link to="/foundations" className="home-cta-outline">
                     Design tokens
                   </Link>
                 </div>
               </Reveal>
             </div>
-            <Reveal index={2} className="rounded-2xl border border-stroke bg-surface-elevated p-5 shadow-level2">
-              <CodeBlock code={SETUP_SNIPPET} />
+            <Reveal index={2} className="home-frame">
+              <div className="rounded-2xl bg-surface-elevated p-5">
+                <CodeBlock code={SETUP_SNIPPET} />
+              </div>
             </Reveal>
           </div>
         </div>

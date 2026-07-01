@@ -16,6 +16,20 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Type-check @swift/components against its source, mirroring the Vite
+       alias in vite.config.ts. This keeps `tsc -b` independent of the
+       package's built `dist/*.d.ts`, which may be missing or stale on a
+       fresh CI checkout (e.g. Vercel) and caused TS2307 across every subpath
+       import. `@swift/icons/*` is code-generated with no persistent source,
+       so it is covered by an ambient declaration in src/ instead. */
+    "paths": {
+      "@swift/components": ["../../packages/components/src/index.ts"],
+      "@swift/components/*": ["../../packages/components/src/*/index.ts"],
+      "@swift/icons": ["./src/swift-icons.d.ts"],
+      "@swift/icons/download": ["../../packages/icons/src/utils/download.ts"],
+      "@swift/icons/*": ["./src/swift-icons.d.ts"]
+    },
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
