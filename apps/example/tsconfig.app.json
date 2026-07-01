@@ -20,14 +20,17 @@
        alias in vite.config.ts. This keeps `tsc -b` independent of the
        package's built `dist/*.d.ts`, which may be missing or stale on a
        fresh CI checkout (e.g. Vercel) and caused TS2307 across every subpath
-       import. `@swift/icons/*` is code-generated with no persistent source,
-       so it is covered by an ambient declaration in src/ instead. */
+       import. Both `tsc` AND Vite 8's rolldown bundler read these `paths`;
+       the components entries point at real `.ts` source, so both resolve
+       correctly. `@swift/icons` is intentionally NOT mapped: it is
+       code-generated with no persistent source, so an alias could only point
+       at a declaration file — which the bundler would then try to load as
+       runtime code, causing MISSING_EXPORT for every icon. Icons resolve
+       normally through the package `exports` map to their built `dist`,
+       which the root build produces before the example builds. */
     "paths": {
       "@swift/components": ["../../packages/components/src/index.ts"],
-      "@swift/components/*": ["../../packages/components/src/*/index.ts"],
-      "@swift/icons": ["./src/swift-icons.d.ts"],
-      "@swift/icons/download": ["../../packages/icons/src/utils/download.ts"],
-      "@swift/icons/*": ["./src/swift-icons.d.ts"]
+      "@swift/components/*": ["../../packages/components/src/*/index.ts"]
     },
 
     /* Linting */
