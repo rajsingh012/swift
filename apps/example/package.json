@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "pnpm --filter @swift/icons --filter @swift/components build",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
