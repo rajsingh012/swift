@@ -1,0 +1,11 @@
+/**
+ * Spinner — the animation itself is Tailwind's `animate-spin`; this file
+ * only slows it to a crawl under reduced-motion so the loading state stays
+ * perceivable without continuous motion.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-spinner-svg {
+    animation-duration: 2.4s;
+  }
+}

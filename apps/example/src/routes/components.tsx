@@ -27,23 +27,36 @@ import {
   AvatarPanel,
   BadgePanel,
   BoxPanel,
+  BreadcrumbPanel,
   ButtonPanel,
   CardPanel,
   CarouselPanel,
   CheckboxPanel,
   ChipPanel,
+  CollapsiblePanel,
   DatePickerPanel,
+  DialogPanel,
+  DividerPanel,
+  DropdownMenuPanel,
   InputPanel,
   ListItemPanel,
+  PaginationPanel,
+  PopoverPanel,
+  ProgressPanel,
   RadioPanel,
   SegmentedControlPanel,
+  SelectPanel,
   SheetPanel,
+  SkeletonPanel,
   SliderPanel,
+  SpinnerPanel,
   SwitchPanel,
   TabsPanel,
   TextPanel,
+  TextareaPanel,
   ToastPanel,
   TimePickerPanel,
+  TogglePanel,
   TooltipPanel,
   YearPickerPanel,
 } from '../Components'
@@ -57,23 +70,36 @@ type ComponentName =
   | 'Avatar'
   | 'Badge'
   | 'Box'
+  | 'Breadcrumb'
   | 'Button'
   | 'Card'
   | 'Carousel'
   | 'Checkbox'
   | 'Chip'
+  | 'Collapsible'
   | 'DatePicker'
+  | 'Dialog'
+  | 'Divider'
+  | 'DropdownMenu'
   | 'Input'
   | 'ListItem'
+  | 'Pagination'
+  | 'Popover'
+  | 'Progress'
   | 'Radio'
   | 'SegmentedControl'
+  | 'Select'
   | 'Sheet'
+  | 'Skeleton'
   | 'Slider'
+  | 'Spinner'
   | 'Switch'
   | 'Tabs'
   | 'Text'
+  | 'Textarea'
   | 'Toast'
   | 'TimePicker'
+  | 'Toggle'
   | 'Tooltip'
   | 'YearPicker'
 
@@ -85,23 +111,36 @@ const components: ReadonlyArray<{ name: ComponentName; icon: IconComponent }> = 
   { name: 'Avatar', icon: Person },
   { name: 'Badge', icon: Tag },
   { name: 'Box', icon: GridSmall },
+  { name: 'Breadcrumb', icon: ArrowRightLong },
   { name: 'Button', icon: Check },
   { name: 'Card', icon: CreditCard },
   { name: 'Carousel', icon: ArrowRightLong },
   { name: 'Checkbox', icon: CheckCircle },
   { name: 'Chip', icon: Filter },
+  { name: 'Collapsible', icon: GridSmall },
   { name: 'DatePicker', icon: Calendar },
+  { name: 'Dialog', icon: View },
+  { name: 'Divider', icon: GridSmall },
+  { name: 'DropdownMenu', icon: Filter },
   { name: 'Input', icon: Edit },
   { name: 'ListItem', icon: Document },
+  { name: 'Pagination', icon: ArrowRightLong },
+  { name: 'Popover', icon: InfoCircle },
+  { name: 'Progress', icon: SandTimeFilled },
   { name: 'Radio', icon: CheckCircleFilled },
   { name: 'SegmentedControl', icon: GridSmall },
+  { name: 'Select', icon: Filter },
   { name: 'Sheet', icon: ArrowRightLong },
+  { name: 'Skeleton', icon: Document },
   { name: 'Slider', icon: Filter },
+  { name: 'Spinner', icon: SandTimeFilled },
   { name: 'Switch', icon: Notifications },
   { name: 'Tabs', icon: View },
   { name: 'Text', icon: Document },
+  { name: 'Textarea', icon: Edit },
   { name: 'Toast', icon: Alert },
   { name: 'TimePicker', icon: SandTimeFilled },
+  { name: 'Toggle', icon: Check },
   { name: 'Tooltip', icon: InfoCircle },
   { name: 'YearPicker', icon: CalendarModify },
 ]
@@ -112,23 +151,36 @@ const panelMap: Record<ComponentName, ComponentType> = {
   Avatar: AvatarPanel,
   Badge: BadgePanel,
   Box: BoxPanel,
+  Breadcrumb: BreadcrumbPanel,
   Button: ButtonPanel,
   Card: CardPanel,
   Carousel: CarouselPanel,
   Checkbox: CheckboxPanel,
   Chip: ChipPanel,
+  Collapsible: CollapsiblePanel,
   DatePicker: DatePickerPanel,
+  Dialog: DialogPanel,
+  Divider: DividerPanel,
+  DropdownMenu: DropdownMenuPanel,
   Input: InputPanel,
   ListItem: ListItemPanel,
+  Pagination: PaginationPanel,
+  Popover: PopoverPanel,
+  Progress: ProgressPanel,
   Radio: RadioPanel,
   SegmentedControl: SegmentedControlPanel,
+  Select: SelectPanel,
   Sheet: SheetPanel,
+  Skeleton: SkeletonPanel,
   Slider: SliderPanel,
+  Spinner: SpinnerPanel,
   Switch: SwitchPanel,
   Tabs: TabsPanel,
   Text: TextPanel,
+  Textarea: TextareaPanel,
   Toast: ToastPanel,
   TimePicker: TimePickerPanel,
+  Toggle: TogglePanel,
   Tooltip: TooltipPanel,
   YearPicker: YearPickerPanel,
 }

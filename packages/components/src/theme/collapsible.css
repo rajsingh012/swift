@@ -1,0 +1,25 @@
+/**
+ * Collapsible — height animation via the grid-template-rows 0fr ↔ 1fr trick,
+ * identical to Accordion. Plain CSS to avoid Tailwind arbitrary-variant
+ * escaping around `data-[state=closed]`.
+ */
+
+.swift-collapsible-content {
+  display: grid;
+  grid-template-rows: minmax(0, 0fr);
+  transition: grid-template-rows var(--motion-duration-normal, 200ms) ease-out;
+}
+
+.swift-collapsible-content[data-state="closed"] {
+  grid-template-rows: minmax(0, 0fr);
+}
+
+.swift-collapsible-content[data-state="open"] {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-collapsible-content {
+    transition: none;
+  }
+}

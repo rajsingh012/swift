@@ -1,0 +1,38 @@
+/**
+ * DropdownMenu — surface chrome lives in the component's Tailwind classes;
+ * this file only adds the per-side scale/fade entrance/exit animation and a
+ * sensible max-height so long menus scroll rather than overflow the viewport.
+ */
+
+.swift-menu-content {
+  --menu-animation-duration: var(--motion-duration-fast, 150ms);
+  --menu-ease: var(--motion-ease-snappy);
+  --menu-max-height: min(24rem, calc(100vh - 1rem));
+}
+
+.swift-menu-content[data-side="top"] { transform-origin: bottom; }
+.swift-menu-content[data-side="bottom"] { transform-origin: top; }
+.swift-menu-content[data-side="left"] { transform-origin: right; }
+.swift-menu-content[data-side="right"] { transform-origin: left; }
+
+.swift-menu-content[data-state="open"] {
+  animation: swift-menu-in var(--menu-animation-duration) var(--menu-ease) both;
+}
+.swift-menu-content[data-state="closed"] {
+  animation: swift-menu-out var(--menu-animation-duration) var(--menu-ease) both;
+}
+
+@keyframes swift-menu-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes swift-menu-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-menu-content {
+    animation-duration: 1ms !important;
+  }
+}

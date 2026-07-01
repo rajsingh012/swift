@@ -1,0 +1,68 @@
+/**
+ * Skeleton — placeholder colour + the two animation styles.
+ *
+ *  - pulse: a gentle opacity breathe (cheap, no layout).
+ *  - wave:  a sheen sweeping left→right via a moving gradient.
+ *
+ * Text bones with no explicit height fall back to ~1em so a row of text
+ * skeletons matches the line they stand in for.
+ */
+
+.swift-skeleton {
+  /* `stroke` (neutral-200 light / neutral-700 dark) keeps a visible step of
+     contrast on BOTH the page surface and an elevated card — unlike
+     surface-muted, which collapses to surface-elevated in dark mode and
+     vanishes. */
+  --skeleton-bg: var(--color-stroke);
+  --skeleton-sheen: color-mix(in srgb, var(--color-surface) 60%, transparent);
+
+  background-color: var(--skeleton-bg);
+}
+
+/* Text bones get an intrinsic height so a bare <Skeleton /> still shows. */
+.swift-skeleton[data-variant="text"] {
+  height: 1em;
+}
+
+/* ── Pulse ──────────────────────────────────────────────────────── */
+
+.swift-skeleton--pulse {
+  animation: swift-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes swift-skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ── Wave ───────────────────────────────────────────────────────── */
+
+.swift-skeleton--wave {
+  position: relative;
+  overflow: hidden;
+}
+
+.swift-skeleton--wave::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--skeleton-sheen),
+    transparent
+  );
+  animation: swift-skeleton-wave 1.6s linear infinite;
+}
+
+@keyframes swift-skeleton-wave {
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swift-skeleton--pulse,
+  .swift-skeleton--wave::after {
+    animation: none;
+  }
+}
