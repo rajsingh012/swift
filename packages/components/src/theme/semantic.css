@@ -28,6 +28,8 @@
 
   --color-surface-brand: var(--color-brand-500);
   --color-surface-brand-muted: var(--color-brand-50);
+  /* Gradient fill for large brand surfaces (primary buttons, hero). */
+  --color-surface-brand-gradient: var(--gradient-brand);
   --color-surface-highlight: var(--color-highlight-500);
   --color-surface-highlight-muted: var(--color-highlight-50);
   --color-surface-success: var(--color-success-500);
@@ -81,6 +83,7 @@
      the dark end of the palette so they still read as tinted-dark backdrops. */
   --color-surface-brand: var(--color-brand-500);
   --color-surface-brand-muted: var(--color-brand-900);
+  --color-surface-brand-gradient: var(--gradient-brand);
   --color-surface-highlight: var(--color-highlight-500);
   --color-surface-highlight-muted: var(--color-highlight-900);
   --color-surface-success: var(--color-success-500);

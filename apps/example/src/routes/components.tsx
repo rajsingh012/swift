@@ -234,11 +234,12 @@ function RouteComponent() {
                 <Button
                   variant="unstyled"
                   onClick={() => setSelected(name)}
+                  aria-current={isActive || undefined}
                   classes={{
                     root: `group relative flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-[background-color,color] duration-(--motion-duration-fast) ease-(--motion-ease-standard) ${
                       isActive
-                        ? 'bg-[var(--kudos-accent)] font-bold text-[var(--kudos-accent-ink)]'
-                        : 'font-medium text-content hover:bg-surface-muted'
+                        ? 'bg-surface-brand-muted font-semibold text-content-brand'
+                        : 'font-medium text-content hover:bg-surface-muted hover:text-content-strong'
                     }`,
                   }}
                 >
@@ -246,7 +247,7 @@ function RouteComponent() {
                     size={16}
                     className={`shrink-0 transition-[color,scale] duration-(--motion-duration-fast) ease-(--motion-ease-standard) group-hover:scale-[1.06] ${
                       isActive
-                        ? 'text-[var(--kudos-accent-ink)]'
+                        ? 'text-content-brand'
                         : 'text-content-muted group-hover:text-content'
                     }`}
                   />

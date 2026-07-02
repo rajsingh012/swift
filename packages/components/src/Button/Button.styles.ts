@@ -22,7 +22,7 @@ const chromeClasses =
 export const variantClasses: Record<ButtonVariant, string> = {
   primary:
     chromeClasses +
-    ' bg-surface-brand text-content-on-brand hover:not-disabled:bg-brand-600 active:not-disabled:bg-brand-700',
+    ' bg-[image:var(--color-surface-brand-gradient)] bg-surface-brand text-content-on-brand hover:not-disabled:bg-brand-600 active:not-disabled:bg-brand-700',
   secondary:
     chromeClasses +
     ' bg-surface-muted text-content-strong border border-stroke hover:not-disabled:bg-surface-subtle active:not-disabled:bg-surface',

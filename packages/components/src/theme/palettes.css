@@ -10,17 +10,24 @@
  */
 
 @theme static {
-  /* Brand (emerald) — anchored at brand-500 = #27ae60 */
-  --color-brand-50: #e9f8ef;
-  --color-brand-100: #c8edd6;
-  --color-brand-200: #95dab2;
-  --color-brand-300: #5ec488;
-  --color-brand-400: #38b66f;
-  --color-brand-500: #27ae60;
-  --color-brand-600: #209250;
-  --color-brand-700: #197540;
-  --color-brand-800: #115830;
-  --color-brand-900: #093a20;
+  /* Brand (cyan) — anchored at brand-500 = #00bdff. High end deepens toward
+     the gradient's #131ca2 indigo terminal so text/stroke tokens (which use
+     brand-700+) stay dark enough for contrast. */
+  --color-brand-50: #e5f8ff;
+  --color-brand-100: #b8ecff;
+  --color-brand-200: #7edcff;
+  --color-brand-300: #38caff;
+  --color-brand-400: #00bdff;
+  --color-brand-500: #00bdff;
+  --color-brand-600: #0a86c9;
+  --color-brand-700: #0f5b93;
+  --color-brand-800: #123a68;
+  --color-brand-900: #131ca2;
+
+  /* Brand gradient — cyan → indigo. Source of truth for large brand fills
+     (primary buttons, hero bands). Use via `bg-[image:var(--gradient-brand)]`
+     or the semantic `--color-surface-brand-gradient` alias. */
+  --gradient-brand: linear-gradient(97.83deg, #00bdff 6.22%, #131ca2 87.68%);
 
   /* Highlight (blue) */
   --color-highlight-50: #f0fbff;
@@ -87,18 +94,22 @@
    * Pick role-appropriate shades from this in semantic.css rather than
    * referencing neutrals directly in components.
    */
+  /* Neutrals carry a subtle indigo undertone (hue-matched to brand #101f9d)
+     so surfaces, text, and strokes feel on-brand in both themes. Lightness
+     steps are unchanged from the previous cool-gray ramp to preserve
+     contrast; only the hue/saturation shifts toward indigo. */
   --color-neutral-0: #ffffff;
-  --color-neutral-50: #f5f6fa;
-  --color-neutral-100: #f0f1f5;
-  --color-neutral-150: #e9eaf0;
-  --color-neutral-200: #cccfd9;
-  --color-neutral-300: #aeb2bf;
-  --color-neutral-400: #888e9d;
-  --color-neutral-500: #70778c;
-  --color-neutral-600: #4a4f63;
-  --color-neutral-700: #303547;
-  --color-neutral-800: #1b1e2f;
-  --color-neutral-900: #0a0e14;
+  --color-neutral-50: #f6f6fb;
+  --color-neutral-100: #f0f0f8;
+  --color-neutral-150: #e8e9f3;
+  --color-neutral-200: #cbccdd;
+  --color-neutral-300: #adafc4;
+  --color-neutral-400: #8789a3;
+  --color-neutral-500: #6f7191;
+  --color-neutral-600: #494b6b;
+  --color-neutral-700: #2f3150;
+  --color-neutral-800: #191b33;
+  --color-neutral-900: #0a0b1a;
 
   /*
    * Ink — "Warm Black to Black" scale.
