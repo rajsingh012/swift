@@ -1,5 +1,6 @@
 @import "@swift/components/theme.css";
 @import "./motion.css";
+@import "animate.css";
 
 @keyframes toast-in {
   from {
@@ -9,6 +10,86 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+/* Shorter-travel variant of animate.css fadeInRight (starts closer to final position) */
+@keyframes fadeInRightShort {
+  from {
+    opacity: 0;
+    transform: translate3d(60px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate__fadeInRightShort {
+  animation-name: fadeInRightShort;
+}
+
+/* Shorter-travel variant of animate.css fadeInLeft (starts closer to final position) */
+@keyframes fadeInLeftShort {
+  from {
+    opacity: 0;
+    transform: translate3d(-60px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate__fadeInLeftShort {
+  animation-name: fadeInLeftShort;
+}
+
+/* Rolling-digit odometer */
+.odometer-digit {
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.odometer-digit__strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 1.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.odometer-digit__cell {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .odometer-digit__strip {
+    transition: none;
+  }
+}
+
+/* Gentle continuous float for stat icons */
+@keyframes icon-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.icon-float {
+  animation: icon-float 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-float {
+    animation: none;
   }
 }
 
