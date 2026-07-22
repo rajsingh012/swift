@@ -1,4 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { Home } from '@swift/icons/Home';
+import { Image } from '@swift/icons/Image';
+import { Services } from '@swift/icons/Services';
+import { Flash } from '@swift/icons/Flash';
+import { useInView } from '../../../hooks/useInView';
 
 const sections = [
     {
@@ -13,21 +18,29 @@ const sections = [
                 title: 'Free Home Visit & Rooftop Survey',
                 description:
                     'Our team measures your rooftop to design a solar system for maximum generation.',
+                Icon: Home,
+                className: 'animate__fadeInRightShort',
             },
             {
                 title: 'Free 3D Solar Design',
                 description:
                     'We share a personalised 3D rooftop solar design, so you can clearly see how it will look on your home.',
+                Icon: Image,
+                className: 'animate__fadeInRightShort',
             },
             {
                 title: 'Hassle-Free Installation & Subsidy Support',
                 description:
                     'Our experts install your solar system and handle all paperwork, including the subsidy—no follow-ups needed.',
+                Icon: Services,
+                className: 'animate__fadeInRightShort',
             },
             {
                 title: 'Solar On. You Save. We Maintain.',
                 description:
                     'Your system starts saving from day one, while we handle maintenance for smooth performance year after year.',
+                Icon: Flash,
+                className: 'animate__fadeInRightShort',
             },
         ],
     },
@@ -71,6 +84,7 @@ function Lists() {
 
     const sectionRefs = useRef<Array<HTMLElement | null>>([]);
     const rafId = useRef<number | null>(null);
+    const [gridRef, inView] = useInView<HTMLUListElement>();
 
     useEffect(() => {
         const calculateTransforms = (): CardTransform[] => {
@@ -158,16 +172,20 @@ function Lists() {
                                     </h2>
 
                                     {section.items ? (
-                                        <ul className="mb-8 space-y-6 text-content-secondary">
+                                        <ul ref={gridRef} className="mb-8 space-y-6 text-content-secondary">
                                             {section.items.map((item, itemIndex) => (
-                                                <li key={`${item.title}-${itemIndex}`} className="flex gap-4">
-                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stroke bg-surface text-sm font-semibold text-content-strong">
-                                                        {itemIndex + 1}
+                                                <li
+                                                    key={`${item.title}-${itemIndex}`}
+                                                    className={`flex gap-4 ${inView ? `animate__animated ${item.className}` : 'opacity-0'}`}
+                                                    style={inView ? { animationDelay: `${itemIndex * 200}ms` } : undefined}
+                                                >
+                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stroke bg-surface text-content-strong">
+                                                        <item.Icon size={20} />
                                                     </div>
                                                     <div>
-                                                            <h3 className="text-lg font-semibold text-content-strong">{item.title}</h3>
-                                                            <p className="mt-2 text-sm leading-relaxed text-content-secondary">{item.description}</p>
-                                                        </div>
+                                                        <h3 className="text-lg font-semibold text-content-strong">{item.title}</h3>
+                                                        <p className="mt-2 text-sm leading-relaxed text-content-secondary flex gap-2 items-start"> <span className="h-px w-6 bg-surface-brand mt-3" /> {item.description}</p>
+                                                    </div>
                                                 </li>
                                             ))}
                                         </ul>

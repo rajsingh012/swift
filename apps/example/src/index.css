@@ -45,6 +45,22 @@
   animation-name: fadeInLeftShort;
 }
 
+/* Shorter-travel variant of animate.css fadeInUp (starts closer to final position) */
+@keyframes fadeInUpShort {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate__fadeInUpShort {
+  animation-name: fadeInUpShort;
+}
+
 /* Rolling-digit odometer */
 .odometer-digit {
   display: inline-block;
