@@ -22,9 +22,9 @@ const RouteComponent = () => {
             </div>
             <PoweringSection />
             <AppShowcaseSection />
-            <StorySection />
-            <UseCasesSection />
             <EnergyFlowSection />
+            <UseCasesSection />
+            <StorySection />
             <FeaturesSection />
             <Lists />
             <TestimonialsSection />

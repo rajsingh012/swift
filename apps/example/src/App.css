@@ -434,10 +434,46 @@
 
 /* ── Reduced motion ─────────────────────────────────────────────── */
 
+/* ── Decorative orbital ring — a slowly-rotating conic halo that sits
+   behind icon chips and stat tiles to add life without motion noise. ── */
+@keyframes ds-spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ds-spin-slow {
+  animation: ds-spin-slow 16s linear infinite;
+}
+.ds-spin-slower {
+  animation: ds-spin-slow 26s linear infinite reverse;
+}
+
+/* ── "Live" pulse — an expanding ring for the reach / presence dot. ── */
+@keyframes ds-pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.65;
+  }
+  70%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.ds-pulse-ring {
+  animation: ds-pulse-ring 2.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .theme-icon-swap {
     animation-duration: 1ms !important;
     animation-delay: 0ms !important;
+  }
+
+  .ds-spin-slow,
+  .ds-spin-slower,
+  .ds-pulse-ring {
+    animation: none;
   }
 
   .home-cta,

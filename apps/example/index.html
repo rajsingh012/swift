@@ -9,12 +9,8 @@
       (function () {
         try {
           var stored = localStorage.getItem('theme');
-          var theme =
-            stored === 'dark' || stored === 'light'
-              ? stored
-              : window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'dark'
-                : 'light';
+          // Default to dark mode; honour an explicit saved preference if present.
+          var theme = stored === 'dark' || stored === 'light' ? stored : 'dark';
           document.documentElement.dataset.theme = theme;
         } catch (_) {}
       })();

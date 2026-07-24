@@ -1,11 +1,7 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { Carousel } from '@swift/components/Carousel';
 import { Badge } from '@swift/components/Badge';
 import { Text } from '@swift/components/Text';
-import { Home } from '@swift/icons/Home';
-import { Settings } from '@swift/icons/Settings';
-import { GridSmallFilled } from '@swift/icons/GridSmallFilled';
-import { HeartFilled } from '@swift/icons/HeartFilled';
 import { MoreHoriz } from '@swift/icons/MoreHoriz';
 import { Wifi } from '@swift/icons/Wifi';
 import { Signal } from '@swift/icons/Signal';
@@ -72,41 +68,6 @@ function CountUp({ value, active }: { value: string; active: boolean }) {
     return <>{display.toFixed(decimals)}</>;
 }
 
-/* ── Bottom-bar tab ────────────────────────────────────────────── */
-
-function TabItem({
-    Icon,
-    label,
-    active,
-    badge,
-    activeColor = '#10b981',
-}: {
-    Icon: (props: { size?: number }) => ReactNode;
-    label: string;
-    active?: boolean;
-    badge?: string;
-    activeColor?: string;
-}) {
-    return (
-        <span
-            className="relative flex flex-col items-center gap-0.5"
-            style={{ color: active ? activeColor : undefined }}
-        >
-            <span className={active ? '' : 'text-white/45'}>
-                <Icon size={18} />
-            </span>
-            <span className={`text-[9px] font-medium ${active ? '' : 'text-white/45'}`}>
-                {label}
-            </span>
-            {badge && (
-                <span className="absolute -right-1.5 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-rose-500 px-1 text-[8px] font-bold text-white">
-                    {badge}
-                </span>
-            )}
-        </span>
-    );
-}
-
 /* ── Phone slide — one shared frame for every scene, so all slides
    share the exact same footprint (fixes the uneven gaps). The centre
    / active slide lights up with the ambient glow, float, glare and
@@ -116,7 +77,13 @@ function PhoneCard({ item, active }: { item: UseCase; active: boolean }) {
     const { accent } = item;
 
     return (
-        <div className="relative flex w-full items-center justify-center">
+        <div
+            className={`relative flex w-full items-center justify-center transition-all duration-700 ${
+                active
+                    ? 'opacity-100 filter-none'
+                    : 'opacity-50 filter-[grayscale(1)_blur(1px)]'
+            }`}
+        >
             {/* Ambient accent glow (active only) */}
             {active && (
                 <div
@@ -184,7 +151,7 @@ function PhoneCard({ item, active }: { item: UseCase; active: boolean }) {
                         </div>
 
                         {/* Live generation strip */}
-                        <div className="flex items-end justify-between px-4 pt-2.5">
+                        <div className="flex items-end justify-between px-4 pb-5 pt-2.5">
                             <div className="flex flex-col leading-none">
                                 <span className="text-[9px] uppercase tracking-wide text-white/50">
                                     {item.label} · today
@@ -214,14 +181,6 @@ function PhoneCard({ item, active }: { item: UseCase; active: boolean }) {
                                     />
                                 ))}
                             </div>
-                        </div>
-
-                        {/* Bottom tab bar */}
-                        <div className="mt-3 flex items-center justify-around border-t border-white/10 px-2 py-2.5">
-                            <TabItem Icon={Home} label="Home" activeColor={accent} active />
-                            <TabItem Icon={GridSmallFilled} label="Device" />
-                            <TabItem Icon={HeartFilled} label="Service" badge="23" />
-                            <TabItem Icon={Settings} label="Settings" />
                         </div>
 
                         {/* Sweeping screen glare (active only) */}

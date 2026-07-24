@@ -39,23 +39,34 @@ const segments: Segment[] = [
   },
 ]
 
-/** Brand-gradient icon tile with a soft glow, shared across the site. */
+/** Conic halo that slowly rotates behind a solid brand-gradient icon chip. */
 function IconTile({ Icon }: { Icon: ComponentType<IconProps> }) {
   return (
-    <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-content-on-brand shadow-md">
+    <span className="relative flex h-14 w-14 shrink-0 items-center justify-center">
+      {/* Rotating conic ring */}
       <span
         aria-hidden="true"
-        className="absolute inset-0 rounded-2xl bg-surface-brand opacity-30 blur-md"
+        className="ds-spin-slow absolute inset-0 rounded-2xl opacity-70"
+        style={{
+          background:
+            'conic-gradient(from 0deg, transparent, color-mix(in oklab, var(--color-surface-brand) 85%, transparent), color-mix(in oklab, var(--color-surface-new) 70%, transparent), transparent 78%)',
+        }}
       />
+      {/* Soft glow */}
       <span
         aria-hidden="true"
-        className="absolute inset-0 rounded-2xl"
+        className="absolute inset-0 rounded-2xl bg-surface-brand opacity-40 blur-md"
+      />
+      {/* Solid gradient chip carved out of the ring */}
+      <span
+        className="relative flex h-11 w-11 items-center justify-center rounded-xl text-content-on-brand shadow-md"
         style={{
           background:
             'linear-gradient(135deg, var(--color-surface-brand), color-mix(in oklab, var(--color-surface-brand) 55%, #000))',
         }}
-      />
-      <Icon size={22} className="relative" />
+      >
+        <Icon size={22} className="relative" />
+      </span>
     </span>
   )
 }
@@ -67,11 +78,26 @@ const CarouselSection = () => {
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12">
           {/* Two audience segments */}
           {segments.map((segment) => (
-            <div
+            <article
               key={segment.title}
-              className={`group animate__animated animate__fadeInUpShort ${segment.delay} flex flex-col justify-between gap-6 rounded-3xl border border-stroke bg-surface-elevated p-7 shadow-level3 transition duration-300 hover:-translate-y-1 hover:border-stroke-brand/40 hover:shadow-level4 lg:col-span-3`}
+              className={`group animate__animated animate__fadeInUpShort ${segment.delay} relative flex flex-col justify-between gap-6 overflow-hidden rounded-3xl border border-stroke bg-surface-elevated p-7 shadow-level3 transition duration-300 hover:-translate-y-1.5 hover:border-stroke-brand/50 hover:shadow-level4 lg:col-span-3`}
             >
-              <div className="flex flex-col gap-4">
+              {/* Top hairline sheen */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                style={{
+                  background:
+                    'linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-surface-brand) 65%, transparent), transparent)',
+                }}
+              />
+              {/* Corner glow revealed on hover */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-surface-brand/25 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
+              />
+
+              <div className="relative flex flex-col gap-5">
                 <IconTile Icon={segment.Icon} />
                 <div className="flex flex-col gap-1.5">
                   <Text variant="heading-sm" fontWeight="bold" className="text-content-strong">
@@ -83,20 +109,20 @@ const CarouselSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-end justify-between gap-3 border-t border-stroke pt-4">
+              <div className="relative flex items-end justify-between gap-3 border-t border-stroke pt-4">
                 <div className="flex flex-col">
-                  <span className="text-xl font-bold tracking-tight text-content-brand">
+                  <span className="brand-gradient-text text-2xl font-bold tracking-tight">
                     {segment.stat}
                   </span>
-                  <span className="text-xs font-medium uppercase tracking-wide text-content-muted">
+                  <span className="text-[0.7rem] font-semibold uppercase tracking-wider text-content-muted">
                     {segment.statLabel}
                   </span>
                 </div>
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-brand-muted text-content-brand transition-transform duration-300 group-hover:translate-x-1">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-brand-muted text-content-brand transition-all duration-300 group-hover:bg-surface-brand group-hover:text-content-on-brand group-hover:translate-x-1">
                   <ArrowRight size={16} />
                 </span>
               </div>
-            </div>
+            </article>
           ))}
 
           {/* Featured — Commercial */}
@@ -107,14 +133,28 @@ const CarouselSection = () => {
                 alt="Commercial solar installation"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
+              {/* Diagonal shine sweep on hover */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-y-8 -left-1/3 w-1/3 -translate-x-full -skew-x-12 bg-white/20 blur-md transition-transform duration-700 ease-out group-hover:translate-x-[420%]"
+              />
               {/* Bottom-anchored gradient for legible text */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/45 to-transparent" />
 
               <div className="relative z-10 flex h-full flex-col justify-end gap-4 p-8 sm:p-10">
-                <span className="flex w-fit items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
-                  <City size={14} />
-                  For Business
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="flex w-fit items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white ring-1 ring-inset ring-white/25 backdrop-blur-sm">
+                    <City size={14} />
+                    For Business
+                  </span>
+                  {/* Floating glass stat chip */}
+                  <span className="flex w-fit items-baseline gap-1.5 rounded-full bg-white/10 px-3 py-1 text-white ring-1 ring-inset ring-white/20 backdrop-blur-sm">
+                    <span className="text-sm font-bold">500+</span>
+                    <span className="text-[0.7rem] font-medium uppercase tracking-wider text-white/70">
+                      businesses
+                    </span>
+                  </span>
+                </div>
                 <div className="flex flex-col gap-2">
                   <h3 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
                     Commercial &amp; Industrial

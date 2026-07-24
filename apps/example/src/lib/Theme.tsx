@@ -11,8 +11,8 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 function initialTheme(): Theme {
-  if (typeof document === 'undefined') return 'light'
-  return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  if (typeof document === 'undefined') return 'dark'
+  return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
