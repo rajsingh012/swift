@@ -57,12 +57,15 @@ function RootLayout() {
   const [navOpen, setNavOpen] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const showSearch = pathname === '/icons'
+  // The solar-square page ships its own website header — hide the DS chrome there.
+  const hideChrome = pathname === '/solar-square'
 
   return (
     <ThemeProvider>
       <IconSearchContext.Provider value={{ query, setQuery }}>
         <ToastProvider>
           <div className="flex h-screen flex-col bg-surface-muted text-content">
+            {!hideChrome && (
             <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-stroke bg-surface/80 px-4 shadow-level1 backdrop-blur sm:px-6">
               <div className="flex min-w-0 items-center gap-3 lg:gap-8">
                 <button
@@ -118,6 +121,7 @@ function RootLayout() {
                 <ThemeToggleButton />
               </div>
             </header>
+            )}
 
             <Sheet open={navOpen} onOpenChange={setNavOpen} modal>
               <Sheet.Portal>

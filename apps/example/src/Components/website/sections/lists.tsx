@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Badge } from '@swift/components/Badge';
 import { Button } from '@swift/components/Button';
 import { Card } from '@swift/components/Card';
-import { Divider } from '@swift/components/Divider';
 import { Text } from '@swift/components/Text';
 import { ArrowRight } from '@swift/icons/ArrowRight';
 import { CheckShieldFilled } from '@swift/icons/CheckShieldFilled';
@@ -191,7 +190,7 @@ function SectionCard({
                 zIndex: index + 1,
             }}
         >
-            <Card.Media className="relative h-64 shrink-0 md:h-auto md:w-1/2">
+            <Card.Media className="relative h-64 shrink-0 md:h-auto md:w-1/4">
                 <img
                     src={section.image}
                     alt={section.title}
@@ -207,7 +206,7 @@ function SectionCard({
                 </Badge>
             </Card.Media>
 
-            <div className="flex flex-1 flex-col justify-center gap-6 bg-surface-muted p-8 sm:p-12 md:p-14">
+            <div className="flex flex-1 flex-col justify-center gap-5 bg-surface-muted p-5 sm:p-6">
                 <div className="flex flex-col gap-3">
                     <Badge
                         pill
@@ -217,45 +216,79 @@ function SectionCard({
                     >
                         {section.eyebrow}
                     </Badge>
-                    <Text variant="heading-lg" fontWeight="bold">
+                    <Text variant="heading-lg" fontWeight="bold" className="text-balance">
                         {section.title}
                     </Text>
-                    <Text variant="para-md" color="secondary">
+                    <Text
+                        variant="para-md"
+                        color="secondary"
+                        className="max-w-2xl text-pretty"
+                    >
                         {section.description}
                     </Text>
                 </div>
 
-                <ul ref={listRef} className="flex flex-col">
+                <ul
+                    ref={listRef}
+                    className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+                >
                     {section.items.map((item, itemIndex) => (
                         <li
                             key={`${item.title}-${itemIndex}`}
-                            className={
+                            className={`group/item relative flex h-full items-start gap-4 overflow-hidden rounded-2xl bg-surface p-4 ring-1 ring-black/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-level3 hover:ring-stroke-brand/40 ${
                                 inView
                                     ? `animate__animated ${item.className}`
                                     : 'opacity-0'
-                            }
+                            }`}
                             style={
                                 inView
-                                    ? { animationDelay: `${itemIndex * 150}ms` }
+                                    ? { animationDelay: `${itemIndex * 120}ms` }
                                     : undefined
                             }
                         >
-                            {itemIndex > 0 && (
-                                <Divider decorative className="my-4" />
-                            )}
-                            <div className="flex gap-4">
-                                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface-brand-muted text-content-brand ring-1 ring-inset ring-stroke-brand/20 transition-transform duration-300 group-hover:scale-105">
-                                    <item.Icon size={22} />
-                                </span>
-                                <div className="flex flex-col gap-1">
-                                    <Text variant="body-lg" fontWeight="semibold">
-                                        {item.title}
-                                    </Text>
-                                    <Text variant="body-sm" color="secondary">
-                                        {item.description}
-                                    </Text>
-                                </div>
+                            {/* brand accent bar — grows in on hover */}
+                            <span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-linear-to-r from-surface-brand to-transparent transition-transform duration-300 group-hover/item:scale-x-100"
+                            />
+
+                            <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-content-on-brand shadow-md transition-transform duration-300 group-hover/item:-translate-y-0.5 group-hover/item:scale-105">
+                                {/* soft glow behind the tile */}
+                                <span
+                                    aria-hidden="true"
+                                    className="absolute inset-0 rounded-xl bg-surface-brand opacity-30 blur-md transition-opacity duration-300 group-hover/item:opacity-60"
+                                />
+                                <span
+                                    aria-hidden="true"
+                                    className="absolute inset-0 rounded-xl"
+                                    style={{
+                                        background:
+                                            'linear-gradient(135deg, var(--color-surface-brand), color-mix(in oklab, var(--color-surface-brand) 55%, #000))',
+                                    }}
+                                />
+                                <item.Icon size={20} className="relative" />
+                            </span>
+
+                            <div className="relative flex min-w-0 flex-col gap-1">
+                                <Text variant="body-sm" fontWeight="semibold">
+                                    {item.title}
+                                </Text>
+                                <Text
+                                    variant="para-sm"
+                                    color="secondary"
+                                    className="text-pretty"
+                                >
+                                    {item.description}
+                                </Text>
                             </div>
+
+                            {/* ghosted step number, top-right */}
+                            <span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute right-3 top-2 select-none text-3xl font-black leading-none tabular-nums text-content/6 transition-colors duration-300 group-hover/item:text-content-brand/15"
+                            >
+                                {String(itemIndex + 1).padStart(2, '0')}
+                            </span>
                         </li>
                     ))}
                 </ul>

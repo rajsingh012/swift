@@ -213,7 +213,7 @@ function FaqSection() {
     );
 
     return (
-        <section id="faq" className="bg-surface-muted py-20 text-content">
+        <section id="faq" className="py-20 text-content">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="grid gap-10 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
                     {/* Left — intro + graphic (sticky on desktop) */}

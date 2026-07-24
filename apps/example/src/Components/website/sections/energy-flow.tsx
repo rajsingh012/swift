@@ -214,6 +214,19 @@ function SolarScene({ active }: { active: boolean }) {
                     />
                 </g>
 
+                {/* ─ Drifting clouds (sky depth) ─ */}
+                <g fill="#ffffff" opacity="0.75">
+                    <g className="cloud-drift">
+                        <ellipse cx="360" cy="70" rx="34" ry="15" />
+                        <ellipse cx="392" cy="76" rx="24" ry="12" />
+                        <ellipse cx="332" cy="78" rx="20" ry="10" />
+                    </g>
+                    <g className="cloud-drift" style={{ animationDelay: '4s' }} opacity="0.85">
+                        <ellipse cx="490" cy="112" rx="26" ry="12" />
+                        <ellipse cx="514" cy="118" rx="18" ry="9" />
+                    </g>
+                </g>
+
                 {/* ─ Ground ─ */}
                 <line
                     x1="24"
@@ -225,6 +238,15 @@ function SolarScene({ active }: { active: boolean }) {
                     strokeLinecap="round"
                     opacity="0.7"
                 />
+                {/* Grass tufts for depth */}
+                <g stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" opacity="0.7">
+                    <path d="M70 285 q-3 -9 -6 -12 M70 285 q0 -10 0 -13 M70 285 q3 -9 6 -12" fill="none" />
+                    <path d="M300 285 q-3 -8 -5 -11 M300 285 q0 -9 0 -12 M300 285 q3 -8 5 -11" fill="none" />
+                    <path d="M410 285 q-2 -7 -4 -10 M410 285 q0 -8 0 -11 M410 285 q2 -7 4 -10" fill="none" />
+                </g>
+                {/* Soft ground shadows under panel pole + house */}
+                <ellipse cx="217" cy="287" rx="26" ry="4" fill="#166534" opacity="0.12" />
+                <ellipse cx="495" cy="288" rx="70" ry="5" fill="#166534" opacity="0.12" />
 
                 {/* ─ Solar panel (tilted, ground-mounted) ─ */}
                 <line
@@ -255,6 +277,30 @@ function SolarScene({ active }: { active: boolean }) {
                     strokeLinecap="round"
                     fill="none"
                 />
+                {/* Energy packets travelling along the wire */}
+                <g fill="#fbbf24">
+                    <circle
+                        className="energy-dot"
+                        cx="217"
+                        cy="285"
+                        r="4"
+                        style={{ animationDelay: '0ms' }}
+                    />
+                    <circle
+                        className="energy-dot"
+                        cx="217"
+                        cy="285"
+                        r="4"
+                        style={{ animationDelay: '730ms' }}
+                    />
+                    <circle
+                        className="energy-dot"
+                        cx="217"
+                        cy="285"
+                        r="4"
+                        style={{ animationDelay: '1460ms' }}
+                    />
+                </g>
 
                 {/* ─ Inverter ─ */}
                 <rect
@@ -287,6 +333,16 @@ function SolarScene({ active }: { active: boolean }) {
                     stroke="#b45309"
                     strokeWidth="2"
                     strokeLinejoin="round"
+                />
+
+                {/* Warm glow radiating from the bulb */}
+                <circle
+                    className="home-glow"
+                    cx="486"
+                    cy="239"
+                    r="30"
+                    fill="#fde047"
+                    style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
                 />
 
                 {/* Hanging bulb — light on (cord → cap → glass) */}

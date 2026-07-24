@@ -6,8 +6,11 @@ import Lists from "./sections/lists";
 import TestimonialsSection from "./sections/testimonials";
 import StorySection from "./sections/story";
 import EnergyFlowSection from "./sections/energy-flow";
+import UseCasesSection from "./sections/use-cases";
+import AppShowcaseSection from "./sections/app-showcase";
 import FeaturesSection from "./sections/features";
 import FaqSection from "./sections/faq";
+import Footer from "./sections/footer";
 
 const RouteComponent = () => {
     return (
@@ -20,10 +23,13 @@ const RouteComponent = () => {
             <PoweringSection />
             <StorySection />
             <EnergyFlowSection />
+            <AppShowcaseSection />
+            <UseCasesSection />
             <FeaturesSection />
             <Lists />
             <TestimonialsSection />
             <FaqSection />
+            <Footer />
         </div>
     );
 }
