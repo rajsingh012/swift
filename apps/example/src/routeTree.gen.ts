@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SolarSquareRouteImport } from './routes/solar-square'
 import { Route as IconsRouteImport } from './routes/icons'
 import { Route as FoundationsRouteImport } from './routes/foundations'
 import { Route as CssRouteImport } from './routes/css'
 import { Route as ComponentsRouteImport } from './routes/components'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SolarSquareRoute = SolarSquareRouteImport.update({
+  id: '/solar-square',
+  path: '/solar-square',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IconsRoute = IconsRouteImport.update({
   id: '/icons',
   path: '/icons',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/css': typeof CssRoute
   '/foundations': typeof FoundationsRoute
   '/icons': typeof IconsRoute
+  '/solar-square': typeof SolarSquareRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/css': typeof CssRoute
   '/foundations': typeof FoundationsRoute
   '/icons': typeof IconsRoute
+  '/solar-square': typeof SolarSquareRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/css': typeof CssRoute
   '/foundations': typeof FoundationsRoute
   '/icons': typeof IconsRoute
+  '/solar-square': typeof SolarSquareRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/components' | '/css' | '/foundations' | '/icons'
+  fullPaths:
+    | '/'
+    | '/components'
+    | '/css'
+    | '/foundations'
+    | '/icons'
+    | '/solar-square'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/components' | '/css' | '/foundations' | '/icons'
-  id: '__root__' | '/' | '/components' | '/css' | '/foundations' | '/icons'
+  to: '/' | '/components' | '/css' | '/foundations' | '/icons' | '/solar-square'
+  id:
+    | '__root__'
+    | '/'
+    | '/components'
+    | '/css'
+    | '/foundations'
+    | '/icons'
+    | '/solar-square'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +99,18 @@ export interface RootRouteChildren {
   CssRoute: typeof CssRoute
   FoundationsRoute: typeof FoundationsRoute
   IconsRoute: typeof IconsRoute
+  SolarSquareRoute: typeof SolarSquareRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/solar-square': {
+      id: '/solar-square'
+      path: '/solar-square'
+      fullPath: '/solar-square'
+      preLoaderRoute: typeof SolarSquareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/icons': {
       id: '/icons'
       path: '/icons'
@@ -125,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   CssRoute: CssRoute,
   FoundationsRoute: FoundationsRoute,
   IconsRoute: IconsRoute,
+  SolarSquareRoute: SolarSquareRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

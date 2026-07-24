@@ -14,6 +14,7 @@
     "@swift/components": "workspace:*",
     "@swift/icons": "workspace:*",
     "@tanstack/react-router": "^1.169.2",
+    "animate.css": "^4.1.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },

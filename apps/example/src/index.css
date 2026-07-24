@@ -1,5 +1,6 @@
 @import "@swift/components/theme.css";
 @import "./motion.css";
+@import "animate.css";
 
 @keyframes toast-in {
   from {
@@ -9,6 +10,324 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+/* Shorter-travel variant of animate.css fadeInRight (starts closer to final position) */
+@keyframes fadeInRightShort {
+  from {
+    opacity: 0;
+    transform: translate3d(60px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate__fadeInRightShort {
+  animation-name: fadeInRightShort;
+}
+
+/* Shorter-travel variant of animate.css fadeInLeft (starts closer to final position) */
+@keyframes fadeInLeftShort {
+  from {
+    opacity: 0;
+    transform: translate3d(-60px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate__fadeInLeftShort {
+  animation-name: fadeInLeftShort;
+}
+
+/* Shorter-travel variant of animate.css fadeInUp (starts closer to final position) */
+@keyframes fadeInUpShort {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate__fadeInUpShort {
+  animation-name: fadeInUpShort;
+}
+
+/* Bottom-to-top reveal — the panel is wiped in from its bottom edge via
+   clip-path (no gap, stays anchored) while the content lifts subtly. */
+@keyframes revealUp {
+  from {
+    clip-path: inset(100% 0 0 0);
+    transform: translate3d(0, 24px, 0);
+    opacity: 0;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+.animate__revealUp {
+  animation-name: revealUp;
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Rolling-digit odometer */
+.odometer-digit {
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.odometer-digit__strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 1.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.odometer-digit__cell {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .odometer-digit__strip {
+    transition: none;
+  }
+}
+
+/* Gentle continuous float for stat icons */
+@keyframes icon-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.icon-float {
+  animation: icon-float 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-float {
+    animation: none;
+  }
+}
+
+/* ── Solar energy-flow diagram ─────────────────────────────────── */
+
+/* Dashes flowing along the connector toward the home */
+.flow-track {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-surface-brand) 0 45%,
+    transparent 45%
+  );
+  background-size: 14px 100%;
+  animation: flow-x 0.7s linear infinite;
+}
+
+@keyframes flow-x {
+  to {
+    background-position-x: 14px;
+  }
+}
+
+.flow-track-v {
+  background-image: linear-gradient(
+    180deg,
+    var(--color-surface-brand) 0 45%,
+    transparent 45%
+  );
+  background-size: 100% 14px;
+  animation: flow-y 0.7s linear infinite;
+}
+
+@keyframes flow-y {
+  to {
+    background-position-y: 14px;
+  }
+}
+
+/* Dashes crawling along an SVG connector path */
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.flow-line {
+  stroke-dasharray: 5 7;
+  animation: flow-dash 0.8s linear infinite;
+}
+
+/* Shimmering sun beams */
+@keyframes beam-pulse {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.beam {
+  animation: beam-pulse 2.4s ease-in-out infinite;
+}
+
+/* Windows lighting up */
+@keyframes lit-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.lit {
+  animation: lit-pulse 2.2s ease-in-out infinite;
+}
+
+/* Drifting background blobs */
+@keyframes blob-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(26px, -30px) scale(1.08);
+  }
+  66% {
+    transform: translate(-20px, 18px) scale(0.94);
+  }
+}
+
+.blob-float {
+  animation: blob-float 16s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob-float {
+    animation: none;
+  }
+}
+
+/* Rotating sun rays + pulsing core */
+@keyframes sun-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sun-rays {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sun-spin 16s linear infinite;
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+.sun-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: soft-pulse 2.6s ease-in-out infinite;
+}
+
+/* Home lighting up */
+@keyframes home-glow {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.15);
+  }
+}
+
+.home-glow {
+  animation: home-glow 2.4s ease-in-out infinite;
+}
+
+/* Energy packets travelling along the panel → inverter → home wire.
+   Dots start at the panel base (x=217) and slide to the house (x=430),
+   a 213-unit run in the scene's user coordinate space. */
+@keyframes energy-travel {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  8%,
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(213px);
+    opacity: 0;
+  }
+}
+
+.energy-dot {
+  transform-box: fill-box;
+  animation: energy-travel 2.2s linear infinite;
+}
+
+/* Clouds drifting slowly across the sky for depth. */
+@keyframes cloud-drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(22px);
+  }
+}
+
+.cloud-drift {
+  transform-box: fill-box;
+  animation: cloud-drift 14s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-track,
+  .flow-track-v,
+  .flow-line,
+  .sun-rays,
+  .sun-core,
+  .home-glow,
+  .energy-dot,
+  .cloud-drift {
+    animation: none;
   }
 }
 
@@ -48,5 +367,153 @@
     max-width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
+  }
+}
+
+/* ── "Where solar works" isometric illustrations ─────────────────── */
+@keyframes uc-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes uc-shadow {
+  0%, 100% { transform: scaleX(1); opacity: 0.16; }
+  50% { transform: scaleX(0.88); opacity: 0.1; }
+}
+@keyframes uc-sun-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.14); opacity: 0.8; }
+}
+@keyframes uc-spin { to { transform: rotate(360deg); } }
+@keyframes uc-smoke {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  25% { opacity: 0.9; }
+  100% { transform: translateY(-32px) scale(1.35); opacity: 0; }
+}
+@keyframes uc-flag {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.55); }
+}
+@keyframes uc-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.uc-float {
+  animation: uc-float 5s ease-in-out infinite;
+  will-change: transform;
+}
+.uc-shadow,
+.uc-glow,
+.uc-rays,
+.uc-smoke > circle,
+.uc-flag {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.uc-shadow { animation: uc-shadow 5s ease-in-out infinite; }
+.uc-glow { animation: uc-sun-pulse 4s ease-in-out infinite; }
+.uc-rays { animation: uc-spin 40s linear infinite; }
+.uc-smoke > circle { animation: uc-smoke 3.2s ease-out infinite; }
+.uc-flag { animation: uc-flag 1.6s ease-in-out infinite; transform-origin: left center; }
+.uc-twinkle { animation: uc-twinkle 3s ease-in-out infinite; }
+
+/* ── App showcase (scroll-pinned phone) ─────────────────────────── */
+@keyframes phone-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-14px) rotate(1deg); }
+}
+.phone-float {
+  animation: phone-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes card-float-a {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-12px) translateX(4px); }
+}
+@keyframes card-float-b {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(10px) translateX(-5px); }
+}
+.card-float-a { animation: card-float-a 5s ease-in-out infinite; }
+.card-float-b { animation: card-float-b 6.5s ease-in-out infinite; }
+
+/* Screen glare that sweeps across the phone */
+@keyframes screen-glare {
+  0% { transform: translateX(-120%) rotate(18deg); opacity: 0; }
+  30% { opacity: 0.5; }
+  60% { opacity: 0; }
+  100% { transform: translateX(220%) rotate(18deg); opacity: 0; }
+}
+.screen-glare { animation: screen-glare 5.5s ease-in-out infinite; }
+
+/* Live bars that breathe */
+@keyframes bar-breathe {
+  0%, 100% { transform: scaleY(0.7); }
+  50% { transform: scaleY(1); }
+}
+.bar-breathe { transform-origin: bottom; animation: bar-breathe 1.4s ease-in-out infinite; }
+
+/* Savings chart bars grow in a slow loop */
+@keyframes chart-grow {
+  0%, 100% { transform: scaleY(0.82); }
+  50% { transform: scaleY(1); }
+}
+.chart-grow { transform-origin: bottom; animation: chart-grow 3s ease-in-out infinite; }
+
+/* Soft light sweep across list rows / banners */
+@keyframes row-shimmer {
+  0% { background-position: -160% 0; }
+  100% { background-position: 260% 0; }
+}
+.row-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.09) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: row-shimmer 3.6s linear infinite;
+}
+
+/* Travelling shine that runs along a progress fill */
+@keyframes bar-shine {
+  0% { transform: translateX(-120%); }
+  60%, 100% { transform: translateX(320%); }
+}
+.bar-shine { animation: bar-shine 2.8s ease-in-out infinite; }
+
+/* Gentle glow pulse on the hero numbers inside the phone */
+@keyframes value-glow {
+  0%, 100% { text-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+  50% { text-shadow: 0 0 22px rgba(255, 255, 255, 0.28); }
+}
+.value-glow { animation: value-glow 3.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-float,
+  .card-float-a,
+  .card-float-b,
+  .screen-glare,
+  .bar-breathe,
+  .chart-grow,
+  .row-shimmer,
+  .bar-shine,
+  .value-glow {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-float,
+  .uc-shadow,
+  .uc-glow,
+  .uc-rays,
+  .uc-smoke > circle,
+  .uc-flag,
+  .uc-twinkle {
+    animation: none;
   }
 }
