@@ -1,18 +1,34 @@
 import { useEffect, useRef, useState } from 'react';
+import { Badge } from '@swift/components/Badge';
+import { Button } from '@swift/components/Button';
+import { Card } from '@swift/components/Card';
+import { Divider } from '@swift/components/Divider';
+import { Text } from '@swift/components/Text';
+import { ArrowRight } from '@swift/icons/ArrowRight';
+import { CheckShieldFilled } from '@swift/icons/CheckShieldFilled';
+import { CustomerServiceFilled } from '@swift/icons/CustomerServiceFilled';
+import { Flash } from '@swift/icons/Flash';
 import { Home } from '@swift/icons/Home';
 import { Image } from '@swift/icons/Image';
+import { PriceLockFilled } from '@swift/icons/PriceLockFilled';
 import { Services } from '@swift/icons/Services';
-import { Flash } from '@swift/icons/Flash';
+import { Settings } from '@swift/icons/Settings';
+import { StarShieldFilled } from '@swift/icons/StarShieldFilled';
+import { TrendUp } from '@swift/icons/TrendUp';
+import { WalletFilled } from '@swift/icons/WalletFilled';
 import { useInView } from '../../../hooks/useInView';
 
 const sections = [
     {
         id: 'offerings',
+        eyebrow: 'How it works',
         title: 'We Handle Everything. You Just Save.',
         description:
             'We handle the full solar journey from survey to installation, so you can start saving without the paperwork.',
+        // TODO: replace with final asset
         image:
             'https://cdn.solarsquare.in/blog/wp-content/uploads/2025/09/03143632/joureny-ty.webp',
+        cta: 'Get a free quote',
         items: [
             {
                 title: 'Free Home Visit & Rooftop Survey',
@@ -45,20 +61,86 @@ const sections = [
         ],
     },
     {
-        id: 'solutions',
-        title: 'Wind Turbine Maintenance',
+        id: 'why-us',
+        eyebrow: 'Why SolarSquare',
+        title: 'Why 1 Lakh+ Homes Chose Us',
         description:
-            'Suspendisse suscipit sagittis leo sitea Consectetur elit. Nulla vitae elit libero, a pharetra.',
+            'From guaranteed savings to storm-proof engineering, every part of your solar journey is built to last.',
+        // TODO: replace with final asset (placeholder)
         image:
-            'https://images.pexels.com/photos/20208374/pexels-photo-20208374.jpeg',
+            'https://images.pexels.com/photos/9875441/pexels-photo-9875441.jpeg',
+        cta: 'Explore benefits',
+        items: [
+            {
+                title: 'Guaranteed Savings',
+                description:
+                    'Save up to 90% on your electricity bills, backed by a money-back promise.',
+                Icon: CheckShieldFilled,
+                className: 'animate__fadeInRightShort',
+            },
+            {
+                title: 'Hassle-Free Process',
+                description:
+                    'Zero middlemen. We manage survey, installation and subsidy paperwork end to end.',
+                Icon: Services,
+                className: 'animate__fadeInRightShort',
+            },
+            {
+                title: 'Storm-Proof Structure',
+                description:
+                    'WindPro Mount™, validated by IIT Bombay, keeps your panels safe in any weather.',
+                Icon: StarShieldFilled,
+                className: 'animate__fadeInRightShort',
+            },
+            {
+                title: 'Reliable After-Sales Service',
+                description:
+                    'Dedicated support and proactive maintenance for smooth performance, year after year.',
+                Icon: CustomerServiceFilled,
+                className: 'animate__fadeInRightShort',
+            },
+        ],
     },
     {
-        id: 'inspection',
-        title: 'Wind Turbine Inspection',
+        id: 'goodzero',
+        eyebrow: 'GoodZero™ Plan',
+        title: 'India’s Only Guaranteed Solar Savings Plan',
         description:
-            'Suspendisse suscipit sagittis leo sitea Consectetur elit. Nulla vitae elit libero, a pharetra.',
+            'GoodZero™ locks in your savings and takes maintenance, repairs and monitoring off your plate.',
+        // TODO: replace with final asset (placeholder)
         image:
-            'https://images.pexels.com/photos/20208374/pexels-photo-20208374.jpeg',
+            'https://images.pexels.com/photos/9799718/pexels-photo-9799718.jpeg',
+        cta: 'Know More about GoodZero',
+        items: [
+            {
+                title: 'Money-Back Guarantee at ₹8/unit',
+                description:
+                    'We guarantee your solar savings, or we pay you the difference. No fine print.',
+                Icon: PriceLockFilled,
+                className: 'animate__fadeInRightShort',
+            },
+            {
+                title: 'Proactive Maintenance Visits',
+                description:
+                    'Scheduled service visits keep your system generating at peak efficiency.',
+                Icon: Settings,
+                className: 'animate__fadeInRightShort',
+            },
+            {
+                title: '₹0 Repair Costs',
+                description:
+                    'All repairs are on us for the life of the plan. No surprise bills, ever.',
+                Icon: WalletFilled,
+                className: 'animate__fadeInRightShort',
+            },
+            {
+                title: 'Real-Time App Tracking',
+                description:
+                    'Track generation, savings and rewards live from the SolarSquare app.',
+                Icon: TrendUp,
+                className: 'animate__fadeInRightShort',
+            },
+        ],
     },
 ];
 
@@ -70,6 +152,8 @@ const initialTransforms = sections.map((_, index) => ({
     scale: 1 - CARD_SCALE_STEP * index,
 }));
 
+type Section = (typeof sections)[number];
+
 type CardTransform = {
     scale: number;
 };
@@ -78,13 +162,123 @@ function clamp(value: number, min = 0, max = 1) {
     return Math.min(Math.max(value, min), max);
 }
 
+function SectionCard({
+    section,
+    index,
+    transform,
+    setRef,
+}: {
+    section: Section;
+    index: number;
+    transform: CardTransform;
+    setRef: (node: HTMLElement | null) => void;
+}) {
+    const [listRef, inView] = useInView<HTMLUListElement>();
+    const reverse = index % 2 === 1;
+
+    return (
+        <Card
+            as="article"
+            id={section.id}
+            ref={setRef}
+            variant="elevated"
+            radius="lg"
+            className={`group sticky mx-auto mb-8 flex max-w-6xl flex-col overflow-hidden ring-1 ring-black/5 transition-shadow duration-300 will-change-transform md:flex-row ${reverse ? 'md:flex-row-reverse' : ''}`}
+            style={{
+                top: STAGE_TOP + index * STACK_GAP,
+                transform: `scale(${transform.scale})`,
+                transformOrigin: 'top center',
+                zIndex: index + 1,
+            }}
+        >
+            <Card.Media className="relative h-64 shrink-0 md:h-auto md:w-1/2">
+                <img
+                    src={section.image}
+                    alt={section.title}
+                    className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-black/40 via-black/5 to-transparent" />
+                <Badge
+                    pill
+                    appearance="solid"
+                    className="absolute left-5 top-5 tabular-nums shadow-sm bg-surface-brand! text-content-on-brand!"
+                >
+                    {String(index + 1).padStart(2, '0')}
+                </Badge>
+            </Card.Media>
+
+            <div className="flex flex-1 flex-col justify-center gap-6 bg-surface-muted p-8 sm:p-12 md:p-14">
+                <div className="flex flex-col gap-3">
+                    <Badge
+                        pill
+                        variant="info"
+                        appearance="soft"
+                        className="w-fit uppercase tracking-wider"
+                    >
+                        {section.eyebrow}
+                    </Badge>
+                    <Text variant="heading-lg" fontWeight="bold">
+                        {section.title}
+                    </Text>
+                    <Text variant="para-md" color="secondary">
+                        {section.description}
+                    </Text>
+                </div>
+
+                <ul ref={listRef} className="flex flex-col">
+                    {section.items.map((item, itemIndex) => (
+                        <li
+                            key={`${item.title}-${itemIndex}`}
+                            className={
+                                inView
+                                    ? `animate__animated ${item.className}`
+                                    : 'opacity-0'
+                            }
+                            style={
+                                inView
+                                    ? { animationDelay: `${itemIndex * 150}ms` }
+                                    : undefined
+                            }
+                        >
+                            {itemIndex > 0 && (
+                                <Divider decorative className="my-4" />
+                            )}
+                            <div className="flex gap-4">
+                                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface-brand-muted text-content-brand ring-1 ring-inset ring-stroke-brand/20 transition-transform duration-300 group-hover:scale-105">
+                                    <item.Icon size={22} />
+                                </span>
+                                <div className="flex flex-col gap-1">
+                                    <Text variant="body-lg" fontWeight="semibold">
+                                        {item.title}
+                                    </Text>
+                                    <Text variant="body-sm" color="secondary">
+                                        {item.description}
+                                    </Text>
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+
+                <div>
+                    <Button variant={index === 0 ? 'primary' : 'outline'} size="md">
+                        {section.cta}
+                        <Button.RightIcon>
+                            <ArrowRight size={16} />
+                        </Button.RightIcon>
+                    </Button>
+                </div>
+            </div>
+        </Card>
+    );
+}
+
 function Lists() {
     const [transforms, setTransforms] =
         useState<CardTransform[]>(initialTransforms);
 
     const sectionRefs = useRef<Array<HTMLElement | null>>([]);
     const rafId = useRef<number | null>(null);
-    const [gridRef, inView] = useInView<HTMLUListElement>();
 
     useEffect(() => {
         const calculateTransforms = (): CardTransform[] => {
@@ -139,65 +333,17 @@ function Lists() {
         <div className="bg-surface px-4 py-12 sm:px-8 lg:px-10">
             <div className="mx-auto max-w-7xl">
                 <div className="relative">
-                    {sections.map((section, index) => {
-                        const transform = transforms[index] ?? { scale: 1 };
-
-                        return (
-                            <article
-                                id={section.id}
-                                key={`${section.title}-${index}`}
-                                ref={(node) => {
-                                    sectionRefs.current[index] = node;
-                                }}
-                                className="sticky mx-auto mb-8 flex max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-stroke bg-surface-elevated shadow-level4 will-change-transform md:flex-row"
-                                style={{
-                                    top: STAGE_TOP + index * STACK_GAP,
-                                    transform: `scale(${transform.scale})`,
-                                    transformOrigin: 'top center',
-                                    zIndex: index + 1,
-                                }}
-                            >
-                                <div className="h-64 w-full shrink-0 md:h-auto md:w-1/2">
-                                    <img
-                                        src={section.image}
-                                        alt={section.title}
-                                        className="h-full w-full object-cover"
-                                    />
-                                </div>
-
-                                <div className="flex flex-1 flex-col justify-center bg-surface-muted p-8 text-content sm:p-12 md:p-16">
-
-                                    <h2 className="mb-6 text-3xl font-bold text-content-strong sm:text-4xl">
-                                        {section.title}
-                                    </h2>
-
-                                    {section.items ? (
-                                        <ul ref={gridRef} className="mb-8 space-y-6 text-content-secondary">
-                                            {section.items.map((item, itemIndex) => (
-                                                <li
-                                                    key={`${item.title}-${itemIndex}`}
-                                                    className={`flex gap-4 ${inView ? `animate__animated ${item.className}` : 'opacity-0'}`}
-                                                    style={inView ? { animationDelay: `${itemIndex * 200}ms` } : undefined}
-                                                >
-                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stroke bg-surface text-content-strong">
-                                                        <item.Icon size={20} />
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="text-lg font-semibold text-content-strong">{item.title}</h3>
-                                                        <p className="mt-2 text-sm leading-relaxed text-content-secondary flex gap-2 items-start"> <span className="h-px w-6 bg-surface-brand mt-3" /> {item.description}</p>
-                                                    </div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <p className="mb-8 text-lg leading-relaxed text-content-secondary">
-                                            {section.description}
-                                        </p>
-                                    )}
-                                </div>
-                            </article>
-                        );
-                    })}
+                    {sections.map((section, index) => (
+                        <SectionCard
+                            key={`${section.id}-${index}`}
+                            section={section}
+                            index={index}
+                            transform={transforms[index] ?? { scale: 1 }}
+                            setRef={(node) => {
+                                sectionRefs.current[index] = node;
+                            }}
+                        />
+                    ))}
                 </div>
             </div>
         </div>

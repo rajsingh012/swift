@@ -109,6 +109,166 @@
   }
 }
 
+/* ── Solar energy-flow diagram ─────────────────────────────────── */
+
+/* Dashes flowing along the connector toward the home */
+.flow-track {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-surface-brand) 0 45%,
+    transparent 45%
+  );
+  background-size: 14px 100%;
+  animation: flow-x 0.7s linear infinite;
+}
+
+@keyframes flow-x {
+  to {
+    background-position-x: 14px;
+  }
+}
+
+.flow-track-v {
+  background-image: linear-gradient(
+    180deg,
+    var(--color-surface-brand) 0 45%,
+    transparent 45%
+  );
+  background-size: 100% 14px;
+  animation: flow-y 0.7s linear infinite;
+}
+
+@keyframes flow-y {
+  to {
+    background-position-y: 14px;
+  }
+}
+
+/* Dashes crawling along an SVG connector path */
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.flow-line {
+  stroke-dasharray: 5 7;
+  animation: flow-dash 0.8s linear infinite;
+}
+
+/* Shimmering sun beams */
+@keyframes beam-pulse {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.beam {
+  animation: beam-pulse 2.4s ease-in-out infinite;
+}
+
+/* Windows lighting up */
+@keyframes lit-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.lit {
+  animation: lit-pulse 2.2s ease-in-out infinite;
+}
+
+/* Drifting background blobs */
+@keyframes blob-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(26px, -30px) scale(1.08);
+  }
+  66% {
+    transform: translate(-20px, 18px) scale(0.94);
+  }
+}
+
+.blob-float {
+  animation: blob-float 16s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob-float {
+    animation: none;
+  }
+}
+
+/* Rotating sun rays + pulsing core */
+@keyframes sun-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sun-rays {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sun-spin 16s linear infinite;
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+.sun-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: soft-pulse 2.6s ease-in-out infinite;
+}
+
+/* Home lighting up */
+@keyframes home-glow {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.15);
+  }
+}
+
+.home-glow {
+  animation: home-glow 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-track,
+  .flow-track-v,
+  .flow-line,
+  .sun-rays,
+  .sun-core,
+  .home-glow {
+    animation: none;
+  }
+}
+
 @layer base {
   :root {
     font: 18px/145% var(--font-sans);
