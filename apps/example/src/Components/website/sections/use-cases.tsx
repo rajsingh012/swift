@@ -229,7 +229,7 @@ function UseCasesSection() {
     return (
         <section
             id="where-solar-works"
-            className="relative overflow-hidden bg-surface py-20 text-content"
+            className="section-seam relative overflow-hidden py-20 text-content"
         >
             {/* Backdrop: soft grid + giant ghost scene number (mirrors the
                 app-showcase section), tinted to the active scene accent. */}
@@ -273,7 +273,7 @@ function UseCasesSection() {
                     <Text variant="heading-lg" fontWeight="bold">
                         Solar Power for Every Space
                     </Text>
-                    <Text variant="para-md" color="secondary">
+                    <Text variant="para-md" className="text-content-muted">
                         From a single rooftop to an entire factory, Swift solar
                         scales to fit — drag through to watch each space go live.
                     </Text>

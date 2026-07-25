@@ -221,8 +221,7 @@ function SectionCard({
                     </Text>
                     <Text
                         variant="para-md"
-                        color="secondary"
-                        className="max-w-2xl text-pretty"
+                        className="max-w-2xl text-pretty text-content-muted"
                     >
                         {section.description}
                     </Text>
@@ -270,13 +269,12 @@ function SectionCard({
                             </span>
 
                             <div className="relative flex min-w-0 flex-col gap-1">
-                                <Text variant="body-sm" fontWeight="semibold">
+                                <Text variant="body-md" fontWeight="bold">
                                     {item.title}
                                 </Text>
                                 <Text
                                     variant="para-sm"
-                                    color="secondary"
-                                    className="text-pretty"
+                                    className="text-pretty text-content-muted"
                                 >
                                     {item.description}
                                 </Text>
@@ -294,7 +292,7 @@ function SectionCard({
                 </ul>
 
                 <div>
-                    <Button variant={index === 0 ? 'primary' : 'outline'} size="md">
+                    <Button variant={index === 0 ? 'primary' : 'outline'} size="md" className="!rounded-full">
                         {section.cta}
                         <Button.RightIcon>
                             <ArrowRight size={16} />
@@ -363,8 +361,15 @@ function Lists() {
     }, []);
 
     return (
-        <div className="bg-surface px-4 py-12 sm:px-8 lg:px-10">
-            <div className="mx-auto max-w-7xl">
+        <div className="section-seam relative bg-surface-muted px-4 py-12 sm:px-8 lg:px-10">
+            {/* Backdrop: dot grid fading toward the content. `inset-0` keeps
+                it bounded, so no `overflow-hidden` is needed — which would
+                otherwise break the cards' `position: sticky` stacking. */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-dot-grid"
+            />
+            <div className="relative mx-auto max-w-7xl">
                 <div className="relative">
                     {sections.map((section, index) => (
                         <SectionCard

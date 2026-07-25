@@ -79,7 +79,7 @@ function StorySection() {
     return (
         <section
             id="story"
-            className="relative overflow-hidden bg-surface py-20 text-content"
+            className="section-seam relative overflow-hidden py-20 text-content"
         >
             {/* Decorative brand washes */}
             <div
@@ -114,7 +114,7 @@ function StorySection() {
                     <Text variant="heading-lg" fontWeight="bold">
                         See Why India Trusts SolarSquare
                     </Text>
-                    <Text variant="para-md" color="secondary">
+                    <Text variant="para-md" className='text-content-muted'>
                         Watch how we take homeowners from their first rooftop
                         survey to switching on clean, money-saving solar — and hear
                         it straight from the families who made the switch.
@@ -164,7 +164,7 @@ function StorySection() {
                     </Card>
 
                     <div>
-                        <Button variant="primary" size="md">
+                        <Button variant="primary" size="md" className="!rounded-full">
                             Get a Free Quote
                             <Button.RightIcon>
                                 <ArrowRight size={16} />

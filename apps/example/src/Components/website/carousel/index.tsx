@@ -3,7 +3,6 @@ import { Button } from '@swift/components/Button'
 import { Text } from '@swift/components/Text'
 import { ArrowRight } from '@swift/icons/ArrowRight'
 import { Building } from '@swift/icons/Building'
-import { City } from '@swift/icons/City'
 import { Home } from '@swift/icons/Home'
 
 type IconProps = { size?: number; className?: string }
@@ -74,7 +73,22 @@ function IconTile({ Icon }: { Icon: ComponentType<IconProps> }) {
 const CarouselSection = () => {
   return (
     <section className="relative z-20 -mt-28 lg:-mt-40">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Backdrop matching the Powering section (muted band + dot grid +
+          brand spotlight). Fades in from the top so the hero image still
+          shows through behind the cards' overlap, while the lower edge
+          flows seamlessly into the Powering band below. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-surface-muted"
+        style={{
+          maskImage: 'linear-gradient(to bottom, transparent, #000 42%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 42%)',
+        }}
+      >
+        <div className="absolute inset-0 bg-dot-grid" />
+        <div className="glow-brand absolute -top-10 left-1/2 h-72 w-xl -translate-x-1/2 rounded-full blur-3xl" />
+      </div>
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12">
           {/* Two audience segments */}
           {segments.map((segment) => (
@@ -103,7 +117,7 @@ const CarouselSection = () => {
                   <Text variant="heading-sm" fontWeight="bold" className="text-content-strong">
                     {segment.title}
                   </Text>
-                  <Text variant="para-sm" color="secondary">
+                  <Text variant="para-sm" className='text-content-muted'>
                     {segment.description}
                   </Text>
                 </div>
@@ -143,14 +157,10 @@ const CarouselSection = () => {
 
               <div className="relative z-10 flex h-full flex-col justify-end gap-4 p-8 sm:p-10">
                 <div className="flex items-center gap-2">
-                  <span className="flex w-fit items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white ring-1 ring-inset ring-white/25 backdrop-blur-sm">
-                    <City size={14} />
-                    For Business
-                  </span>
                   {/* Floating glass stat chip */}
-                  <span className="flex w-fit items-baseline gap-1.5 rounded-full bg-white/10 px-3 py-1 text-white ring-1 ring-inset ring-white/20 backdrop-blur-sm">
+                  <span className="flex w-fit items-baseline gap-1.5 rounded-full bg-black/55 px-3 py-1 text-white ring-1 ring-inset ring-white/20 backdrop-blur-sm">
                     <span className="text-sm font-bold">500+</span>
-                    <span className="text-[0.7rem] font-medium uppercase tracking-wider text-white/70">
+                    <span className="text-[0.7rem] font-medium uppercase tracking-wider">
                       businesses
                     </span>
                   </span>
@@ -159,13 +169,13 @@ const CarouselSection = () => {
                   <h3 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
                     Commercial &amp; Industrial
                   </h3>
-                  <p className="max-w-md text-base leading-relaxed text-white/85">
+                  <p className="max-w-md text-base leading-relaxed text-white/60">
                     Power your business with green energy, meet ESG goals and cut
                     operating costs at scale.
                   </p>
                 </div>
                 <div>
-                  <Button variant="primary" size="md">
+                  <Button variant="primary" size="md" className="!rounded-full">
                     Explore Our Services
                     <Button.RightIcon>
                       <ArrowRight size={16} />

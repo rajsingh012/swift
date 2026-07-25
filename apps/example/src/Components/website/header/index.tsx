@@ -1,7 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { Afternoon } from '@swift/icons/Afternoon'
-import { Night } from '@swift/icons/Night'
-import { useTheme } from '../../../lib/Theme'
 
 // px scrolled before hide-on-scroll kicks in (keeps header visible near the top)
 const SCROLL_REVEAL_THRESHOLD = 80
@@ -19,8 +16,6 @@ function Header() {
   const [hidden, setHidden] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const lastScrollY = useRef(0)
-  const { theme, toggle } = useTheme()
-  const isDark = theme === 'dark'
 
   useEffect(() => {
     lastScrollY.current = window.scrollY
@@ -69,7 +64,11 @@ function Header() {
             : 'border border-transparent bg-transparent'
         }`}
       >
-        <div className="flex items-center gap-3">
+        <div
+          className={`-mt-4 flex items-center gap-3 rounded-b-2xl px-4 pt-6 pb-2 transition-colors duration-300 ${
+            scrolled ? 'bg-transparent' : 'bg-white shadow-lg shadow-black/5 pb-4'
+          }`}
+        >
           <img src="https://cdn.solarsquare.in/blog/wp-content/uploads/2025/11/05101757/logo.webp" alt="Solar Square" className="h-14 w-auto" />
         </div>
 
@@ -90,23 +89,15 @@ function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={toggle}
-            aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-            className={`inline-flex h-11 w-11 items-center justify-center rounded-full border transition ${
-              scrolled
-                ? 'border-stroke bg-surface-muted text-content hover:bg-surface-elevated'
-                : 'border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20'
-            }`}
-          >
-            {isDark ? <Afternoon size={18} /> : <Night size={18} />}
-          </button>
           <a
             href="#quote"
-            className="inline-flex items-center rounded-full bg-surface-brand px-5 py-2.5 text-sm font-semibold text-content-on-brand shadow-lg shadow-[color:var(--shadow-level2)] transition hover:bg-surface-brand/90"
+            style={{
+              backgroundImage:
+                'linear-gradient(120deg, color-mix(in oklab, var(--color-surface-brand) 80%, #22d3ee) 0%, var(--color-surface-brand) 50%, color-mix(in oklab, var(--color-surface-brand) 62%, #7c3aed) 100%)',
+            }}
+            className="spin-border inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold text-content-on-brand shadow-lg shadow-(color:--shadow-level2) transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:brightness-110"
           >
-            Get Free Quote
+            <span className="relative">Get Free Quote</span>
           </a>
           <button
             type="button"
@@ -139,7 +130,7 @@ function Header() {
               <a
                 href="#quote"
                 onClick={() => setMenuOpen(false)}
-                className="rounded-2xl bg-surface-brand px-4 py-3 text-center text-sm font-semibold text-content-on-brand transition hover:bg-surface-brand/90"
+                className="rounded-full bg-surface-brand px-4 py-3 text-center text-sm font-semibold text-content-on-brand transition hover:bg-surface-brand/90"
               >
                 Get Free Quote
               </a>

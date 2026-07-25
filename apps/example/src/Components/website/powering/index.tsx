@@ -35,7 +35,7 @@ const stats: Stat[] = [
     label: 'Power Installed',
     caption: 'Total capacity across India',
     Icon: Power,
-    accent: 'var(--color-surface-new)',
+    accent: 'var(--color-surface-highlight)',
     className: 'animate__fadeInUpShort animate__delay-300',
   },
   {
@@ -91,8 +91,21 @@ const PoweringSection = () => {
   const [gridRef, gridInView] = useInView<HTMLDivElement>()
 
   return (
-    <section id="powering" className="bg-surface py-20 text-content sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section
+      id="powering"
+      className="relative bg-surface-muted py-20 text-content sm:py-24"
+    >
+      {/* Backdrop: dot grid + brand spotlight bleeding from the top. Clipping
+          lives on this layer (not the section) so the sticky intro column
+          below still pins on scroll. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-dot-grid" />
+        <div className="glow-brand absolute -top-24 left-1/2 h-72 w-xl -translate-x-1/2 rounded-full blur-3xl" />
+      </div>
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-16">
           {/* Left — sticky intro */}
           <div
@@ -108,7 +121,7 @@ const PoweringSection = () => {
               Powering Homes{' '}
               <span className="brand-gradient-text">Across India</span>
             </h2>
-            <p className="max-w-md text-base leading-8 text-content-secondary">
+            <p className="max-w-md text-base leading-8 text-content-muted">
               We are present in 31 cities across 10 states — and growing every day.
               Every rooftop we solarize brings India closer to a cleaner future.
             </p>
@@ -132,12 +145,12 @@ const PoweringSection = () => {
                   <span className="ds-pulse-ring absolute inset-0 rounded-full bg-surface-brand" />
                   <span className="relative h-2 w-2 rounded-full bg-surface-brand" />
                 </span>
-                <span className="text-sm font-medium text-content-secondary">Live &amp; growing</span>
+                <span className="text-sm font-medium text-content-muted">Live &amp; growing</span>
               </div>
             </div>
 
             <div>
-              <Button variant="primary" size="lg">
+              <Button variant="primary" size="lg" className="!rounded-full">
                 Unlock Your Solar Savings
                 <Button.RightIcon>
                   <ArrowRight size={18} />
@@ -196,7 +209,7 @@ const PoweringSection = () => {
                       />
                       {stat.label}
                     </p>
-                    <p className="text-sm leading-relaxed text-content-secondary">
+                    <p className="text-sm leading-relaxed text-content-muted">
                       {stat.caption}
                     </p>
                   </div>

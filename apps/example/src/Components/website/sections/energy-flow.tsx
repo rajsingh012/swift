@@ -466,8 +466,20 @@ function EnergyFlowSection() {
     const [ref, inView] = useInView<HTMLDivElement>();
 
     return (
-        <section id="how-solar-works" className="bg-surface py-20 text-content">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section
+            id="how-solar-works"
+            className="section-seam relative overflow-hidden py-20 text-content"
+        >
+            {/* Backdrop: diagonal energy hatching + drifting brand glows */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-diagonal-lines"
+            />
+            <div
+                aria-hidden="true"
+                className="glow-brand pointer-events-none absolute -right-24 top-8 h-80 w-80 rounded-full blur-3xl"
+            />
+            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div
                     ref={ref}
                     className="grid items-center gap-10 lg:grid-cols-[1.7fr_1fr] lg:gap-14"
@@ -503,7 +515,7 @@ function EnergyFlowSection() {
                             <Text variant="heading-lg" fontWeight="bold">
                                 From Sunlight to Savings
                             </Text>
-                            <Text variant="para-md" color="secondary">
+                            <Text variant="para-md" className='text-content-muted'>
                                 Watch a ray of sunlight travel from the sky to
                                 your rooftop — turning the lights on and your
                                 bill down.
@@ -531,7 +543,7 @@ function EnergyFlowSection() {
                                         </Text>
                                         <Text
                                             variant="body-sm"
-                                            color="secondary"
+                                            className='text-content-muted'
                                         >
                                             {item.desc}
                                         </Text>

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Header from "./header";
 import HeroSection from "./hero";
 import CarouselSection from "./carousel";
@@ -14,7 +15,17 @@ import Footer from "./sections/footer";
 
 const RouteComponent = () => {
     return (
-        <div className="min-h-screen bg-surface text-content">
+        <div
+            className="min-h-screen bg-surface text-content"
+            style={
+                {
+                    '--color-surface': '#0a0e14',
+                    '--color-surface-muted': '#151d2e',
+                    '--color-surface-subtle': '#1a2232',
+                    '--color-surface-elevated': '#141c2b',
+                } as CSSProperties
+            }
+        >
             <Header />
             <div className="relative">
                 <HeroSection />

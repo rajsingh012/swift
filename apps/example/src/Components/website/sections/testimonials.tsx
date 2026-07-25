@@ -67,7 +67,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             className="flex h-full flex-col gap-5 p-6 sm:p-8"
         >
             <Stars />
-            <Text variant="para-md" className="flex-1">
+            <Text variant="para-md" className="flex-1 text-content-muted">
                 “{item.quote}”
             </Text>
             <Divider decorative />
@@ -119,8 +119,20 @@ function TestimonialsSection() {
     }, []);
 
     return (
-        <section id="testimonials" className="bg-surface py-20 text-content">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section
+            id="testimonials"
+            className="section-seam relative overflow-hidden py-20 text-content"
+        >
+            {/* Backdrop: fine grid + a centered brand spotlight behind the cards */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-grid-fine"
+            />
+            <div
+                aria-hidden="true"
+                className="glow-brand pointer-events-none absolute left-1/2 top-1/3 h-96 w-3xl -translate-x-1/2 rounded-full blur-3xl"
+            />
+            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div
                     ref={headRef}
                     className={`mx-auto max-w-2xl text-center ${
@@ -144,7 +156,7 @@ function TestimonialsSection() {
                     >
                         Loved by Homeowners Across India
                     </Text>
-                    <Text variant="para-md" color="secondary" className="mt-3">
+                    <Text variant="para-md" className="mt-3 text-content-muted">
                         Real families, real savings — hear why homeowners made the
                         switch to solar with us.
                     </Text>
