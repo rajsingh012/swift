@@ -5,7 +5,7 @@ import FlipWords from './flip-words';
 import { ArrowRight } from '@swift/icons';
 
 const HeroSection = () => {
-  const [ref, progress] = useScrollProgress<HTMLDivElement>();
+  const [ref] = useScrollProgress<HTMLDivElement>();
 
   return (
     <section ref={ref} className="relative h-175 w-full overflow-hidden">
