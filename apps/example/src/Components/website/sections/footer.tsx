@@ -63,13 +63,40 @@ function Footer() {
     };
 
     return (
-        <footer className="bg-surface text-content">
+        <footer className="relative bg-surface text-content">
+            {/* Subtle dot-grid + brand glow so the footer reads as a designed
+                surface rather than a flat black void. */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 overflow-hidden"
+            >
+                <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/15 to-transparent" />
+                <div className="bg-dot-grid absolute inset-0 opacity-60" />
+                <div className="glow-brand absolute -bottom-40 left-1/2 h-96 w-2xl -translate-x-1/2 rounded-full blur-3xl opacity-70" />
+            </div>
             {/* Dark shell with rounded top; the CTA card straddles its top edge */}
-            <div className="mt-24 px-4 pb-10 pt-px text-white sm:px-6 lg:px-8">
+            <div className="relative mt-24 px-4 pb-10 pt-px text-white sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-7xl">
-                    {/* Get in Touch CTA — in normal flow, pulled up to overlap the edge */}
-                    <div className="-mt-24 grid overflow-hidden rounded-3xl bg-surface-brand shadow-level3 lg:grid-cols-[1.15fr_1fr]">
-                        <div className="flex flex-col gap-6 p-8 sm:p-10 lg:p-12">
+                    {/* Get in Touch CTA — pulled up past the footer's top gap so
+                        it overlaps into the FAQ section above (lands in the FAQ's
+                        py-20 bottom padding, so no content is covered). */}
+                    <div
+                        className="relative -mt-40 grid overflow-hidden rounded-3xl shadow-level3 ring-1 ring-white/10 lg:grid-cols-[1.15fr_1fr]"
+                        style={{
+                            background:
+                                'linear-gradient(135deg, var(--color-surface-brand), color-mix(in oklab, var(--color-surface-brand) 55%, #06203f))',
+                        }}
+                    >
+                        {/* Texture + top sheen for depth on the brand panel */}
+                        <div
+                            aria-hidden="true"
+                            className="pointer-events-none absolute inset-0"
+                            style={{
+                                background:
+                                    'radial-gradient(120% 90% at 0% 0%, rgba(255,255,255,0.18), transparent 55%)',
+                            }}
+                        />
+                        <div className="relative flex flex-col gap-6 p-8 sm:p-10 lg:p-12">
                             <Text
                                 variant="heading-lg"
                                 fontWeight="bold"
@@ -107,6 +134,15 @@ function Footer() {
                                 src="https://cdn.solarsquare.in/blog/wp-content/uploads/2026/07/20201751/hero-home-desk.webp"
                                 alt="Home with rooftop solar panels"
                                 className="absolute inset-0 h-full w-full object-cover"
+                            />
+                            {/* Feather the seam between the brand panel and the photo */}
+                            <div
+                                aria-hidden="true"
+                                className="absolute inset-y-0 left-0 w-1/3"
+                                style={{
+                                    background:
+                                        'linear-gradient(to right, color-mix(in oklab, var(--color-surface-brand) 80%, #06203f), transparent)',
+                                }}
                             />
                         </div>
                     </div>
