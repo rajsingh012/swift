@@ -213,8 +213,16 @@ function FaqSection() {
     );
 
     return (
-        <section id="faq" className="py-20 text-content">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section
+            id="faq"
+            className="section-seam relative bg-surface-muted py-20 text-content"
+        >
+            {/* Backdrop: diagonal hatching fading toward the center */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-diagonal-lines"
+            />
+            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="grid gap-10 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
                     {/* Left — intro + graphic (sticky on desktop) */}
                     <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
@@ -230,7 +238,7 @@ function FaqSection() {
                             <Text variant="heading-lg" fontWeight="bold">
                                 Questions? We’ve Got Answers
                             </Text>
-                            <Text variant="para-md" color="secondary">
+                            <Text variant="para-md" className='text-content-muted'>
                                 Everything you need to know about going solar
                                 with us. Pick a topic to jump in.
                             </Text>
@@ -296,7 +304,7 @@ function FaqSection() {
                                     <Accordion.Content>
                                         <Text
                                             variant="para-md"
-                                            color="secondary"
+                                            className='text-content-muted'
                                         >
                                             {faq.answer}
                                         </Text>

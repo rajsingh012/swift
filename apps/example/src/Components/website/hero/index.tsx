@@ -1,10 +1,11 @@
 import { Button } from '@swift/components/Button';
 import { Text } from '@swift/components/Text';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
-import ScrollRevealText from './scroll-reveal-text';
+import FlipWords from './flip-words';
+import { ArrowRight } from '@swift/icons';
 
 const HeroSection = () => {
-  const [ref, progress] = useScrollProgress<HTMLDivElement>();
+  const [ref] = useScrollProgress<HTMLDivElement>();
 
   return (
     <section ref={ref} className="relative h-175 w-full overflow-hidden">
@@ -25,18 +26,25 @@ const HeroSection = () => {
             variant="heading-xl"
             fontWeight="bold"
             variantMapping={{ 'heading-xl': 'h1' }}
+            className='text-white'
           >
-            <ScrollRevealText
-              text="The Future is Solar. Bring it Home Today."
-              progress={progress}
-            />
+            The{' '}
+            <FlipWords
+              words={['Future', 'Present', 'Power', 'Choice']}
+              background="transparent"
+            />{' '}
+            is Solar. Bring it Home Today.
           </Text>
-          <Text variant="para-lg" className="text-white/90">
+          <Text variant="para-lg">
             With India&rsquo;s No.&nbsp;1 Home Solar Brand.
           </Text>
           <div>
-            <Button variant="primary" size="lg">
-              Get Free Quote
+            <Button
+              variant="primary"
+              size="lg"
+              className="!rounded-full"
+            >
+              Get Free Quote <ArrowRight />
             </Button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import {
     type ComponentType,
+    useEffect,
     useLayoutEffect,
     useRef,
     useState,
@@ -346,6 +347,15 @@ function FeaturesSection() {
     const current = features[active];
     const { Icon } = current;
 
+    // Autoplay: cycle through benefits every 3s. Resets whenever `active`
+    // changes (e.g. on tap) so a manual selection gets a full dwell.
+    useEffect(() => {
+        const id = window.setInterval(() => {
+            setActive((prev) => (prev + 1) % features.length);
+        }, 3000);
+        return () => window.clearInterval(id);
+    }, [active]);
+
     const wrapRef = useRef<HTMLDivElement>(null);
     const cardRef = useRef<HTMLDivElement>(null);
     const circleRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -382,7 +392,7 @@ function FeaturesSection() {
     return (
         <section
             id="features"
-            className="relative overflow-hidden py-20 text-content"
+            className="section-seam relative overflow-hidden py-20 text-content"
             style={{
                 background:
                     'linear-gradient(135deg, color-mix(in oklab, var(--color-surface-brand) 7%, var(--color-surface)) 0%, var(--color-surface) 45%, color-mix(in oklab, var(--color-surface-brand) 9%, var(--color-surface)) 100%)',
@@ -435,7 +445,7 @@ function FeaturesSection() {
                 <Text variant="heading-lg" fontWeight="bold" className="mt-4">
                     Everything You Get, In One Package
                 </Text>
-                <Text variant="para-md" color="secondary" className="mt-3">
+                <Text variant="para-md" className="mt-3 text-content-muted">
                     Tap any benefit to see what makes going solar with us a smart,
                     worry-free choice.
                 </Text>

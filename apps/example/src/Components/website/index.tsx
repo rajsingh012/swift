@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Header from "./header";
 import HeroSection from "./hero";
 import CarouselSection from "./carousel";
@@ -14,7 +15,22 @@ import Footer from "./sections/footer";
 
 const RouteComponent = () => {
     return (
-        <div className="min-h-screen bg-surface text-content">
+        <div
+            // Force dark tokens for the whole marketing page, independent of the
+            // app's global theme toggle or the visitor's system preference. Dark
+            // tokens are keyed on a plain [data-theme="dark"] selector, so scoping
+            // it to this wrapper re-themes every descendant.
+            data-theme="dark"
+            className="min-h-screen bg-surface text-content"
+            style={
+                {
+                    '--color-surface': '#0a0e14',
+                    '--color-surface-muted': '#151d2e',
+                    '--color-surface-subtle': '#1a2232',
+                    '--color-surface-elevated': '#141c2b',
+                } as CSSProperties
+            }
+        >
             <Header />
             <div className="relative">
                 <HeroSection />

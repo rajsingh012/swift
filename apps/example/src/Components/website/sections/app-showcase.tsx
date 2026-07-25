@@ -440,7 +440,7 @@ function StoreBadge({
     return (
         <a
             href="#"
-            className="flex items-center gap-2.5 rounded-xl bg-content px-4 py-2.5 text-surface transition-transform duration-200 hover:-translate-y-0.5"
+            className="flex items-center gap-2.5 rounded-full bg-content px-4 py-2.5 text-surface transition-transform duration-200 hover:-translate-y-0.5"
         >
             <span className="shrink-0">{glyph}</span>
             <span className="flex flex-col leading-tight">
@@ -544,7 +544,7 @@ function AppShowcaseSection() {
         <section
             id="app"
             ref={ref}
-            className="relative bg-surface text-content"
+            className="section-seam relative bg-surface text-content"
             style={{ height: `${STEPS.length * 100}vh` }}
         >
             {/* Pinned viewport */}
@@ -583,7 +583,7 @@ function AppShowcaseSection() {
                         <Text variant="heading-lg" fontWeight="bold">
                             Track your solar system, in real time
                         </Text>
-                        <Text variant="para-md" color="secondary">
+                        <Text variant="para-md" className="text-content-muted">
                             Track the performance of your solar system — anywhere,
                             anytime. Scroll to take the tour.
                         </Text>
@@ -642,7 +642,7 @@ function AppShowcaseSection() {
                                                     <div className="overflow-hidden">
                                                         <Text
                                                             variant="body-sm"
-                                                            color="secondary"
+                                                            className='text-content-muted'
                                                         >
                                                             {step.desc}
                                                         </Text>

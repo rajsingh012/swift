@@ -63,9 +63,9 @@ function Footer() {
     };
 
     return (
-        <footer className="bg-surface-muted text-content">
+        <footer className="bg-surface text-content">
             {/* Dark shell with rounded top; the CTA card straddles its top edge */}
-            <div className="mt-24 bg-[#161311] px-4 pb-10 pt-px text-white sm:px-6 lg:px-8">
+            <div className="mt-24 px-4 pb-10 pt-px text-white sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-7xl">
                     {/* Get in Touch CTA — in normal flow, pulled up to overlap the edge */}
                     <div className="-mt-24 grid overflow-hidden rounded-3xl bg-surface-brand shadow-level3 lg:grid-cols-[1.15fr_1fr]">
@@ -195,7 +195,7 @@ function Footer() {
                                 <button
                                     type="submit"
                                     aria-label="Subscribe"
-                                    className="absolute right-2 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-xl bg-surface-brand text-white transition hover:brightness-110"
+                                    className="absolute right-2 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-surface-brand text-white transition hover:brightness-110"
                                 >
                                     <SendMessageFilled size={18} />
                                 </button>

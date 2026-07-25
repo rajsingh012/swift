@@ -121,6 +121,63 @@
   animation-direction: reverse;
 }
 
+/* ── Spinning gradient border (highlight CTAs) ──────────────────── */
+
+/* Animatable custom property so the conic gradient can rotate smoothly. */
+@property --spin-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes showcase-border-spin {
+  to {
+    --spin-angle: 360deg;
+  }
+}
+
+/* Pair with `position: relative`/`rounded-full`. Draws a rotating light
+ * sweep as a crisp ring (::before, masked to the padding box) plus a soft
+ * blurred glow behind it (::after). */
+.spin-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.spin-border::before,
+.spin-border::after {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--spin-angle),
+    transparent 0deg,
+    rgba(255, 255, 255, 0.9) 90deg,
+    transparent 180deg,
+    transparent 360deg
+  );
+  animation: showcase-border-spin 3s linear infinite;
+}
+
+/* Crisp ring: fill only the 2px padding band via mask compositing. */
+.spin-border::before {
+  inset: 0;
+  padding: 2px;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Soft glow bleeding just outside the button. */
+.spin-border::after {
+  inset: -3px;
+  z-index: -1;
+  filter: blur(7px);
+  opacity: 0.7;
+}
+
 /* ── Hover micro-interactions ───────────────────────────────────── */
 
 .hover-lift {
@@ -152,6 +209,92 @@
     infinite;
 }
 
+/* ── Section backdrops (static decoration) ──────────────────────── */
+/* Cohesive family of faint patterns for a `pointer-events-none absolute
+ * inset-0` aria-hidden layer inside a `relative overflow-hidden` section.
+ * Palette: hairline white lines on the dark surface + brand cyan
+ * (#00bdff) glows. Every pattern is radially masked so it dissolves
+ * before it reaches the content and never competes with it. These are
+ * static (no animation) so they need no reduced-motion handling. */
+
+.bg-dot-grid {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.07) 1.3px,
+    transparent 1.4px
+  );
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 70% 65% at 50% 32%,
+    #000,
+    transparent 74%
+  );
+  mask-image: radial-gradient(ellipse 70% 65% at 50% 32%, #000, transparent 74%);
+}
+
+.bg-diagonal-lines {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.04) 0,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px,
+    transparent 17px
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 85% 78% at 50% 50%,
+    #000,
+    transparent 82%
+  );
+  mask-image: radial-gradient(ellipse 85% 78% at 50% 50%, #000, transparent 82%);
+}
+
+.bg-grid-fine {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 58px 58px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 75% 60% at 50% 0%,
+    #000 8%,
+    transparent 78%
+  );
+  mask-image: radial-gradient(ellipse 75% 60% at 50% 0%, #000 8%, transparent 78%);
+}
+
+/* Soft brand-tinted spotlight. Drop in as its own absolutely-positioned
+ * blurred blob; size/position with utilities. */
+.glow-brand {
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 189, 255, 0.22),
+    transparent 68%
+  );
+}
+
+/* Delicate luminous hairline along a section's top edge — separates
+ * adjacent sections without a hard rule. Apply to the section element
+ * itself (it owns no other ::before). */
+.section-seam {
+  position: relative;
+}
+
+.section-seam::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.1) 22%,
+    rgba(0, 189, 255, 0.38) 50%,
+    rgba(255, 255, 255, 0.1) 78%,
+    transparent
+  );
+}
+
 /* ── Route view transitions (cross-fade + slight rise) ──────────── */
 
 ::view-transition-old(root) {
@@ -172,6 +315,8 @@
   .anim-scale-in,
   .marquee-track,
   .aurora,
+  .spin-border::before,
+  .spin-border::after,
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation-duration: 1ms !important;
