@@ -16,6 +16,11 @@ import Footer from "./sections/footer";
 const RouteComponent = () => {
     return (
         <div
+            // Force dark tokens for the whole marketing page, independent of the
+            // app's global theme toggle or the visitor's system preference. Dark
+            // tokens are keyed on a plain [data-theme="dark"] selector, so scoping
+            // it to this wrapper re-themes every descendant.
+            data-theme="dark"
             className="min-h-screen bg-surface text-content"
             style={
                 {

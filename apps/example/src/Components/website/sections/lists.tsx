@@ -206,7 +206,7 @@ function SectionCard({
                 </Badge>
             </Card.Media>
 
-            <div className="flex flex-1 flex-col justify-center gap-5 bg-surface-muted p-5 sm:p-6">
+            <div className="flex flex-1 flex-col justify-center gap-5 bg-[#17223b] p-5 sm:p-6">
                 <div className="flex flex-col gap-3">
                     <Badge
                         pill
