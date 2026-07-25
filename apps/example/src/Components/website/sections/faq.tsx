@@ -215,7 +215,7 @@ function FaqSection() {
     return (
         <section
             id="faq"
-            className="section-seam relative bg-surface-muted py-20 text-content"
+            className="section-seam relative bg-surface-muted pt-20 pb-40 text-content"
         >
             {/* Backdrop: diagonal hatching fading toward the center */}
             <div
